@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.learning</groupId>
-    <artifactId>api-gateway</artifactId>
+    <artifactId>service-registry</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>api-gateway</name>
-    <description>api-gateway</description>
+    <name>service-register</name>
+    <description>service-register</description>
     <url/>
     <licenses>
         <license/>
@@ -31,28 +31,20 @@
         <spring-cloud.version>2024.0.0</spring-cloud.version>
     </properties>
     <dependencies>
-
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-
     </dependencies>
     <dependencyManagement>
         <dependencies>
