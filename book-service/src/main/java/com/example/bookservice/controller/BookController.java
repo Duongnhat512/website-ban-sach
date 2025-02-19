@@ -1,11 +1,11 @@
-package controller;
+package com.example.bookservice.controller;
 
-import entity.Book;
+import com.example.bookservice.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import service.BookService;
+import com.example.bookservice.service.BookService;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ public class BookController {
 
     @GetMapping
     public String getAllBooks(Model model) {
+        System.out.println("🔹 BookController được gọi!");
         List<Book> books = bookService.getAllBooks();
         model.addAttribute("books", books);
         return "book-list";
