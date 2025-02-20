@@ -42,4 +42,23 @@ public class BookController {
                 .result(bookService.getBookById(id))
                 .build();
     }
+
+    @GetMapping("/delete/{id}")
+    public ResponseData<BookCreationResponse> deleteBookById(@PathVariable Long id){
+        return ResponseData.<BookCreationResponse>builder()
+                .message("Delete Book Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.deleteBookById(id))
+                .build();
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseData<BookCreationResponse> updateBook(@PathVariable Long id, @RequestBody BookCreationRequest request){
+        return ResponseData.<BookCreationResponse>builder()
+                .message("Update Book Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.updateBook(id, request))
+                .build();
+    }
+
 }

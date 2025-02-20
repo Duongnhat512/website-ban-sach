@@ -14,5 +14,8 @@ public interface BookService {
 
     BookCreationResponse getBookById(Long id);
 
+    BookCreationResponse updateBook(Long id, BookCreationRequest request);
+
+    BookCreationResponse deleteBookById(Long id);
 
 }

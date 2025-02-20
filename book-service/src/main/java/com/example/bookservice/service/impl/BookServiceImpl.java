@@ -47,4 +47,24 @@ public class BookServiceImpl implements BookService {
         Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
         return bookMapper.toBookCreationResponse(book);
     }
+
+    @Override
+    public BookCreationResponse updateBook(Long id, BookCreationRequest request) {
+        Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        book.setTitle(request.getTitle());
+        book.setDescription(request.getDescription());
+        book.setAuthor(request.getAuthor());
+        book.setPrice(request.getPrice());
+        book.setReleasedDate(request.getReleasedDate());
+        book.setQuantity(request.getQuantity());
+        repository.save(book);
+        return bookMapper.toBookCreationResponse(book);
+    }
+
+    @Override
+    public BookCreationResponse deleteBookById(Long id) {
+        Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        repository.delete(book);
+        return bookMapper.toBookCreationResponse(book);
+    }
 }
