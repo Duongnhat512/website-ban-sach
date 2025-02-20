@@ -1,30 +1,18 @@
 package com.example.bookservice.service;
 
-import com.example.bookservice.Repository.BookRepository;
-import com.example.bookservice.entity.Book;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.bookservice.dto.request.BookCreationRequest;
+import com.example.bookservice.dto.response.BookCreationResponse;
+import com.example.bookservice.dto.response.PageResponse;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
+public interface BookService {
 
-@Service
-public class BookService {
-    @Autowired
-    private BookRepository bookRepository;
 
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
-    }
+    BookCreationResponse createBook(BookCreationRequest request);
 
-    public Book getBookById(Long id) {
-        return bookRepository.findById(id).orElse(null);
-    }
+    PageResponse<BookCreationResponse> getBooks(int page, int size);
 
-    public Book saveBook(Book book) {
-        return bookRepository.save(book);
-    }
+    BookCreationResponse getBookById(Long id);
 
-    public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
-    }
+
 }

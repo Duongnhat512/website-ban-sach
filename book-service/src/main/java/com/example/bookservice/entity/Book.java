@@ -3,7 +3,10 @@ package com.example.bookservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
+
 @Entity
 @Table(name = "books")
 @Getter
@@ -19,7 +22,7 @@ public class Book {
     private String description;
     private String author;
     private Double price;
-    private Date releasedDate;
+    private LocalDate releasedDate;
     private Integer quantity;
     @ManyToOne
     @JoinColumn(name = "category_id")
