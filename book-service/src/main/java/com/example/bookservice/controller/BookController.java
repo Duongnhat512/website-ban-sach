@@ -24,7 +24,7 @@ public class BookController {
                 .result(bookService.createBook(request))
                 .build();
     }
-    @PostMapping("/get-all-books")
+    @GetMapping("/get-all-books")
     public ResponseData<PageResponse<BookCreationResponse>> getBooks(
            @RequestParam(value = "page",defaultValue = "1") int page,
            @RequestParam(value = "size",defaultValue = "10")   int size){
@@ -34,8 +34,8 @@ public class BookController {
                 .result(bookService.getBooks(page, size))
                 .build();
     }
-    @PostMapping("/{id}")
-    public ResponseData<BookCreationResponse> getBookById(Long id){
+    @GetMapping("/{id}")
+    public ResponseData<BookCreationResponse> getBookById(@PathVariable  Long id){
         return ResponseData.<BookCreationResponse>builder()
                 .message("Get Book Successfully")
                 .code(HttpStatus.OK.value())
