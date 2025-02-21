@@ -1,4 +1,4 @@
-package com.example.bookservice.controller;
+package com.example.bookservice.controller.external;
 
 import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;

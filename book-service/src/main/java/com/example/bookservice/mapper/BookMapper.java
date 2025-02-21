@@ -10,4 +10,8 @@ public interface BookMapper {
 
     Book toBook(BookCreationRequest request);
     BookCreationResponse toBookCreationResponse(Book book);
+
+    Book toBook(BookCreationResponse response);
+
+
 }
