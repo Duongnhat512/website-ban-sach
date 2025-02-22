@@ -117,8 +117,6 @@ public class AuthenticationService {
         if(expireTime.before(new Date())){
             throw new RuntimeException("Token expired");
         }
-
-
         var verified = signedJWT.verify(verifier);
 
         if(!verified){
