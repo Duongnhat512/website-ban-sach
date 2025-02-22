@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -34,11 +34,6 @@ public class UserController {
                 .result(userService.getUsers())
                 .build();
     }
-
-
-
-
-
 
     @GetMapping("{id}")
     public ResponseData<UserResponse> getUserById(@PathVariable Long id){

@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -39,9 +40,8 @@ public class User {
     @Column(name = "phone_number")
     String phoneNumber;
 
-
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    Role role;
 
 }
