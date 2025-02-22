@@ -1,7 +1,6 @@
-package org.learning.authenticationservice.dto.request;
+package org.learning.authenticationservice.dto.response;
 
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRequest {
+public class UserResponse {
     private String id;
     private String fullName;
     private String firstName;

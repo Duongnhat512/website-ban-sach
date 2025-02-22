@@ -1,4 +1,4 @@
-package org.learning.authenticationservice.dto.request;
+package org.learning.authenticationservice.dto.response;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RoleRequest {
+public class RoleResponse {
     private Long id;
     private String name;
     private String description;

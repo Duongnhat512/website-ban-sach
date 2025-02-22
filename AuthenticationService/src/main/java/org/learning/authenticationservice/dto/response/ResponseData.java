@@ -1,4 +1,4 @@
-package com.example.bookservice.dto.response;
+package org.learning.authenticationservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
