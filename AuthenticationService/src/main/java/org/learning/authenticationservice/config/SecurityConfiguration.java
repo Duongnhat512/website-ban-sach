@@ -18,7 +18,7 @@ public class SecurityConfiguration {
 
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/users/registration", "/auth/token", "/auth/logout", "/auth/introspect", "/auth/refresh","/roles/create-role"
+            "/users/create-user", "/auth/sign-in", "/auth/logout", "/auth/introspect", "/auth/refresh","/roles/create-role"
     };
     @Bean
     public PasswordEncoder passwordEncoder(){
