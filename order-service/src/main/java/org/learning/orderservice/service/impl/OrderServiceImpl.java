@@ -11,6 +11,7 @@ import org.learning.orderservice.model.Order;
 import org.learning.orderservice.repository.OrderRepository;
 import org.learning.orderservice.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -53,5 +54,20 @@ public class OrderServiceImpl implements OrderService {
                 .bookId(order.getBookId())
                 .orderDate(order.getOrderDate())
                 .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public OrderCreateResponse getOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+                .map(order -> OrderCreateResponse.builder()
+                        .id(order.getId())
+                        .total(order.getTotal())
+                        .address(order.getAddress())
+                        .status(order.getOrderStatus())
+                        .bookId(order.getBookId())
+                        .orderDate(order.getOrderDate())
+                        .build())
+                .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 }
