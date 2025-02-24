@@ -1,0 +1,189 @@
+.best-seller-container {
+    margin-top: 40px;
+    max-width: 1200px;
+    background: #fff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  
+    .ranking-title {
+      font-size: 22px;
+      background: #191e2a;
+      color: #fff;
+      font-weight: bold;
+      padding: 6px 10px;
+    }
+  
+    .ranking-content {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+  
+      .ranking-item {
+        background: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        border: 1px solid #e0e0e0;
+        padding: 10px;
+        transition: transform 0.2s ease-in-out;
+        cursor: pointer;
+  
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+  
+        &.active {
+          border: 2px solid #d81b60;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+  
+        .rank-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+  
+          .rank {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d81b60;
+          }
+  
+          .arrow-icon {
+            color: green;
+            font-size: 16px;
+            margin-top: 5px;
+          }
+        }
+  
+        .image-section {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+  
+          .book-img {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+          }
+        }
+  
+        .info-section {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          flex: 1; // Giúp phần này co giãn linh hoạt theo nội dung
+  
+          strong {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; // Giới hạn tối đa 2 dòng
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+  
+          .author {
+            font-size: 14px;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; // Giới hạn tối đa 2 dòng
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+  
+          .points {
+            font-size: 14px;
+            color: blue;
+            font-weight: bold;
+          }
+        }
+      }
+  
+      .view-more {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+  
+        .ant-btn {
+          background: #d81b60;
+          border-color: #d81b60;
+          font-weight: bold;
+          padding: 8px 15px;
+          font-size: 16px;
+        }
+      }
+    }
+  
+    .highlighted-book {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+  
+      .highlighted-img {
+        width: 100%;
+        max-width: 250px;
+        height: auto;
+        border-radius: 10px;
+      }
+  
+      .book-details {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+  
+        .price {
+          font-size: 16px;
+          font-weight: bold;
+          color: #d81b60;
+          text-decoration: line-through;
+        }
+  
+        .discount {
+          font-size: 14px;
+          color: #28a745;
+          font-weight: bold;
+        }
+  
+        .book-description {
+          font-size: 14px;
+          color: #666;
+          margin-top: 10px;
+          text-align: justify;
+          display: -webkit-box;
+          -webkit-line-clamp: 3; // Giới hạn 3 dòng để mô tả không quá dài
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+  
+        .buy-button {
+          margin-top: 15px;
+          background: #d81b60;
+          border-color: #d81b60;
+          font-weight: bold;
+          padding: 8px 15px;
+          font-size: 16px;
+        }
+      }
+    }
+  
+    .ranking-footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+  }

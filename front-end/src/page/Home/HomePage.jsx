@@ -6,6 +6,7 @@ import "./HomePage.scss";
 import ContainerHome1 from "./contanerhome1/containerhome1";
 import FlashIcon from "../../assets/images/label-flashsale.svg?url";
 import CateProductList from "./cateproductlist/cateproductlist";
+import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -99,6 +100,7 @@ const HomePage = () => {
           <div className="background"></div>
         </div>
         <CateProductList/>
+        <BestSellerRanking />
       </div>
     </div>
   );

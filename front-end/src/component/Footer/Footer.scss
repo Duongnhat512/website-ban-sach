@@ -1,54 +1,74 @@
-.footer_container {
-  border-top: 3px solid rgb(20, 53, 195);
-  .footer_layout {
+.footer-container {
+  background: #F0F0F0;
+  padding: 30px 0;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+
+  .container {
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 16px 0;
-    h2 {
-      font-weight: bold;
+    margin: 0 auto 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    h4 {
       font-size: 16px;
+      font-weight: bold;
       margin-bottom: 10px;
     }
-    p {
-      cursor: pointer;
-      border-radius: 4px;
-      overflow: hidden;
-      line-height: 1rem;
-      padding: 0.365rem 0.75rem 0px 0px;
-      font-size: 14px;
-      color: rgb(51, 51, 51);
-      text-align: left;
-      text-decoration: none;
-      transition: 0.3s;
-      &:hover {
-        color: #024dbc;
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 8px;
+
+        a {
+          color: #333;
+          text-decoration: none;
+
+          &:hover {
+            color: #d81b60;
+          }
+        }
       }
-    }
-    span {
-      color: #024dbc;
-      cursor: pointer;
     }
   }
-  .footer_bottom {
-    background-color: rgb(233, 237, 242);
-    .footer_bottom-layout {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 30px 0px 25px;
-      h1 {
-        font-size: 14px;
-        text-transform: uppercase;
-        font-weight: bold;
-        margin-bottom: 15px;
-      }
-      h2 {
-        font-size: 12px;
-        font-weight: bold;
-      }
-      p {
-        font-size: 12px;
-        line-height: 16px;
+
+  .social-icons {
+    display: flex;
+    gap: 10px;
+    font-size: 20px;
+    margin-top: 10px;
+
+    a {
+      color: #333;
+      transition: color 0.3s;
+
+      &:hover {
+        color: #d81b60;
       }
     }
+  }
+
+  .payment-methods {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+
+    img {
+      height: 30px;
+    }
+  }
+
+  .footer-bottom {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
   }
 }

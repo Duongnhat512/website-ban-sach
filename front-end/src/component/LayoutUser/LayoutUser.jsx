@@ -9,7 +9,7 @@ const LayoutUser = () => {
     <div>
       <Header />
       <Outlet />
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };

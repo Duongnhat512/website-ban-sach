@@ -1,73 +1,76 @@
 import React from "react";
-import { Row, Col } from "antd";
+import { Layout, Row, Col } from "antd";
+import { FacebookOutlined, InstagramOutlined, TwitterOutlined, YoutubeOutlined } from "@ant-design/icons";
 import "./Footer.scss";
-const Footer = () => {
+import logo from "../../assets/images/logo.png"
+const { Footer } = Layout;
+
+const FooterComponent = () => {
   return (
-    <div className="footer_container">
-      <div className="footer_layout">
-        <Row gutter={[16, 16]}>
-          <Col xs={12} sm={12} md={8} xl={6} xxl={6}>
-            <h2>Hỗ trợ khách hàng</h2>
-            <p>Thẻ ưu đãi</p>
-            <p>Chăm sóc khách hàng</p>
-            <p>Chính sách đổi trả</p>
-            <p>Chính sách bảo hành</p>
-            <p>Dịch vụ sửa chữa</p>
+    <Footer className="footer-container">
+      <div className="container">
+        <Row gutter={[32, 16]}>
+          <Col xs={24} sm={12} md={6} className="footer-section">
+            <img src={logo} alt="Fahasa" width={250} />
+            <p>
+              Lầu 5, 387-389 Hai Bà Trưng, Quận 3, TP. HCM
+              <br />
+              Công Ty Cổ Phần Phát Hành Sách TP HCM - FAHASA
+            </p>
+            <p>Fahasa.com nhận đặt hàng trực tuyến và giao hàng tận nơi.</p>
+            <div className="social-icons">
+              <a href="#"><FacebookOutlined /></a>
+              <a href="#"><InstagramOutlined /></a>
+              <a href="#"><TwitterOutlined /></a>
+              <a href="#"><YoutubeOutlined /></a>
+            </div>
           </Col>
-          <Col xs={12} sm={12} md={8} xl={6} xxl={6}>
-            <h2>Chính sách mua hàng</h2>
-            <p>Chính sách bảo mật</p>
-            <p>Chính sách vận chuyển</p>
-            <p>Chính sách thanh toán</p>
-            <p>Chính sách bảo hành</p>
-            <p>Chính sách đổi trả</p>
+
+          <Col xs={12} sm={6} md={4} className="footer-section">
+            <h4>DỊCH VỤ</h4>
+            <ul>
+              <li><a href="#">Điều khoản sử dụng</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Chính sách thanh toán</a></li>
+              <li><a href="#">Giới thiệu Fahasa</a></li>
+              <li><a href="#">Hệ thống nhà sách</a></li>
+            </ul>
           </Col>
-          <Col xs={12} sm={12} md={8} xl={6} xxl={6}>
-            <h2>Thông tin công ty</h2>
-            <p>Giới thiệu công ty</p>
-            <p>Chính sách công ty</p>
-            <p>Trung tâm bảo hành</p>
-            <p>Chính sách bảo mật</p>
-            <p>Tuyển dụng</p>
+
+          <Col xs={12} sm={6} md={4} className="footer-section">
+            <h4>HỖ TRỢ</h4>
+            <ul>
+              <li><a href="#">Chính sách đổi - trả</a></li>
+              <li><a href="#">Chính sách bảo hành</a></li>
+              <li><a href="#">Chính sách vận chuyển</a></li>
+              <li><a href="#">Chính sách khách sĩ</a></li>
+            </ul>
           </Col>
-          <Col xs={12} sm={12} md={8} xl={6} xxl={6}>
-            <h2>Email Liên hệ</h2>
-            <p>Hỗ trợ khách hàng </p>
-            <span>abc@gmail.com</span>
-            <p>Liên hệ báo giá</p>
-            <span>baogia@gmail.com</span>
-            <p>Hợp tác phát triển</p>
-            <span>hoptac@gmail.com</span>
+
+          <Col xs={12} sm={6} md={4} className="footer-section">
+            <h4>TÀI KHOẢN CỦA TÔI</h4>
+            <ul>
+              <li><a href="#">Đăng nhập/Tạo tài khoản</a></li>
+              <li><a href="#">Thay đổi địa chỉ</a></li>
+              <li><a href="#">Chi tiết tài khoản</a></li>
+              <li><a href="#">Lịch sử mua hàng</a></li>
+            </ul>
+          </Col>
+
+          <Col xs={24} sm={12} md={6} className="footer-section">
+            <h4>LIÊN HỆ</h4>
+            <p>📍 60-62 Lê Lợi, Q.1, TP. HCM</p>
+            <p>📧 cskh@fahasa.com.vn</p>
+            <p>📞 1900636467</p>
           </Col>
         </Row>
-      </div>
-      <div className="footer_bottom">
-        <div className="footer_bottom-layout">
-          <Row gutter={[16, 16]}>
-            <Col span={12} xs={24} sm={24}>
-              <h1>CÔNG TY CỔ PHẦN THƯƠNG MẠI - DỊCH VỤ ABC</h1>
-              <p>© 1997 - 2020 Công Ty Cổ Phần Thương Mại - Dịch Vụ ABC</p>
-              <p>
-                Giấy chứng nhận đăng ký doanh nghiệp: 0304998358 do Sở KH-ĐT
-                TP.HCM cấp lần đầu ngày 30 tháng 05 năm 2007
-              </p>
-            </Col>
-            <Col span={12} xs={24} sm={24}>
-              <h2>Địa chỉ trụ sở chính:</h2>
-              <p>
-                Tầng 5, Số 117-119-121 Nguyễn Du, Phường Bến Thành, Quận 1,
-                Thành Phố Hồ Chí Minh
-              </p>
-              <h2>Văn phòng điều hành miền Bắc:</h2>
-              <p>
-                Tầng 2, Số 47 Phố Thái Hà, Phường Trung Liệt, Quận Đống Đa,
-                Thành phố Hà Nội
-              </p>
-            </Col>
-          </Row>
+
+        <div className="footer-bottom">
+          Giấy chứng nhận ĐKKD số 0304132047 do Sở Kế hoạch & Đầu tư TP HCM cấp ngày 20/12/2005
         </div>
       </div>
-    </div>
+    </Footer>
   );
 };
-export default Footer;
+
+export default FooterComponent;
