@@ -1,13 +1,26 @@
 spring:
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: vovannghiahiep1562003@gmail.com
-    password: zuvzquhzgbnmvqqi
+    profiles:
+        active: "local"
+    mail:
+      host: smtp.gmail.com
+      port: 587
+      username: vovannghiahiep1562003@gmail.com
+      password: zuvzquhzgbnmvqqi
 
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+    kafka:
+      consumer:
+        group-id: my-consumer-group
+        auto-offset-reset: earliest
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        properties:
+          spring.json.trusted.packages: "*"
+      bootstrap-servers: localhost:9094
+server:
+  port: 8084
