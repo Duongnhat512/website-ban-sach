@@ -1,10 +1,11 @@
 import React from "react";
-import { Card, Row, Col, Tag, Typography, Progress, Statistic } from "antd";
+import { Card, Row, Col, Tag, Typography, Progress, Statistic, Image } from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import product1 from "../../assets/images/product1.png";
 import "./HomePage.scss";
 import ContainerHome1 from "./contanerhome1/containerhome1";
 import FlashIcon from "../../assets/images/label-flashsale.svg?url";
+import CateProductList from "./cateproductlist/cateproductlist";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -68,12 +69,16 @@ const HomePage = () => {
               Kết thúc trong <Countdown value={deadline} format="HH:mm:ss" />
             </div>
           </div>
-          <Row gutter={16}>
+          <Row gutter={16} style={{position:"relative",zIndex:10}}>
             {products.map((product) => (
               <Col span={6} key={product.id}>
                 <Card
                   hoverable
-                  cover={<img alt={product.title} src={product.image} />}
+                  cover={
+                    <div className="image-container">
+                      <Image preview={false} alt={product.title} src={product.image} width={190} />
+                    </div>
+                  }
                 >
                   <Title level={5} className="product-title">
                     {product.title}
@@ -91,7 +96,9 @@ const HomePage = () => {
               </Col>
             ))}
           </Row>
+          <div className="background"></div>
         </div>
+        <CateProductList/>
       </div>
     </div>
   );

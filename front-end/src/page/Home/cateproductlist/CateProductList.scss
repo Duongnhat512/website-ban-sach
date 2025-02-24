@@ -1,0 +1,183 @@
+.cate-product-list {
+  padding: 20px;
+  background: #fff;
+  margin-top: 60px;
+  .category-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  .header-product-list {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #fcddef;
+    padding: 10px;
+    border-radius: 10px;
+    gap: 10;
+  }
+  .category-card {
+    text-align: center;
+    img {
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    p {
+      margin-top: 16px;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+    &:hover {
+      p {
+        color: #d81b60;
+      }
+    }
+  }
+
+  .product-list {
+    .ant-list-item {
+      .ant-card {
+        .ant-card-meta-title {
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        .ant-card-meta-description {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 14px;
+
+          strong {
+            color: #d81b60;
+          }
+
+          del {
+            color: #888;
+          }
+        }
+
+        .ant-tag {
+          margin-top: 10px;
+        }
+      }
+    }
+
+    .ant-badge-ribbon {
+      .ant-card {
+        border-radius: 8px;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .tag-container {
+    margin-bottom: 16px;
+
+    .ant-tag-checkable {
+      font-size: 14px;
+      padding: 5px 10px;
+      margin-right: 8px;
+      cursor: pointer;
+
+      &.ant-tag-checkable-checked {
+        background-color: #d81b60;
+        color: #fff;
+      }
+    }
+  }
+  .xu-huong-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  h2 {
+    font-size: 20px;
+    color: #000;
+    padding-left: 10px;
+  }
+
+  .ant-list-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; // Tạo khoảng cách giữa các sản phẩm
+    justify-content: center;
+  }
+
+  .ant-card {
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transform: translateY(-5px);
+    }
+
+    .ant-card-cover img {
+      height: 180px;
+      object-fit: cover; // Giữ ảnh không bị méo
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .ant-card-meta-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .ant-card-meta-description {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      strong {
+        color: #d81b60;
+        font-size: 14px;
+      }
+
+      del {
+        color: #888;
+        font-size: 12px;
+      }
+    }
+  }
+  .view-more-button {
+    margin-top: 20px;
+    text-align: center;
+
+    .ant-btn {
+      background-color: #d81b60;
+      border-color: #d81b60;
+      color: #fff;
+
+      &:hover {
+        background-color: #c2185b;
+        border-color: #c2185b;
+      }
+    }
+  }
+  .custom-progress {
+    position: relative;
+    margin-top: 8px; // Tạo khoảng cách với phần trên
+
+    .ant-progress-inner {
+      height: 15px !important; // Tăng chiều cao thanh
+      border-radius: 8px; // Bo góc cho mượt
+    }
+
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); // Căn giữa chữ trong thanh
+      font-size: 12px;
+      font-weight: bold;
+      color: white; // Cho dễ nhìn trên nền đậm
+      white-space: nowrap; // Tránh bị xuống dòng
+    }
+  }
+}

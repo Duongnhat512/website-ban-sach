@@ -87,7 +87,7 @@ function ContainerHome1() {
               alignItems: "center",
             }}
           >
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={flashsale}
@@ -96,7 +96,7 @@ function ContainerHome1() {
               />
               <p className="scroll-text">Flash Sale</p>
             </Col>
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={mcbook}
@@ -105,7 +105,7 @@ function ContainerHome1() {
               />
               <p className="scroll-text">MCBOOKS</p>
             </Col>
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={dinhti}
@@ -114,7 +114,7 @@ function ContainerHome1() {
               />
               <p className="scroll-text">Đinh Tị</p>
             </Col>
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={sanphammoi}
@@ -123,7 +123,7 @@ function ContainerHome1() {
               />
               <p className="scroll-text">Sản Phẩm Mới</p>
             </Col>
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={trogia}
@@ -132,7 +132,7 @@ function ContainerHome1() {
               />
               <p className="scroll-text">Sản Phẩm Được Trợ Giá</p>
             </Col>
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={phienchocu}
@@ -141,7 +141,7 @@ function ContainerHome1() {
               />
               <p className="scroll-text">Phiên Chợ Đồ Cũ</p>
             </Col>
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={bansi}
@@ -150,7 +150,7 @@ function ContainerHome1() {
               />
               <p className="scroll-text">Bán Sỉ</p>
             </Col>
-            <Col span={4} className="scroll-col">
+            <Col span={2} className="scroll-col">
               <Image
                 preview={false}
                 src={manga}
