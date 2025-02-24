@@ -23,6 +23,8 @@ import Banner from "../../assets/images/banner.png";
 import Logo from "../../assets/images/logo.png";
 import "./Header.scss";
 import { useState } from "react";
+import Login from "../../page/Login/Login";
+import Register from "../../page/Register/Register";
 const { Header } = Layout;
 
 const categories = [
@@ -215,6 +217,58 @@ const categories = [
 
 const AppHeader = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("User");
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const showLoginModal = () => {
+    setIsLoginOpen(true);
+  };
+
+  const showRegisterModal = () => {
+    setIsRegisterOpen(true);
+  };
+  const handleCancel = () => {
+    setIsLoginOpen(false);
+    setIsRegisterOpen(false);
+  };
+
+  const handleLogin = (values) => {
+    console.log("Login values:", values);
+    setIsLoggedIn(true);
+    setUsername(values.username);
+    setIsLoginOpen(false);
+  };
+  const accountMenu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button type="link" onClick={showLoginModal}>
+          Đăng nhập
+        </Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button type="link" onClick={showRegisterModal}>
+          Đăng ký
+        </Button>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const userMenu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Button type="link">Thông tin cá nhân</Button>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Button type="link">Lịch sử mua hàng</Button>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <Button type="link" onClick={() => setIsLoggedIn(false)}>
+          Đăng xuất
+        </Button>
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <Layout className="header-container">
       <div className="banner">
@@ -299,14 +353,35 @@ const AppHeader = () => {
                 <ShoppingCartOutlined className="icon" />
                 <p>Giỏ hàng</p>
               </div>
-              <div className="icon-section">
-                <UserOutlined className="icon" />
-                <p>Tài khoản</p>
-              </div>
+              <Dropdown
+                overlay={isLoggedIn ? userMenu : accountMenu}
+                trigger={["hover"]}
+              >
+                <div className="icon-section">
+                  <UserOutlined className="icon" />
+                  <p>{isLoggedIn ? `Xin chào, ${username}` : "Tài khoản"}</p>
+                </div>
+              </Dropdown>
             </Col>
           </Row>
         </Header>
       </div>
+      <Login
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onSwitch={() => {
+          setIsLoginOpen(false);
+          setIsRegisterOpen(true);
+        }}
+      />
+      <Register
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        onSwitch={() => {
+          setIsRegisterOpen(false);
+          setIsLoginOpen(true);
+        }}
+      />
     </Layout>
   );
 };

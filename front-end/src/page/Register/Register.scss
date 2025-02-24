@@ -1,0 +1,35 @@
+.register-modal {
+    .ant-modal-content {
+      border-radius: 10px;
+      padding: 20px;
+    }
+  
+    .register-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  
+      .ant-input-affix-wrapper {
+        display: flex;
+        align-items: center;
+      }
+  
+      .skip-btn {
+        margin-top: 10px;
+        border: 1px solid red;
+        color: red;
+      }
+  
+      .terms {
+        text-align: center;
+        font-size: 12px;
+        margin-top: 10px;
+  
+        a {
+          color: red;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  
