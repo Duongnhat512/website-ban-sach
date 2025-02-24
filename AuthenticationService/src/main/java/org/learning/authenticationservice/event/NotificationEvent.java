@@ -1,4 +1,4 @@
-package org.learning.notificationservice.dto.event;
+package org.learning.authenticationservice.event;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,11 +11,10 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class
-NotificationEvent {
+public class NotificationEvent {
     String channel;
     String recipient;
     String templateCode;
     String subject;
-    Map<String,Object> param;
+    Map<String, Object> param;
 }

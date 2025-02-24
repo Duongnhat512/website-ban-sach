@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.learning.authenticationservice.common.RoleName;
 import org.learning.authenticationservice.dto.request.UserRequest;
 import org.learning.authenticationservice.dto.response.UserResponse;
+import org.learning.authenticationservice.event.NotificationEvent;
 import org.learning.authenticationservice.mapper.UserMapper;
 import org.learning.authenticationservice.model.Role;
 import org.learning.authenticationservice.model.User;
 import org.learning.authenticationservice.repository.RoleRepository;
 import org.learning.authenticationservice.repository.UserRepository;
 import org.learning.authenticationservice.service.UserService;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final KafkaTemplate<String,Object> kafkaTemplate;
 
     @Override
     public UserResponse getUserById(Long id) {
@@ -48,6 +51,16 @@ public class UserServiceImpl implements UserService {
 
         try{
             user = userRepository.save(user);
+
+            NotificationEvent notificationEvent = NotificationEvent.builder()
+                    .channel("EMAIL")
+                    .recipient(user.getEmail())
+                    .templateCode("welcome-email")
+                    .subject("Welcome to DLeaning")
+                    .build();
+
+            kafkaTemplate.send("notification-delivery",notificationEvent);
+
             return userMapper.toUserResponse(user);
         }catch (Exception e){
             log.error("Error while saving user", e);
