@@ -2,15 +2,16 @@ package org.learning.notificationservice.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.learning.notificationservice.dto.event.NotificationEvent;
+import org.learning.event.NotificationEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -22,14 +23,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EmailService {
-    private final JavaMailSender javaMailSender;
-    private final SpringTemplateEngine templateEngine;
+    JavaMailSender javaMailSender;
+    SpringTemplateEngine templateEngine;
     @NonFinal
     @Value("${spring.mail.username}")
-    private String emailFrom;
+    String emailFrom;
 
-    @Async
+
     public void sendEmail(String subject, String content, List<String> toList) throws MessagingException, UnsupportedEncodingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 

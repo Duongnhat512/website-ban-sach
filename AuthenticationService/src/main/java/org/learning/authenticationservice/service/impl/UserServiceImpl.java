@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.learning.authenticationservice.common.RoleName;
 import org.learning.authenticationservice.dto.request.UserRequest;
 import org.learning.authenticationservice.dto.response.UserResponse;
-import org.learning.authenticationservice.event.NotificationEvent;
+import org.learning.event.NotificationEvent;
 import org.learning.authenticationservice.mapper.UserMapper;
 import org.learning.authenticationservice.model.Role;
 import org.learning.authenticationservice.model.User;
@@ -16,9 +16,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -56,7 +54,7 @@ public class UserServiceImpl implements UserService {
                     .channel("EMAIL")
                     .recipient(user.getEmail())
                     .templateCode("welcome-email")
-                    .subject("Welcome to DLeaning")
+                    .subject("Welcome to Fahasa")
                     .build();
 
             kafkaTemplate.send("notification-delivery",notificationEvent);

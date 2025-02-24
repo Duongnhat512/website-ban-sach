@@ -1,4 +1,4 @@
-package org.learning.authenticationservice.event;
+package org.learning.event;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,5 +16,5 @@ public class NotificationEvent {
     String recipient;
     String templateCode;
     String subject;
-    Map<String, Object> param;
+    Map<String,Object> param;
 }
