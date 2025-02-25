@@ -3,7 +3,10 @@ package com.example.bookservice.service;
 import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
+import com.example.bookservice.entity.Book;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface BookService {
 
@@ -17,5 +20,5 @@ public interface BookService {
     BookCreationResponse updateBook(Long id, BookCreationRequest request);
 
     BookCreationResponse deleteBookById(Long id);
-    Book
+    List<Book> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity);
 }

@@ -7,12 +7,21 @@ import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Book;
 import com.example.bookservice.mapper.BookMapper;
 import com.example.bookservice.service.BookService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +29,8 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository repository;
     private final BookMapper bookMapper;
+    @Autowired
+    private EntityManager entityManager;
     @Override
     public BookCreationResponse createBook(BookCreationRequest request) {
         log.info("Creating book with title: {}", request.getTitle());
@@ -66,5 +77,39 @@ public class BookServiceImpl implements BookService {
         Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
         repository.delete(book);
         return bookMapper.toBookCreationResponse(book);
+    }
+
+    public List<Book> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Book> query = cb.createQuery(Book.class);
+        Root<Book> bookRoot = query.from(Book.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Điều kiện tìm kiếm theo title
+        if (title != null && !title.isEmpty()) {
+            predicates.add(cb.like(bookRoot.get("title"), "%" + title + "%"));
+        }
+
+        // Điều kiện tìm kiếm theo giá (minPrice và maxPrice)
+        if (minPrice != null && maxPrice != null) {
+            predicates.add(cb.between(bookRoot.get("price"), minPrice, maxPrice));
+        }
+
+        // Điều kiện tìm kiếm theo author
+        if (author != null && !author.isEmpty()) {
+            predicates.add(cb.like(bookRoot.get("author"), "%" + author + "%"));
+        }
+
+        // Điều kiện tìm kiếm theo quantity
+        if (minQuantity != null) {
+            predicates.add(cb.ge(bookRoot.get("quantity"), minQuantity));
+        }
+
+        // Áp dụng các predicate vào query
+        query.select(bookRoot).where(cb.and(predicates.toArray(new Predicate[0])));
+
+        // Thực thi truy vấn
+        return entityManager.createQuery(query).getResultList();
     }
 }

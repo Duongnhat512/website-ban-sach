@@ -4,11 +4,15 @@ import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.dto.response.ResponseData;
+import com.example.bookservice.entity.Book;
 import com.example.bookservice.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,6 +63,18 @@ public class BookController {
                 .code(HttpStatus.OK.value())
                 .result(bookService.updateBook(id, request))
                 .build();
+    }
+
+    // Endpoint tìm kiếm sách theo các tiêu chí: title, price, author, quantity
+    @GetMapping("/search")
+    public List<Book> searchBooks(
+            @RequestParam(required = false) String title,          // Tìm kiếm theo tiêu đề
+            @RequestParam(required = false) Double minPrice,      // Tìm kiếm theo giá từ
+            @RequestParam(required = false) Double maxPrice,      // Tìm kiếm theo giá đến
+            @RequestParam(required = false) String author,        // Tìm kiếm theo tác giả
+            @RequestParam(required = false) Integer minQuantity)  // Tìm kiếm theo số lượng tối thiểu
+    {
+        return bookService.searchBooks(title, minPrice, maxPrice, author, minQuantity);
     }
 
 }
