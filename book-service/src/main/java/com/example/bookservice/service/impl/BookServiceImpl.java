@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,8 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     private final BookRepository repository;
     private final BookMapper bookMapper;
+
+    private final CloudinaryService cloudinaryService;
     @Autowired
     private EntityManager entityManager;
     @Override
@@ -113,4 +116,15 @@ public class BookServiceImpl implements BookService {
         return entityManager.createQuery(query).getResultList().stream()
                 .map(bookMapper::toBookCreationResponse).toList();
     }
+
+    @Override
+    public void uploadImage(Long id, MultipartFile image) {
+
+        Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        String imageUrl = cloudinaryService.uploadImage(image);
+        book.setImageUrl(imageUrl);
+        repository.save(book);
+    }
+
+
 }
