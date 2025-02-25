@@ -1,16 +1,16 @@
 package org.learning.orderservice.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.learning.orderservice.common.OrderStatus;
+
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class OrderCreateRequest {
-    Double total;
-    Long bookId;
-    String address;
+    private Long userId;
+    private Double total;
+    private String address;
 }

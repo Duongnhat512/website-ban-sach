@@ -15,6 +15,6 @@ public class OrderCreateResponse {
     private Double total;
     private String address;
     private OrderStatus status;
-    private Long bookId;
+    private Long userId;
     private LocalDateTime orderDate;
 }

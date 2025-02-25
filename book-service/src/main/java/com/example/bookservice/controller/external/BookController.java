@@ -67,14 +67,18 @@ public class BookController {
 
     // Endpoint tìm kiếm sách theo các tiêu chí: title, price, author, quantity
     @GetMapping("/search")
-    public List<Book> searchBooks(
+    public ResponseData<List<BookCreationResponse>> searchBooks(
             @RequestParam(required = false) String title,          // Tìm kiếm theo tiêu đề
             @RequestParam(required = false) Double minPrice,      // Tìm kiếm theo giá từ
             @RequestParam(required = false) Double maxPrice,      // Tìm kiếm theo giá đến
             @RequestParam(required = false) String author,        // Tìm kiếm theo tác giả
             @RequestParam(required = false) Integer minQuantity)  // Tìm kiếm theo số lượng tối thiểu
     {
-        return bookService.searchBooks(title, minPrice, maxPrice, author, minQuantity);
+        return ResponseData.<List<BookCreationResponse>>builder()
+                .message("Search Books Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.searchBooks(title, minPrice, maxPrice, author, minQuantity))
+                .build();
     }
 
 }

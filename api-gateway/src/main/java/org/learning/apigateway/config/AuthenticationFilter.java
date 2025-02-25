@@ -40,7 +40,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private String apiPrefix;
 
     @NonFinal
-    private String[] publicEndpoints = {"/auth/.*"};
+    private String[] publicEndpoints = {"/auth/.*","order-details/create"};
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

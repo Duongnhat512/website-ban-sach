@@ -2,7 +2,9 @@ package org.learning.orderservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.learning.orderservice.client.BookClient;
+import org.learning.orderservice.client.UserClient;
 import org.learning.orderservice.common.OrderStatus;
 import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
@@ -25,33 +27,34 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
     private final BookClient bookClient;
+    private final UserClient userClient;
 
 
     @Override
     public OrderCreateResponse createOrder(OrderCreateRequest request) {
-        log.info("Creating order for customer: {}", request.getBookId());
+        log.info("Creating order for customer: {}", request.getUserId());
 
         //
-       Book book =  bookClient.getBook(request.getBookId());
+//       Book book =  bookClient.getBook(request.getUserId());
 
-       log.info("Book details: {}", book);
+
+//       log.info("Book details: {}", book);
 
         Order order = Order.builder()
                 .total(request.getTotal())
-                .bookId(book.getId())
+                .userId(request.getUserId())
                 .address(request.getAddress())
-                .orderStatus(OrderStatus.CREATED)
+                .orderStatus(OrderStatus.PENDING)
                 .orderDate(LocalDateTime.now())
                 .build();
 
         orderRepository.save(order);
-
         return OrderCreateResponse.builder()
                 .id(order.getId())
                 .total(order.getTotal())
                 .address(order.getAddress())
                 .status(order.getOrderStatus())
-                .bookId(order.getBookId())
+                .userId(order.getUserId())
                 .orderDate(order.getOrderDate())
                 .build();
     }
@@ -65,9 +68,31 @@ public class OrderServiceImpl implements OrderService {
                         .total(order.getTotal())
                         .address(order.getAddress())
                         .status(order.getOrderStatus())
-                        .bookId(order.getBookId())
+                        .userId(order.getUserId())
                         .orderDate(order.getOrderDate())
                         .build())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
+
+//    @Override
+//    public OrderCreateResponse updateOrder(Long orderId, OrderCreateRequest request) {
+//        return orderRepository.findById(orderId)
+//                .map(order -> {
+//                    order.setTotal(request.getTotal());
+//                    order.setAddress(request.getAddress());
+//                    order.setOrderStatus(OrderStatus.valueOf(request.()));
+//                    order.setOrderDate(LocalDateTime.now());
+//                    orderRepository.save(order);
+//
+//                    return OrderCreateResponse.builder()
+//                            .id(order.getId())
+//                            .total(order.getTotal())
+//                            .address(order.getAddress())
+//                            .status(order.getOrderStatus())
+//                            .userId(order.getUserId())
+//                            .orderDate(order.getOrderDate())
+//                            .build();
+//                })
+//                .orElseThrow(() -> new RuntimeException("Order not found"));
+//    }
 }

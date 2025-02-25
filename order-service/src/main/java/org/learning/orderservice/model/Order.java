@@ -31,8 +31,8 @@ public class Order {
     @Column(name = "order_status")
     OrderStatus orderStatus;
 
-    @Column(name = "book_id")
-    Long bookId;
+    @Column(name = "user_id")
+    Long userId;
 
     @Column(name = "total_price")
     Double total;

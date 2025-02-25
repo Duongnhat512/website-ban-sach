@@ -20,5 +20,5 @@ public interface BookService {
     BookCreationResponse updateBook(Long id, BookCreationRequest request);
 
     BookCreationResponse deleteBookById(Long id);
-    List<Book> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity);
+    List<BookCreationResponse> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity);
 }

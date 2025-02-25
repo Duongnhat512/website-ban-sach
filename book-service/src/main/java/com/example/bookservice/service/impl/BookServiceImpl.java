@@ -79,7 +79,7 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toBookCreationResponse(book);
     }
 
-    public List<Book> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity) {
+    public List<BookCreationResponse> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Book> query = cb.createQuery(Book.class);
         Root<Book> bookRoot = query.from(Book.class);
@@ -110,6 +110,7 @@ public class BookServiceImpl implements BookService {
         query.select(bookRoot).where(cb.and(predicates.toArray(new Predicate[0])));
 
         // Thực thi truy vấn
-        return entityManager.createQuery(query).getResultList();
+        return entityManager.createQuery(query).getResultList().stream()
+                .map(bookMapper::toBookCreationResponse).toList();
     }
 }
