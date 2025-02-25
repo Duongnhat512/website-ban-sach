@@ -17,5 +17,5 @@ public interface BookService {
     BookCreationResponse updateBook(Long id, BookCreationRequest request);
 
     BookCreationResponse deleteBookById(Long id);
-
+    Book
 }
