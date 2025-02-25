@@ -11,16 +11,8 @@
         <module name="cart-service" />
         <module name="book-service" />
         <module name="server-config" />
-        <module name="service-registry" />
-      </profile>
-      <profile name="Annotation profile for AuthenticationService" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
-        </processorPath>
         <module name="AuthenticationService" />
+        <module name="service-registry" />
       </profile>
     </annotationProcessing>
   </component>

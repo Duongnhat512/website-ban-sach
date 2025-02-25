@@ -25,3 +25,9 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     prefer-ip-address: true
+
+
+cloudinary:
+    cloud-name: dxkr1bbdp
+    api-key: 969818675411756
+    api-secret: myZphrJdZ4j7b8r29f1
