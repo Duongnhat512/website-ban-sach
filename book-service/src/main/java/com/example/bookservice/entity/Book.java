@@ -24,6 +24,7 @@ public class Book {
     private Double price;
     private LocalDate releasedDate;
     private Integer quantity;
+    private String imageUrl;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

@@ -17,5 +17,6 @@ public class BookCreationResponse {
     private Double price;
     private LocalDate releasedDate;
     private Integer quantity;
+    private String imageUrl;
 
 }

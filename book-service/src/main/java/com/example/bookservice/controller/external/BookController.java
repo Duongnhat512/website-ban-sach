@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -75,6 +76,15 @@ public class BookController {
             @RequestParam(required = false) Integer minQuantity)  // Tìm kiếm theo số lượng tối thiểu
     {
         return bookService.searchBooks(title, minPrice, maxPrice, author, minQuantity);
+    }
+    @PostMapping("/upload-image/{id}")
+    public ResponseData<String> uploadImage(@PathVariable Long id, @RequestPart("image") MultipartFile image){
+        bookService.uploadImage(id, image);
+        return  ResponseData.<String>builder()
+                .message("Upload Image Successfully")
+                .code(HttpStatus.OK.value())
+                .result("Upload Image Successfully")
+                .build();
     }
 
 }

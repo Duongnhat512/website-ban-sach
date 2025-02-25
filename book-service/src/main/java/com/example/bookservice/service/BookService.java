@@ -5,6 +5,7 @@ import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Book;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,4 +22,5 @@ public interface BookService {
 
     BookCreationResponse deleteBookById(Long id);
     List<Book> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity);
+    void uploadImage(Long id, MultipartFile image);
 }
