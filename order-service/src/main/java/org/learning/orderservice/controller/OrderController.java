@@ -12,6 +12,8 @@ import org.learning.orderservice.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -32,7 +34,7 @@ public class OrderController {
 
     }
 
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseData<OrderCreateResponse> getOrderById(@PathVariable Long id) {
         log.info("Getting order by id: {}", id);
         OrderCreateResponse response = orderService.getOrder(id);
@@ -42,6 +44,18 @@ public class OrderController {
                 .result(response)
                 .build();
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseData<OrderCreateResponse> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
+        log.info("Updating order status for order: {}", id);
+        OrderCreateResponse response = orderService.updateStatus(id, status);
+        return ResponseData.<OrderCreateResponse>builder()
+                .code(200)
+                .message("Order status updated successfully")
+                .result(response)
+                .build();
+    }
+
     @PostMapping("/order-details/create")
     public ResponseData<OrderDetailCreateResponse> createOrderDetail(@RequestBody OrderDetailsCreateRequest request){
         log.info("Creating order detail for order: {}", request.getOrderId());
@@ -50,6 +64,16 @@ public class OrderController {
                 .code(200)
                 .message("Order detail created successfully")
                 .result(response)
+                .build();
+    }
+
+    @GetMapping("/order-details/{orderId}")
+    public ResponseData<List<OrderDetailCreateResponse>> getOrderDetails(@PathVariable Long orderId) {
+        log.info("Getting order details for order: {}", orderId);
+        return ResponseData.<List<OrderDetailCreateResponse>>builder()
+                .code(200)
+                .message("Order details retrieved successfully")
+                .result(orderDetailService.getOrderDetails(orderId))
                 .build();
     }
 

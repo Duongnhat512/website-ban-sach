@@ -74,25 +74,20 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
-//    @Override
-//    public OrderCreateResponse updateOrder(Long orderId, OrderCreateRequest request) {
-//        return orderRepository.findById(orderId)
-//                .map(order -> {
-//                    order.setTotal(request.getTotal());
-//                    order.setAddress(request.getAddress());
-//                    order.setOrderStatus(OrderStatus.valueOf(request.()));
-//                    order.setOrderDate(LocalDateTime.now());
-//                    orderRepository.save(order);
-//
-//                    return OrderCreateResponse.builder()
-//                            .id(order.getId())
-//                            .total(order.getTotal())
-//                            .address(order.getAddress())
-//                            .status(order.getOrderStatus())
-//                            .userId(order.getUserId())
-//                            .orderDate(order.getOrderDate())
-//                            .build();
-//                })
-//                .orElseThrow(() -> new RuntimeException("Order not found"));
-//    }
+    @Override
+    public OrderCreateResponse updateStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setOrderStatus(OrderStatus.valueOf(status));
+        orderRepository.save(order);
+        return OrderCreateResponse.builder()
+                .id(order.getId())
+                .total(order.getTotal())
+                .address(order.getAddress())
+                .status(order.getOrderStatus())
+                .userId(order.getUserId())
+                .orderDate(order.getOrderDate())
+                .build();
+    }
+
 }
