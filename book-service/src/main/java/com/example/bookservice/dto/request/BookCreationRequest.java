@@ -14,8 +14,13 @@ public class BookCreationRequest {
     private String title;
     private String description;
     private String author;
-    private Double price;
+    private Double originalPrice;
+    private Double currentPrice;
     private LocalDate releasedDate;
     private Integer quantity;
+    private String thumbnail;
+    private Float discount;
+    private String publisher;
+    private Long pages;
 
 }

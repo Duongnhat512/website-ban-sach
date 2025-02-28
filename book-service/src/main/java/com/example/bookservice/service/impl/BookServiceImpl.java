@@ -68,9 +68,13 @@ public class BookServiceImpl implements BookService {
         book.setTitle(request.getTitle());
         book.setDescription(request.getDescription());
         book.setAuthor(request.getAuthor());
-        book.setPrice(request.getPrice());
+        book.setOriginalPrice(request.getOriginalPrice());
+        book.setCurrentPrice(request.getCurrentPrice());
         book.setReleasedDate(request.getReleasedDate());
         book.setQuantity(request.getQuantity());
+        book.setDiscount(request.getDiscount());
+        book.setPublisher(request.getPublisher());
+        book.setPages(request.getPages());
         repository.save(book);
         return bookMapper.toBookCreationResponse(book);
     }
@@ -96,7 +100,7 @@ public class BookServiceImpl implements BookService {
 
         // Điều kiện tìm kiếm theo giá (minPrice và maxPrice)
         if (minPrice != null && maxPrice != null) {
-            predicates.add(cb.between(bookRoot.get("price"), minPrice, maxPrice));
+            predicates.add(cb.between(bookRoot.get("currentPrice"), minPrice, maxPrice));
         }
 
         // Điều kiện tìm kiếm theo author
@@ -122,7 +126,7 @@ public class BookServiceImpl implements BookService {
 
         Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
         String imageUrl = cloudinaryService.uploadImage(image);
-        book.setImageUrl(imageUrl);
+        book.setThumbnail(imageUrl);
         repository.save(book);
     }
 
