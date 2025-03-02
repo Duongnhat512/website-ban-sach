@@ -33,7 +33,7 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
           <div className="login-form">
             <Input
               size="large"
-              placeholder="Nhập số điện thoại hoặc email"
+              placeholder="Nhập email"
               prefix={<MailOutlined />}
             />
             <Input.Password

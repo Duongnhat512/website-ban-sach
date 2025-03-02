@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Input, Button, Tabs } from "antd";
-import { PhoneOutlined, LockOutlined } from "@ant-design/icons";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import "./Register.scss";
 
 const Register = ({ isOpen, onClose, onSwitch }) => {
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activeKey, setActiveKey] = useState("2");
 
@@ -33,16 +32,24 @@ const Register = ({ isOpen, onClose, onSwitch }) => {
           <div className="register-form">
             <Input
               size="large"
-              placeholder="Nhập số điện thoại"
-              prefix={<PhoneOutlined />}
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              suffix={<Button type="link" disabled={!phone}>Gửi mã OTP</Button>}
+              placeholder="Nhập email"
+              prefix={<MailOutlined />}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <Input size="large" placeholder="6 ký tự" value={otp} onChange={(e) => setOtp(e.target.value)} />
-            <Input.Password size="large" placeholder="Nhập mật khẩu" prefix={<LockOutlined />} value={password} onChange={(e) => setPassword(e.target.value)} />
-            <Button type="primary" block size="large" disabled={!otp || !password}>Đăng ký</Button>
-            <Button block size="large" className="skip-btn" onClick={onClose}>Bỏ qua</Button>
+            <Input.Password
+              size="large"
+              placeholder="Nhập mật khẩu"
+              prefix={<LockOutlined />}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button type="primary" block size="large" disabled={!email || !password}>
+              Đăng ký
+            </Button>
+            <Button block size="large" className="skip-btn" onClick={onClose}>
+              Bỏ qua
+            </Button>
             <p className="switch-text">
               Đã có tài khoản? <Button type="link" onClick={onSwitch}>Đăng nhập</Button>
             </p>
