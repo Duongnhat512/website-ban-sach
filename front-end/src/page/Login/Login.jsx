@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Input, Button, Tabs, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
-import { callLoginApi } from "../../service/UserService";
+import { useDispatch } from "react-redux";
+import { callLoginApi, callGetUserToken } from "../../service/UserService";
+import { loginSuccess, setUser } from "../../redux/UserSlice";
 import "./Login.scss";
 
 const Login = ({ isOpen, onClose, onSwitch }) => {
@@ -9,6 +11,7 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isOpen) {
@@ -28,11 +31,12 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
     setLoading(true);
     try {
       const response = await callLoginApi(email, password);
-      console.log(response);
-      if(response && response.code === 200) {
-        localStorage.setItem("token", response.result.token);
-      }
       message.success("Đăng nhập thành công!");
+      localStorage.setItem("token", response.result.token);
+      const userResponse = await callGetUserToken();
+      console.log(userResponse);
+      
+      dispatch(setUser(userResponse.result));
       // Xử lý logic sau khi đăng nhập thành công, ví dụ: lưu token, chuyển hướng trang, v.v.
       onClose();
     } catch (error) {

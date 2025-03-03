@@ -25,6 +25,9 @@ import "./Header.scss";
 import { useState } from "react";
 import Login from "../../page/Login/Login";
 import Register from "../../page/Register/Register";
+import { useDispatch, useSelector } from "react-redux";
+
+
 const { Header } = Layout;
 
 const categories = [
@@ -217,10 +220,11 @@ const categories = [
 
 const AppHeader = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("User");
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const isLoggedIn = useSelector((state) => state.user.authenticated);
+
   const showLoginModal = () => {
     setIsLoginOpen(true);
   };
@@ -228,17 +232,16 @@ const AppHeader = () => {
   const showRegisterModal = () => {
     setIsRegisterOpen(true);
   };
+
   const handleCancel = () => {
     setIsLoginOpen(false);
     setIsRegisterOpen(false);
   };
 
-  const handleLogin = (values) => {
-    console.log("Login values:", values);
-    setIsLoggedIn(true);
-    setUsername(values.username);
-    setIsLoginOpen(false);
+  const handleLogout = () => {
+    dispatch(logout());
   };
+
   const accountMenu = (
     <Menu>
       <Menu.Item key="1">
@@ -263,12 +266,15 @@ const AppHeader = () => {
         <Button type="link">Lịch sử mua hàng</Button>
       </Menu.Item>
       <Menu.Item key="3">
-        <Button type="link" onClick={() => setIsLoggedIn(false)}>
+        <Button type="link" onClick={handleLogout}>
           Đăng xuất
         </Button>
       </Menu.Item>
     </Menu>
   );
+
+
+
   return (
     <Layout className="header-container">
       <div className="banner">
