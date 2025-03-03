@@ -28,7 +28,6 @@ public class WebClientConfig {
         HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(WebClientAdapter.create(webClient)).build();
         return proxyFactory.createClient(AuthenticationClient.class);
     }
-
     @Bean
     public CorsWebFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
