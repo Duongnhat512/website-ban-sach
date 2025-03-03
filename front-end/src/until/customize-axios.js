@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:8888";
+const baseURL =
+  import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:8888";
 const instance = axios.create({
   baseURL: baseURL,
   withCredentials: true, // Để gửi cookie nếu backend dùng
