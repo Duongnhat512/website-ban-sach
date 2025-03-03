@@ -49,6 +49,13 @@ services:
       - ./redis-data:/data
     networks:
       - BookStoreMicroservices
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - BookStoreMicroservices
 networks:
   BookStoreMicroservices:
     driver: bridge

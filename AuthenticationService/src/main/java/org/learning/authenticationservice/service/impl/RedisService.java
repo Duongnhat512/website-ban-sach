@@ -12,20 +12,16 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RedisService{
     private final RedisTemplate<String, Object> redisTemplate;
-
     public void save(String key, Object value){
         redisTemplate.opsForValue().set(key, value);
     }
     public void save(String key, Object values,long timeOut, TimeUnit timeUnit){
         redisTemplate.opsForValue().set(key, values, timeOut, timeUnit);
     }
-
     public String get(String key){
         return (String) redisTemplate.opsForValue().get(key);
     }
     public void delete(String key) {
         redisTemplate.delete(key);
     }
-
-
 }
