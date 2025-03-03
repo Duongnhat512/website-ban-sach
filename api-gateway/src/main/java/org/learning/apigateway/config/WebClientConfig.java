@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.springframework.web.cors.reactive.CorsWebFilter;
+
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -22,26 +24,24 @@ public class WebClientConfig {
     }
 
     @Bean
-    AuthenticationClient authenticationClient (WebClient webClient){
+    AuthenticationClient authenticationClient(WebClient webClient) {
         HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(WebClientAdapter.create(webClient)).build();
         return proxyFactory.createClient(AuthenticationClient.class);
     }
 
     @Bean
-    public CorsWebFilter corsWebFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "x-no-retry", "Access-Control-Allow-Origin"));
-        corsConfiguration.setExposedHeaders(List.of("Authorization", "Content-Type"));
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setMaxAge(3600L);
+    public CorsWebFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://myfrontend.com")); // Thay bằng domain thực tế
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-
+        source.registerCorsConfiguration("/**", config);
         return new CorsWebFilter(source);
     }
+
 
 
 }

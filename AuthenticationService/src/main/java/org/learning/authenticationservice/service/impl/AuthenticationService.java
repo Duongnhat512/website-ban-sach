@@ -67,8 +67,6 @@ public class AuthenticationService {
                 .user(userResponse)
                 .build();
     }
-
-
     public AuthenticationResponse signIn(SignInRequest request){
         log.info("Sign in request for user {}",request.getEmail());
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow(()->new RuntimeException("User not found"));

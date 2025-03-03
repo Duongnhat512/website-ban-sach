@@ -1,27 +1,17 @@
 server:
-  port: 8088  # ??i port v? 8888 ?? API Gateway có th? k?t n?i
-
+  port: 8088
 spring:
   profiles:
-    active: git  # N?u b?n dùng Git, hãy b? native
+    active: git
   cloud:
     config:
       server:
         git:
-          uri: https://github.com/Chippo156/application-config.git  # Repo Git l?u file config
-          clone-on-start: true  # ??m b?o Config Server pull d? li?u ngay khi kh?i ??ng
-          force-pull: true  # Luôn t?i m?i d? li?u
-          default-label: main  # Nhánh m?c ??nh
+          uri: https://github.com/Chippo156/application-config.git
+          clone-on-start: true
+          force-pull: true
+          default-label: main
         bootstrap: true
       allow-override: true
-
-
   application:
     name: config-server
-
-#eureka:
-#  client:
-#    fetch-registry: true
-#    register-with-eureka: true
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka
