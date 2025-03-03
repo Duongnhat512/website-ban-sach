@@ -57,8 +57,6 @@ public class AuthenticationService {
             User user = userRepository.findById(Long.valueOf(signedJWT.getJWTClaimsSet().getSubject())).orElseThrow(()->new RuntimeException("User not found"));
             userResponse = userMapper.toUserResponse(user);
             log.info("User {} introspected",user.getEmail());
-
-
         }catch (Exception e){
             log.error("Error while introspecting token",e);
             isValid = false;
@@ -123,7 +121,6 @@ public class AuthenticationService {
         if(StringUtils.isNotBlank(redisService.get(signedJWT.getJWTClaimsSet().getJWTID()))){
             throw new RuntimeException("Token blacklisted");
         }
-
         Date expireTime = (isRefresh) ?
                 new Date(signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(1,ChronoUnit.DAYS).toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
@@ -136,8 +133,6 @@ public class AuthenticationService {
         if(!verified){
             throw new RuntimeException("Invalid token");
         }
-
-
 
         return signedJWT;
     }
