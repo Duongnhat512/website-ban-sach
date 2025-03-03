@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURL =import.meta.env.VITE_APP_BE_API_URL || "http://localhost:8080";
+const baseURL = import.meta.env.VITE_APP_BE_API_URL || "http://localhost:8080";
 const instance = axios.create({
   baseURL: baseURL,
   withCredentials: true,
@@ -27,8 +27,6 @@ instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-
 
 // Add a response interceptor
 instance.interceptors.response.use(
