@@ -13,8 +13,8 @@ spring:
 #  cloud:
 #    gateway:
 #      routes:
-#        - id: book-service
-#          uri: http://localhost:8081
+#        - id: authentication-service
+#          uri: http://localhost:8080
 #          predicates:
-#            - Path=/books/**
+#            - Path=/auth/**
 

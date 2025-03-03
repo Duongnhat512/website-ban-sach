@@ -1,8 +1,10 @@
 package org.learning.authenticationservice.controller.external;
 
+import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.learning.authenticationservice.dto.request.IntrospectRequest;
+import org.learning.authenticationservice.dto.request.LogoutRequest;
 import org.learning.authenticationservice.dto.request.SignInRequest;
 import org.learning.authenticationservice.dto.response.AuthenticationResponse;
 import org.learning.authenticationservice.dto.response.IntrospectResponse;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,12 +33,19 @@ public class AuthenticationController {
                 .code(200)
                 .build();
     }
-
     @PostMapping("/introspect")
     public ResponseData<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) {
         return ResponseData.<IntrospectResponse>builder()
                 .result(authenticationService.introspect(request))
                 .message("introspect successfully")
+                .code(200)
+                .build();
+    }
+    @PostMapping("/sign-out")
+    public ResponseData<Void> signOut(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ResponseData.<Void>builder()
+                .message("Sign out successfully")
                 .code(200)
                 .build();
     }

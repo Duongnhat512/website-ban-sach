@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     AuthenticationClient authenticationClient;
-
     public Mono<ResponseData<IntrospectResponse>> introspect(String token) {
         return authenticationClient.introspect(IntrospectRequest.builder()
                 .token(token)

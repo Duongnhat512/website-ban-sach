@@ -15,6 +15,7 @@ spring:
         bootstrap: true
       allow-override: true
 
+
   application:
     name: config-server
 
