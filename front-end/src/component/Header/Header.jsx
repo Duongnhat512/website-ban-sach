@@ -10,6 +10,7 @@ import {
   Col,
   Button,
   Popover,
+  message,
 } from "antd";
 import {
   DownOutlined,
@@ -26,8 +27,9 @@ import { useState } from "react";
 import Login from "../../page/Login/Login";
 import Register from "../../page/Register/Register";
 import { useDispatch, useSelector } from "react-redux";
-
-
+import { callLogOut } from "../../service/UserService";
+import { logout } from "../../redux/UserSlice";
+ 
 const { Header } = Layout;
 
 const categories = [
@@ -224,6 +226,7 @@ const AppHeader = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.authenticated);
+  const dispatch = useDispatch();
 
   const showLoginModal = () => {
     setIsLoginOpen(true);
@@ -238,8 +241,15 @@ const AppHeader = () => {
     setIsRegisterOpen(false);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    let res = await callLogOut();
+    if(res && res.code===200){
+      dispatch(logout());
+      localStorage.removeItem("token");
+      message.success("Đăng xuất thành công!");
+    }else{
+      message.error("Đăng xuất thất bại!");
+    }
   };
 
   const accountMenu = (
