@@ -122,6 +122,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public PageResponse<BookCreationResponse> findByCategory(String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page-1,size);
+        Page<Book> books = repository.findByCategory(category,pageable);
+        return PageResponse.<BookCreationResponse>builder()
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(books.getTotalElements())
+                .totalPages(books.getTotalPages())
+                .result(books.map(bookMapper::toBookCreationResponse).getContent())
+                .build();
+    }
+
+    @Override
     public void uploadImage(Long id, MultipartFile image) {
 
         Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));

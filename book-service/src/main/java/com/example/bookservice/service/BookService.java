@@ -21,6 +21,10 @@ public interface BookService {
     BookCreationResponse updateBook(Long id, BookCreationRequest request);
 
     BookCreationResponse deleteBookById(Long id);
+
     List<BookCreationResponse> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity);
+
+    PageResponse<BookCreationResponse> findByCategory(String category, int page, int size);
+
     void uploadImage(Long id, MultipartFile image);
 }

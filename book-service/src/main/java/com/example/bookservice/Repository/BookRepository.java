@@ -1,6 +1,8 @@
 package com.example.bookservice.Repository;
 
 import com.example.bookservice.entity.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,5 +22,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "(b.author LIKE %:author% OR :author IS NULL) AND " +
             "(b.quantity >= :minQuantity OR :minQuantity IS NULL)")
     List<Book> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity);
+
+    // Truy vấn tìm kiếm theo category
+    @Query("SELECT b FROM Book b WHERE b.category.name = :category")
+    Page<Book> findByCategory(String category, Pageable pageable);
 }
 

@@ -91,4 +91,17 @@ public class BookController {
                 .build();
     }
 
+    @GetMapping("/search-by-category")
+    public ResponseData<PageResponse<BookCreationResponse>> findByCategory(
+            @RequestParam String category,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseData.<PageResponse<BookCreationResponse>>builder()
+                .message("Search Books by Category Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.findByCategory(category, page, size))
+                .build();
+    }
+
 }
