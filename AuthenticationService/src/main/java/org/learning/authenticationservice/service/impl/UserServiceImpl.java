@@ -3,6 +3,7 @@ package org.learning.authenticationservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.learning.authenticationservice.common.RoleName;
+import org.learning.authenticationservice.dto.request.OTPRequest;
 import org.learning.authenticationservice.dto.request.UserRequest;
 import org.learning.authenticationservice.dto.response.UserResponse;
 import org.learning.event.NotificationEvent;
@@ -17,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final KafkaTemplate<String,Object> kafkaTemplate;
+    private final RedisService redisService;
 
     @Override
     public UserResponse getUserById(Long id) {
@@ -34,10 +38,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse createUser(UserRequest request,String otp) {
         if(userRepository.existsByEmail(request.getEmail())){
             log.error("Email already exists");
             throw new RuntimeException("Email already exists");
+        }
+        String storedOtp = redisService.get(request.getEmail());
+        if(storedOtp == null || !storedOtp.equals(otp)){
+            log.error("OTP not found");
+            throw new RuntimeException("OTP not found");
         }
         User user = userMapper.toUser(request);
 
@@ -58,7 +67,6 @@ public class UserServiceImpl implements UserService {
                     .build();
 
             kafkaTemplate.send("notification-delivery",notificationEvent);
-
             return userMapper.toUserResponse(user);
         }catch (Exception e){
             log.error("Error while saving user", e);
@@ -83,5 +91,53 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getUsers() {
         return userMapper.toUserList(userRepository.findAll());
     }
+
+    @Override
+    public void sendOtpByEmail(OTPRequest request) {
+
+        if(userRepository.existsByEmail(request.getEmail())){
+            log.error("Email already exists");
+            throw new RuntimeException("Email already exists");
+        }
+        StringBuilder content = new StringBuilder();
+        String otp = generateOTP();
+
+        redisService.save(request.getEmail(),otp,30, TimeUnit.MINUTES);
+
+        content.append("<html>")
+                .append("<body style='font-family: Arial, sans-serif; line-height: 1.6;'>")
+                .append("<h2 style='color: #4CAF50;'>Welcome to T1 Team!</h2>")
+                .append("<p>Dear <strong>")
+                .append(request.getEmail())
+                .append("</strong>,</p>")
+                .append("<p>Thank you for registering with <strong>T1 Team</strong>. We are excited to have you on board!</p>")
+                .append("<p style='font-size: 18px;'><strong>Your OTP Code is:</strong> ")
+                .append("<span style='font-size: 22px; color: #FF5733;'><strong>")
+                .append(otp)
+                .append("</strong></span></p>")
+                .append("<p><strong>Note:</strong> This OTP is valid for <em>5 minutes</em>. Please enter it as soon as possible to complete your registration.</p>")
+                .append("<p>If you did not request this code, please ignore this email. For your security, do not share this code with anyone.</p>")
+                .append("<br/>")
+                .append("<p>Best regards,</p>")
+                .append("<p><strong>T1 Team</strong></p>")
+                .append("</body>")
+                .append("</html>");
+        NotificationEvent event = NotificationEvent.builder()
+                .channel("EMAIL")
+                .recipient(request.getEmail())
+                .templateCode(String.valueOf(content))
+                .subject("OTP Verification")
+                .build();
+        kafkaTemplate.send("notification-otp",event);
+        log.info("OTP sent to {}",request.getEmail());
+    }
+    private static String generateOTP(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = 1 ;i <=6;i++){
+            stringBuilder.append(new Random().nextInt(10));
+        }
+        return stringBuilder.toString();
+    }
+
 
 }

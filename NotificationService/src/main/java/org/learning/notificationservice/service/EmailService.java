@@ -30,22 +30,29 @@ public class EmailService {
     @NonFinal
     @Value("${spring.mail.username}")
     String emailFrom;
+    @KafkaListener(topics = "notification-otp",groupId = "my-consumer-group")
+    public void sendOtp(NotificationEvent event) throws MessagingException, UnsupportedEncodingException {
+        log.info("Received event: {}", event);
+        Context context = new Context();
+        context.setVariable("recipientName" , event.getRecipient());
 
+        if(event.getParam() != null){
+            context.setVariables(event.getParam());
+        }else {
+            log.warn("Event param is null, cannot set variables in email template.");
+        }
+        MimeMessage message  = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
 
-    public void sendEmail(String subject, String content, List<String> toList) throws MessagingException, UnsupportedEncodingException {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-        log.info("Sending email from:  {}", emailFrom);
-        log.info("Sending email to:  {}", toList.toArray(new String[0]));
         helper.setFrom(emailFrom, "VO VAN NGHIA HIEP");
-        helper.setTo(toList.toArray(new String[0]));
-        helper.setSubject(subject);
-        helper.setText(content, true);
-        javaMailSender.send(mimeMessage);
-    }
+        helper.setTo(event.getRecipient());
+        helper.setSubject(event.getSubject());
+        helper.setText(event.getTemplateCode(), true);
+        javaMailSender.send(message);
+        log.info("Email sent to: {}", event.getRecipient());
 
-    @KafkaListener(topics = "notification-delivery",groupId ="my-consumer-group")
+    }
+    @KafkaListener(topics = "notification-delivery",groupId = "my-consumer-group")
     public void sendEmailByKafka(NotificationEvent event) throws MessagingException, UnsupportedEncodingException {
         log.info("Received event: {}", event);
         Context context = new Context();
