@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Input, Button, Tabs } from "antd";
+import { Modal, Input, Button, Tabs, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { callLoginApi } from "../../service/UserService";
 import "./Login.scss";
 
 const Login = ({ isOpen, onClose, onSwitch }) => {
   const [activeKey, setActiveKey] = useState("1");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -17,6 +21,20 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
       onSwitch(); // Đóng login, mở register
     } else {
       setActiveKey(key);
+    }
+  };
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      const response = await callLoginApi(email, password);
+      message.success("Đăng nhập thành công!");
+      // Xử lý logic sau khi đăng nhập thành công, ví dụ: lưu token, chuyển hướng trang, v.v.
+      onClose();
+    } catch (error) {
+      message.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,14 +53,25 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
               size="large"
               placeholder="Nhập email"
               prefix={<MailOutlined />}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Input.Password
               size="large"
               placeholder="Nhập mật khẩu"
               prefix={<LockOutlined />}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <div className="forgot-password">Quên mật khẩu?</div>
-            <Button type="primary" block size="large">
+            <Button
+              type="primary"
+              block
+              size="large"
+              onClick={handleLogin}
+              loading={loading}
+              disabled={!email || !password}
+            >
               Đăng nhập
             </Button>
             <Button block size="large" className="skip-btn" onClick={onClose}>
