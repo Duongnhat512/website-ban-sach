@@ -28,6 +28,10 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
     setLoading(true);
     try {
       const response = await callLoginApi(email, password);
+      console.log(response);
+      if(response && response.code === 200) {
+        localStorage.setItem("token", response.result.token);
+      }
       message.success("Đăng nhập thành công!");
       // Xử lý logic sau khi đăng nhập thành công, ví dụ: lưu token, chuyển hướng trang, v.v.
       onClose();
