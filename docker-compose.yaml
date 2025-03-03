@@ -39,7 +39,19 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-   
+  redis-container-microservice:
+    container_name: redis-container-microservice
+    image: docker.io/redis:7.2.3
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - BookStoreMicroservices
 networks:
   BookStoreMicroservices:
     driver: bridge
+volumes:
+  redis-data:
+

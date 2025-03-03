@@ -10,4 +10,6 @@ import lombok.*;
 public class IntrospectResponse {
     boolean valid;
     String scope;
+    UserResponse user;
+
 }

@@ -2,22 +2,20 @@ package org.learning.orderservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.learning.orderservice.client.BookClient;
 import org.learning.orderservice.client.UserClient;
 import org.learning.orderservice.common.OrderStatus;
 import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
-import org.learning.orderservice.extenal.Book;
 import org.learning.orderservice.model.Order;
 import org.learning.orderservice.repository.OrderRepository;
 import org.learning.orderservice.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -33,21 +31,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderCreateResponse createOrder(OrderCreateRequest request) {
         log.info("Creating order for customer: {}", request.getUserId());
-
-        //
-//       Book book =  bookClient.getBook(request.getUserId());
-
-
-//       log.info("Book details: {}", book);
-
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+        log.info("User id: {}", userId);
         Order order = Order.builder()
                 .total(request.getTotal())
-                .userId(request.getUserId())
+                .userId(Long.valueOf(userId))
                 .address(request.getAddress())
                 .orderStatus(OrderStatus.PENDING)
                 .orderDate(LocalDateTime.now())
                 .build();
-
         orderRepository.save(order);
         return OrderCreateResponse.builder()
                 .id(order.getId())

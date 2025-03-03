@@ -29,8 +29,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public OrderDetailCreateResponse createOrderDetail(OrderDetailsCreateRequest request) {
         log.info("OrderDetailServiceImpl.createOrderDetail: {}", request);
         Order order = ORDER_REPOSITORY.findById(request.getOrderId()).orElseThrow(() -> new RuntimeException("Order not found"));
-
-
         OrderDetail orderDetail = OrderDetail.builder()
                 .orderId(request.getOrderId())
                 .bookId(request.getBookId())
