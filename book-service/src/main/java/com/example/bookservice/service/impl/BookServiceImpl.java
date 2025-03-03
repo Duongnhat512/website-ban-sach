@@ -135,6 +135,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public PageResponse<BookCreationResponse> getFlashSaleBooks() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Book> books = repository.findByDiscountGreaterThan(pageable);
+        return PageResponse.<BookCreationResponse>builder()
+                .currentPage(1)
+                .pageSize(10)
+                .totalElements(books.getTotalElements())
+                .totalPages(books.getTotalPages())
+                .result(books.map(bookMapper::toBookCreationResponse).getContent())
+                .build();
+    }
+
+    @Override
     public void uploadImage(Long id, MultipartFile image) {
 
         Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));

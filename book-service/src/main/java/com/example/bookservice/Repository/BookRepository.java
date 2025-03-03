@@ -26,5 +26,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     // Truy vấn tìm kiếm theo category
     @Query("SELECT b FROM Book b WHERE b.category.name = :category")
     Page<Book> findByCategory(String category, Pageable pageable);
+
+    // Truy vấn lấy ra các sách đang giảm giá
+    @Query("SELECT b FROM Book b WHERE b.discount > 0")
+    Page<Book> findByDiscountGreaterThan(Pageable pageable);
 }
 

@@ -104,4 +104,13 @@ public class BookController {
                 .build();
     }
 
+    @GetMapping("/flash-sale")
+    public ResponseData<PageResponse<BookCreationResponse>> getFlashSaleBooks() {
+        return ResponseData.<PageResponse<BookCreationResponse>>builder()
+                .message("Get Flash Sale Books Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.getFlashSaleBooks())
+                .build();
+    }
+
 }
