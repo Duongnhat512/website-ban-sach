@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Input, Button, Tabs, Form, message, DatePicker } from "antd";
+import { Modal, Input, Button, Tabs, Form, message, DatePicker, Row, Col } from "antd";
 import { MailOutlined, LockOutlined, UserOutlined, PhoneOutlined, CalendarOutlined } from "@ant-design/icons";
-import { callRegisterApi } from "../../service/UserService";
+import { callRegisterApi, callSendOtpApi } from "../../service/UserService";
 import "./Register.scss";
-// import moment from "moment";
 
 const Register = ({ isOpen, onClose, onSwitch }) => {
   const [activeKey, setActiveKey] = useState("2");
   const [loading, setLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpCountdown, setOtpCountdown] = useState(0);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (isOpen) {
@@ -15,11 +18,40 @@ const Register = ({ isOpen, onClose, onSwitch }) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    let timer;
+    if (otpCountdown > 0) {
+      timer = setInterval(() => {
+        setOtpCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [otpCountdown]);
+
   const handleTabChange = (key) => {
     if (key === "1") {
       onSwitch(); // Đóng đăng ký, mở đăng nhập
     } else {
       setActiveKey(key);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    const email = form.getFieldValue("email");
+    if (!email) {
+      message.error("Vui lòng nhập email trước khi gửi OTP.");
+      return;
+    }
+    setOtpLoading(true);
+    try {
+      await callSendOtpApi(email);
+      message.success("OTP đã được gửi đến email của bạn!");
+      setOtpSent(true);
+      setOtpCountdown(60); // Đặt thời gian đếm ngược 1 phút
+    } catch (error) {
+      message.error("Gửi OTP thất bại. Vui lòng kiểm tra lại email.");
+    } finally {
+      setOtpLoading(false);
     }
   };
 
@@ -48,6 +80,7 @@ const Register = ({ isOpen, onClose, onSwitch }) => {
         </Tabs.TabPane>
         <Tabs.TabPane tab="Đăng ký" key="2">
           <Form
+            form={form}
             name="register"
             onFinish={handleRegister}
             initialValues={{ remember: true }}
@@ -82,6 +115,36 @@ const Register = ({ isOpen, onClose, onSwitch }) => {
                 prefix={<MailOutlined />}
               />
             </Form.Item>
+            <Form.Item>
+              <Row gutter={8}>
+                <Col span={16}>
+                  <Form.Item
+                    name="otp"
+                    noStyle
+                    rules={[{ required: otpSent, message: "Vui lòng nhập OTP!" }]}
+                  >
+                    <Input
+                      size="large"
+                      placeholder="Nhập OTP"
+                      prefix={<LockOutlined />}
+                      disabled={!otpSent}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Button
+                    type="primary"
+                    block
+                    size="large"
+                    onClick={handleSendOtp}
+                    loading={otpLoading}
+                    disabled={otpCountdown > 0}
+                  >
+                    {otpCountdown > 0 ? `Gửi lại OTP sau ${otpCountdown}s` : "Gửi OTP"}
+                  </Button>
+                </Col>
+              </Row>
+            </Form.Item>
             <Form.Item
               name="password"
               rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
@@ -101,7 +164,6 @@ const Register = ({ isOpen, onClose, onSwitch }) => {
                 placeholder="Ngày sinh"
                 format="YYYY-MM-DD"
                 style={{ width: "100%" }}
-                prefix={<CalendarOutlined />}
               />
             </Form.Item>
             <Form.Item

@@ -41,3 +41,12 @@ export const callRegisterApi = async (userData) => {
     throw error;
   }
 };
+export const callSendOtpApi = async (email) => {
+  try {
+    const response = await axios.post("/api/v1/auth/user/send-otp", { email });
+    return response;
+  } catch (error) {
+    console.error("Send OTP error:", error.response?.data || error.message);
+    throw error;
+  }
+};
