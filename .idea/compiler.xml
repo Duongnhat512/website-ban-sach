@@ -7,9 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="api-gateway" />
         <module name="cart-service" />
         <module name="book-service" />
+        <module name="api-gateway" />
+        <module name="NotificationService" />
         <module name="server-config" />
         <module name="AuthenticationService" />
         <module name="service-registry" />
@@ -19,6 +20,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AuthenticationService" options="-parameters" />
+      <module name="NotificationService" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
       <module name="book-service" options="-parameters" />
       <module name="cart-service" options="-parameters" />
