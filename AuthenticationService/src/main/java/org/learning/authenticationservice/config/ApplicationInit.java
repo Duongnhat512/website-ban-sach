@@ -59,8 +59,6 @@ public class ApplicationInit {
                         .build());
                 log.warn("Admin user has been created with default password: admin, please change it");
             }
-
-
             log.info("Application initialization completed .....");
         };
     }
