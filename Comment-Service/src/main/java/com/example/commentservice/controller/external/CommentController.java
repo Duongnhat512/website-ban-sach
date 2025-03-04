@@ -2,6 +2,7 @@ package com.example.commentservice.controller.external;
 
 import com.example.commentservice.dto.request.CommentCreationRequest;
 import com.example.commentservice.dto.response.CommentCreationResponse;
+
 import com.example.commentservice.dto.response.ResponseData;
 import com.example.commentservice.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +18,12 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentController {
     private final CommentService commentService;
-    @PostMapping("/create")
-    public ResponseData<CommentCreationResponse> createBook(@RequestBody CommentCreationRequest request){
+
+    @PostMapping
+    public ResponseData<CommentCreationResponse> createComment(@RequestBody CommentCreationRequest request) {
         return ResponseData.<CommentCreationResponse>builder()
-                .code(HttpStatus.CREATED.value())
-                .message("Create Book Successfully")
+                .code(HttpStatus.OK.value())
+                .message("Create comment successfully")
                 .result(commentService.createComment(request))
                 .build();
     }

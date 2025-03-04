@@ -40,7 +40,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private String apiPrefix;
 
     @NonFinal
-    private String[] publicEndpoints = {"/auth/.*","order-details/create"};
+    private String[] publicEndpoints = {"/auth/.*","/order-details/create","/books/.*" , "/comments/.*"};
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -57,7 +57,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String token = authHeaders.get(0).substring(7);
         log.info("Token: {}", token);
         return authenticationService.introspect(token).flatMap(introspectResponseResponseData -> {
-            log.info("Introspect response: {}", introspectResponseResponseData);
+            log.info("Introspect response: {}", introspectResponseResponseData.getResult().isValid());
             if(introspectResponseResponseData.getResult().isValid()){
                 return chain.filter(exchange);
             }

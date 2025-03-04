@@ -9,8 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseData<T>{
+public class ResponseData<T> {
+
     private int code;
     private String message;
     private T result;
+
 }

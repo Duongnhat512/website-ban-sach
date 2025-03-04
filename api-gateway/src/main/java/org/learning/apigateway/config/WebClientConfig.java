@@ -19,7 +19,7 @@ public class WebClientConfig {
     @Bean
     WebClient webClient() {
         return WebClient.builder()
-                .baseUrl("http://localhost:3000")
+                .baseUrl("http://localhost:8080/auth")
                 .build();
     }
 

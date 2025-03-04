@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.util.Date;
 @Entity
-@Table(name = "Comment")
+@Table(name = "comments")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,9 +14,17 @@ import java.util.Date;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
+
+    @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "book_id")
     private Long bookId;
+
+    @Column(name = "date_time")
     private Date dateTime;
+
+    @Column(name = "content")
     private String content;
 }

@@ -1,9 +1,16 @@
 package com.example.commentservice.dto.response;
 
+import lombok.*;
+
 import java.util.Date;
 
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommentCreationResponse {
-    private String id;
+    private Long id;
     private Long userId;
     private Long bookId;
     private Date dateTime;
