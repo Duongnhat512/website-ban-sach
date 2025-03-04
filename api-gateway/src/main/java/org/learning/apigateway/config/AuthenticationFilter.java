@@ -40,7 +40,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private String apiPrefix;
 
     @NonFinal
-    private String[] publicEndpoints = {"/auth/.*","/order-details/create","/books/.*" , "/comments/.*"};
+    private String[] publicEndpoints = {"/auth/.*","/order-details/create","/books/.*" , "/comments/.*", "/promotions/.*"};
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -65,7 +65,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                 return unauthenticated(exchange.getResponse());
             }
         }).onErrorResume(throwable -> unauthenticated(exchange.getResponse()));
-
     }
 
     @Override
