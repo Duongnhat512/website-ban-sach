@@ -32,9 +32,9 @@ export const callLogOut = async () => {
   }
 }
 
-export const callRegisterApi = async (userData) => {
+export const callRegisterApi = async (userData, otp) => {
   try {
-    const response = await axios.post("/api/v1/auth/user/create-user", userData);
+    const response = await axios.post(`/api/v1/auth/user/create-user?otp=${otp}`, userData);
     return response;
   } catch (error) {
     console.error("Register error:", error.response?.data || error.message);
@@ -43,7 +43,7 @@ export const callRegisterApi = async (userData) => {
 };
 export const callSendOtpApi = async (email) => {
   try {
-    const response = await axios.post("/api/v1/auth/user/send-otp", { email });
+    const response = await axios.post("/api/v1/auth/user/send-otp-register", { email });
     return response;
   } catch (error) {
     console.error("Send OTP error:", error.response?.data || error.message);

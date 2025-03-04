@@ -58,12 +58,19 @@ const Register = ({ isOpen, onClose, onSwitch }) => {
   const handleRegister = async (values) => {
     setLoading(true);
     try {
+      const otp = form.getFieldValue("otp");
       const formattedValues = {
         ...values,
         dob: values.dob.format("YYYY-MM-DD"), // Định dạng ngày sinh
       };
-      const response = await callRegisterApi(formattedValues);
-      message.success("Đăng ký thành công!");
+      const response = await callRegisterApi(formattedValues, otp);
+      console.log(response);
+      if(response && response.code===201){
+        message.success("Đăng ký thành công!");
+      }else{
+        message.error("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.");
+      }
+      
       onClose();
     } catch (error) {
       message.error("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.");
