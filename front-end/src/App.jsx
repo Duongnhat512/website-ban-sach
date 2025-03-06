@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LayoutUser from "./component/LayoutUser/LayoutUser";
 import LayoutAdmin from "./component/LayoutAdmin/LayoutAdmin";
 import ErrorPage from "./component/ErrorPage/ErrorPage";
@@ -9,6 +9,9 @@ import Register from "./page/Register/Register";
 import { useDispatch } from "react-redux";
 import { callGetUserToken } from "./service/UserService";
 import { setUser } from "./redux/UserSlice";
+import ProductDetail from "./page/ProductDetail/ProductDetail";
+import Filter from "./page/Filter/Filter";
+
 function App() {
   const dispatch = useDispatch();
 
@@ -24,29 +27,22 @@ function App() {
 
     fetchUser();
   }, [dispatch]);
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <LayoutUser />,
-      errorElement: <ErrorPage />,
-      children: [{ index: true, path: "/", element: <HomePage /> }],
-    },
-    {
-      path: "login",
-      element: <Login />,
-    },
-    {
-      path: "register",
-      element: <Register />,
-    },
-    {
-      path: "/admin",
-      element: <LayoutAdmin />,
-    },
-  ]);
+
   return (
     <div className="container">
-      <RouterProvider router={router} />
+      <Router>
+        <Routes>
+          <Route path="/" element={<LayoutUser />}>
+            <Route index element={<HomePage />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/filter" element={<Filter />} />
+          </Route>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="/admin" element={<LayoutAdmin />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
