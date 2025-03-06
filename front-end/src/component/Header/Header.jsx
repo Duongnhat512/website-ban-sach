@@ -222,10 +222,10 @@ const categories = [
 
 const AppHeader = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const [username, setUsername] = useState("User");
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.authenticated);
+  const username = useSelector(state => state.user.user.fullName.split(' ')[0]);  
   const dispatch = useDispatch();
 
   const showLoginModal = () => {

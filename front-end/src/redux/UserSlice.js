@@ -6,8 +6,9 @@ const initialState = {
   user: {
     id: "",
     email: "",
-    name: "",
-    avatar: "",
+    fullName: "",
+    dob: "",
+    phoneNumber:"",
   },
 };
 
