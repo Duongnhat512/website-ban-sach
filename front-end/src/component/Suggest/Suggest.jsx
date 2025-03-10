@@ -25,7 +25,7 @@ function Suggest() {
 
   return (
     <div className="suggest">
-      <div className="suggest-background" style={{ backgroundColor: "#33b564" }}></div>
+      <div className="suggest-background"></div>
       <div className="suggest-content ">
         <Row gutter={[16, 16]}>
           {bookList.map((book) => (

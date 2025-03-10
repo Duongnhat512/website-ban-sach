@@ -4,7 +4,6 @@
     width: 100%;
     min-height: 100vh;
     position: relative;
-    background-color:#33b564;
   }
   
   .suggest-background {
@@ -14,16 +13,12 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh; /* Chiều cao của banner */
+    height: 50vh; /* Chiều cao của banner */
     z-index: 1;
-    background-color:#33b564;
-
   }
   
   .suggest-content {
-    position: absolute;
+    position: relative;
     z-index: 2;
-    margin-top: 150px; /* Tạo khoảng trống phía trên để không bị che lấp */
-    background-color:#33b564;
-
+    padding-top: 80px; /* Tạo khoảng trống phía trên để không bị che lấp */
   }
