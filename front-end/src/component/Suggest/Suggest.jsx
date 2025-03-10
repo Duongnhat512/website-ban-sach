@@ -1,11 +1,13 @@
-import { Col, Row, Card, Image } from "antd";
+import { Col, Row, Card, Image, Button } from "antd";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Suggest.scss";
 import { callGetBook } from "../../service/BookService";
 import product1 from "../../assets/images/product1.png";
 
 function Suggest() {
   const [bookList, setBookList] = useState([]);
+  const navigate = useNavigate();
 
   const handleGetAllBook = async () => {
     try {
@@ -23,13 +25,21 @@ function Suggest() {
     handleGetAllBook();
   }, []);
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+  };
+
+  const handleViewAll = () => {
+    navigate('/filter');
+  };
+
   return (
     <div className="suggest">
       <div className="suggest-background"></div>
-      <div className="suggest-content ">
+      <div className="suggest-content">
         <Row gutter={[16, 16]}>
           {bookList.map((book) => (
-            <Col span={6} key={book.id} >
+            <Col span={6} key={book.id}>
               <Card
                 hoverable
                 cover={
@@ -47,7 +57,7 @@ function Suggest() {
                       <div className="text-sm text-gray-500">
                         {book.originalPrice && (
                           <span className="line-through mr-2">
-                            {book.originalPrice}đ
+                            {formatCurrency(book.originalPrice)}
                           </span>
                         )}
                         {book.discount && (
@@ -55,7 +65,7 @@ function Suggest() {
                         )}
                       </div>
                       <div className="text-lg font-bold text-green-600">
-                        {book.currentPrice ? `${book.currentPrice}đ` : "Liên hệ"}
+                        {book.currentPrice ? formatCurrency(book.currentPrice) : "Liên hệ"}
                       </div>
                       <div className="text-sm text-gray-500">Đã bán 420</div>
                     </>
@@ -65,6 +75,11 @@ function Suggest() {
             </Col>
           ))}
         </Row>
+        <div className="flex justify-center mt-4">
+          <Button type="primary" onClick={handleViewAll}>
+            Xem tất cả
+          </Button>
+        </div>
       </div>
     </div>
   );
