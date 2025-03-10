@@ -225,7 +225,7 @@ const AppHeader = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.authenticated);
-  const username = useSelector(state => state.user.user.fullName.split(' ')[0]);  
+  const username = useSelector(state => state.user?.user?.fullName.split(' ')[0]);  
   const dispatch = useDispatch();
 
   const showLoginModal = () => {

@@ -11,6 +11,7 @@ import { callGetUserToken } from "./service/UserService";
 import { setUser } from "./redux/UserSlice";
 import ProductDetail from "./page/ProductDetail/ProductDetail";
 import Filter from "./page/Filter/Filter";
+import Banner1 from "./page/HomeBanner/Banner1";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/filter" element={<Filter />} />
+            <Route path="/Banner1" element={<Banner1 />} />
           </Route>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />

@@ -15,7 +15,14 @@ import mcbook from "../../../assets/images/mcbook.png";
 import phienchocu from "../../../assets/images/phienchocu.png";
 import sanphammoi from "../../../assets/images/sanphammoi.png";
 import trogia from "../../../assets/images/trogia.png";
+import { useNavigate } from "react-router-dom";
+
 function ContainerHome1() {
+  const navigate = useNavigate();
+
+  const handleImageClick = () => {
+    navigate("/Banner1");
+  };
   return (
     <>
       <div className="sub-container-1">
@@ -30,6 +37,7 @@ function ContainerHome1() {
                 src={main1}
                 alt="Image 1"
                 className="side-image"
+                onClick={handleImageClick}
               />
               <Image
                 preview={false}
