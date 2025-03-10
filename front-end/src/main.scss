@@ -4,7 +4,6 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 /* Additional global styles can be added here */
 body {
   font-family: Arial, sans-serif;
@@ -30,3 +29,6 @@ td {
   text-decoration: none;
   list-style: none;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
