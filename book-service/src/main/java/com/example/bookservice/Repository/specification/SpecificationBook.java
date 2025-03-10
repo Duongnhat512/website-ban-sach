@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.Specification;
 @RequiredArgsConstructor
 public class SpecificationBook implements Specification<Book> {
     private final SpecSearchCriteria criteria;
-
     @Override
     public Predicate toPredicate(Root<Book> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         Predicate predicate;
