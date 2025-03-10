@@ -1,21 +1,27 @@
 package org.learning.orderservice.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.learning.orderservice.client.BookClient;
-import org.learning.orderservice.client.UserClient;
 import org.learning.orderservice.common.OrderStatus;
 import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
+import org.learning.orderservice.extenal.Book;
+import org.learning.orderservice.extenal.OrderDetail;
 import org.learning.orderservice.model.Order;
 import org.learning.orderservice.repository.OrderRepository;
 import org.learning.orderservice.service.OrderService;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +30,9 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
-    private final BookClient bookClient;
-    private final UserClient userClient;
-
+   private final KafkaTemplate<String, String> kafkaTemplate;
+   private final BookClient bookClient;
+   private final ObjectMapper objectMapper;
 
     @Override
     public OrderCreateResponse createOrder(OrderCreateRequest request) {
@@ -42,6 +48,18 @@ public class OrderServiceImpl implements OrderService {
                 .orderDate(LocalDateTime.now())
                 .build();
         orderRepository.save(order);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for (var item : request.getOrderItems()) {
+            Book book = bookClient.getBook(item.getBookId());
+            OrderDetail detail = new OrderDetail();
+            detail.setBookId(item.getBookId());
+            detail.setQuantity(item.getQuantity());
+            detail.setPrice(book.getCurrentPrice()); // Lấy giá từ ProductService
+            detail.setTotal(detail.getPrice() * detail.getQuantity());
+            detail.setOrderId(order.getId());
+            orderDetails.add(detail);
+        }
+        sendOrderDetails(orderDetails);
         return OrderCreateResponse.builder()
                 .id(order.getId())
                 .total(order.getTotal())
@@ -50,6 +68,14 @@ public class OrderServiceImpl implements OrderService {
                 .userId(order.getUserId())
                 .orderDate(order.getOrderDate())
                 .build();
+    }
+    public void sendOrderDetails(List<OrderDetail> orderDetails) {
+        try {
+            String jsonPayload = objectMapper.writeValueAsString(orderDetails);
+            kafkaTemplate.send("create-order-detail", jsonPayload);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
