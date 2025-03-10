@@ -40,7 +40,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private String apiPrefix;
 
     @NonFinal
-    private String[] publicEndpoints = {"/auth/.*","/order-details/create","/books/.*" , "/comments/.*", "/promotions/.*"};
+    private String[] publicEndpoints = {"/v3/api-docs", "/swagger-ui", "/swagger-ui.html"
+            ,"/auth/.*","/order-details/create","/books/.*" , "/comments/.*", "/promotions/.*"};
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -74,6 +75,12 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     private boolean isPublicEndpoint(ServerHttpRequest request){
         log.info("Request path: {}", request.getPath().value());
+        String path = request.getPath().value();
+        log.info("Request path: {}", path);
+        // Kiểm tra Swagger UI & API Docs trước
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/api/v1/swagger-ui")) {
+            return true;
+        }
         return Arrays.stream(publicEndpoints).anyMatch(s -> request.getURI().getPath().matches(apiPrefix + s));
 
     }

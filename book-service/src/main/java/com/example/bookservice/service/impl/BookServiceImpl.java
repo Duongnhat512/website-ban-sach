@@ -1,6 +1,7 @@
 package com.example.bookservice.service.impl;
 
 import com.example.bookservice.Repository.BookRepository;
+import com.example.bookservice.Repository.SearchRepository;
 import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
@@ -34,6 +35,8 @@ public class BookServiceImpl implements BookService {
     private final CloudinaryService cloudinaryService;
     @Autowired
     private EntityManager entityManager;
+
+    private final SearchRepository searchRepository;
     @Override
     public BookCreationResponse createBook(BookCreationRequest request) {
         log.info("Creating book with title: {}", request.getTitle());
@@ -154,6 +157,11 @@ public class BookServiceImpl implements BookService {
         String imageUrl = cloudinaryService.uploadImage(image);
         book.setThumbnail(imageUrl);
         repository.save(book);
+    }
+
+    @Override
+    public PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size, String sortBy, String... search) {
+        return searchRepository.getBookWithSortAndSearchSpecification(page, size, sortBy, search);
     }
 
 

@@ -113,4 +113,18 @@ public class BookController {
                 .build();
     }
 
+    @GetMapping("/search-by-keyword")
+    public ResponseData<PageResponse<BookCreationResponse>> searchByKeyword(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sort" , required = false) String sort,
+            @RequestParam(value = "search" ,required = false) String... search
+            ) {
+        return ResponseData.<PageResponse<BookCreationResponse>>builder()
+                .message("Search Books by Keyword Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.getBooksBySearchSpecification(page,size,sort,search))
+                .build();
+    }
+
 }
