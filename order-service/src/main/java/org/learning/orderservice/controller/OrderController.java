@@ -7,9 +7,7 @@ import org.learning.orderservice.dto.request.OrderDetailsCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
 import org.learning.orderservice.dto.response.OrderDetailCreateResponse;
 import org.learning.orderservice.dto.response.ResponseData;
-import org.learning.orderservice.service.OrderDetailService;
 import org.learning.orderservice.service.OrderService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +18,6 @@ import java.util.List;
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
-    private final OrderDetailService orderDetailService;
 
     @PostMapping("/create")
     public ResponseData<OrderCreateResponse> createOrder(@RequestBody OrderCreateRequest request) {
@@ -56,25 +53,6 @@ public class OrderController {
                 .build();
     }
 
-    @PostMapping("/order-details/create")
-    public ResponseData<OrderDetailCreateResponse> createOrderDetail(@RequestBody OrderDetailsCreateRequest request){
-        log.info("Creating order detail for order: {}", request.getOrderId());
-        OrderDetailCreateResponse response = orderDetailService.createOrderDetail(request);
-        return ResponseData.<OrderDetailCreateResponse>builder()
-                .code(200)
-                .message("Order detail created successfully")
-                .result(response)
-                .build();
-    }
 
-    @GetMapping("/order-details/{orderId}")
-    public ResponseData<List<OrderDetailCreateResponse>> getOrderDetails(@PathVariable Long orderId) {
-        log.info("Getting order details for order: {}", orderId);
-        return ResponseData.<List<OrderDetailCreateResponse>>builder()
-                .code(200)
-                .message("Order details retrieved successfully")
-                .result(orderDetailService.getOrderDetails(orderId))
-                .build();
-    }
 
 }

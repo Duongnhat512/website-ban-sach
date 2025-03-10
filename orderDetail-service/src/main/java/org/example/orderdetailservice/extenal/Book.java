@@ -1,4 +1,4 @@
-package org.learning.orderservice.extenal;
+package org.example.orderdetailservice.extenal;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,14 +19,9 @@ public class Book {
     private String title;
     private String description;
     private String author;
-    private Double originalPrice;
-    private Double currentPrice;
+    private Double price;
     private LocalDate releasedDate;
     private Integer quantity;
-    private String thumbnail;
-    private Float discount;
-    private String publisher;
-    private Long pages;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

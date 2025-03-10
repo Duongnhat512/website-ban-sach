@@ -50,7 +50,6 @@ public class EmailService {
         helper.setText(event.getTemplateCode(), true);
         javaMailSender.send(message);
         log.info("Email sent to: {}", event.getRecipient());
-
     }
     @KafkaListener(topics = "notification-delivery",groupId = "my-consumer-group")
     public void sendEmailByKafka(NotificationEvent event) throws MessagingException, UnsupportedEncodingException {
