@@ -1,6 +1,6 @@
-package org.learning.orderservice.repository;
+package org.example.orderdetailservice.repository;
 
-import org.learning.orderservice.model.OrderDetail;
+import org.example.orderdetailservice.model.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,0 +1,47 @@
+server:
+  port: 8888
+app:
+  api-prefix: /api/v1
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: book-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=${app.api-prefix}/books/**
+          filters:
+            - StripPrefix=2
+        - id: order-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=${app.api-prefix}/orders/**
+          filters:
+            - StripPrefix=2
+        - id: authentication-service
+          uri: http://localhost:8080
+          predicates:
+            - Path=${app.api-prefix}/auth/**
+          filters:
+            - StripPrefix=2
+        - id: promotion-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=${app.api-prefix}/promotions/**
+          filters:
+            - StripPrefix=2
+        - id: comment-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=${app.api-prefix}/comments/**
+          filters:
+            - StripPrefix=2
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0

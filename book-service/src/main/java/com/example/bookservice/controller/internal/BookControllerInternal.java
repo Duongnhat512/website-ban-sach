@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/internal/books")
 public class BookControllerInternal {
     private final BookService bookService;
-
     private final BookMapper mapper;
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable Long id){

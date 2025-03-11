@@ -13,11 +13,21 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    bootstrap-servers: localhost:9094
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
 
 server:
   port: 8080
-  servlet:
-    context-path: /authentication
 
 eureka:
   client:
@@ -27,3 +37,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     prefer-ip-address: true
+
+
+jwt:
+  secret-key: 822494485f7263b97a925038e8993fe07dfcc4fd99d812bbf07f80dc10b43a85

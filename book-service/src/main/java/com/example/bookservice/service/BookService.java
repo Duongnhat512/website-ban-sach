@@ -29,4 +29,7 @@ public interface BookService {
     PageResponse<BookCreationResponse> getFlashSaleBooks();
 
     void uploadImage(Long id, MultipartFile image);
+
+    PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size,String sortBy, String... search);
+
 }

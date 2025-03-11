@@ -31,6 +31,18 @@ spring:
 #            - Path=${app.api-prefix}/auth/**
 #          filters:
 #            - StripPrefix=2
+#        - id: promotion-service
+#          uri: http://localhost:8083
+#          predicates:
+#            - Path=${app.api-prefix}/promotions/**
+#          filters:
+#            - StripPrefix=2
+#        - id: comment-service
+#          uri: http://localhost:8085
+#          predicates:
+#            - Path=${app.api-prefix}/comments/**
+#          filters:
+#            - StripPrefix=2
 #management:
 #  zipkin:
 #    tracing:
