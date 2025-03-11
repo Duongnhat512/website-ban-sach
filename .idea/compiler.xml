@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="cart-service" />
+        <module name="payment-service" />
         <module name="book-service" />
         <module name="api-gateway" />
         <module name="NotificationService" />
@@ -24,6 +25,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="book-service" options="-parameters" />
       <module name="cart-service" options="-parameters" />
+      <module name="payment-service" options="-parameters" />
       <module name="server-config" options="-parameters" />
       <module name="service-registry" options="-parameters" />
     </option>
