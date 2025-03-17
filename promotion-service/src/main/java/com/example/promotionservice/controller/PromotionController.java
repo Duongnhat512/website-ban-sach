@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -47,4 +49,16 @@ public class PromotionController {
                 .result(response)
                 .build();
     }
+
+    @GetMapping("/get-all")
+    public ResponseData<List<PromotionCreateResponse>> getAllPromotions() {
+        log.info("Getting all promotions");
+        return ResponseData.<List<PromotionCreateResponse>>builder()
+                .code(200)
+                .message("Promotions retrieved successfully")
+                .result(promotionService.getAllPromotions())
+                .build();
+    }
+
+
 }

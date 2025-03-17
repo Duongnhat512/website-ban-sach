@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -71,5 +73,20 @@ public class PromotionServiceImpl implements PromotionService {
                 .discount(promotion.getDiscount())
                 .condition(promotion.getCondition())
                 .build();
+    }
+
+    @Override
+    public List<PromotionCreateResponse> getAllPromotions() {
+        return promotionRepository.findAll().stream()
+                .map(promotion -> PromotionCreateResponse.builder()
+                        .id(promotion.getId())
+                        .name(promotion.getName())
+                        .amount(promotion.getAmount())
+                        .startDate(promotion.getStartDate())
+                        .endDate(promotion.getEndDate())
+                        .discount(promotion.getDiscount())
+                        .condition(promotion.getCondition())
+                        .build())
+                .toList();
     }
 }
