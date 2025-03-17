@@ -112,7 +112,6 @@ public class BookController {
                 .result(bookService.getFlashSaleBooks())
                 .build();
     }
-
     @GetMapping("/search-by-keyword")
     public ResponseData<PageResponse<BookCreationResponse>> searchByKeyword(
             @RequestParam(value = "page", defaultValue = "1") int page,
