@@ -32,7 +32,15 @@ public class SearchRepository {
     private BookMapper bookMapper;
 
     public PageResponse<BookCreationResponse> getBookWithSortAndSearchSpecification(int page, int size, String sortBy, String... search){
-        Sort sort = Sort.by(sortBy);
+        String sortByy = sortBy.split(":")[0];
+        String order = sortBy.split(":")[1];
+        Sort sort = null;
+        if(order.equals("desc")) {
+            sort = Sort.by(sortByy).descending();
+        }
+        else{
+            sort = Sort.by(sortByy).ascending();
+        }
         Pageable pageable = PageRequest.of(page-1,size,sort);
         SpecificationBuildQuery specificationBuildQuery = new SpecificationBuildQuery();
         if(search != null){
