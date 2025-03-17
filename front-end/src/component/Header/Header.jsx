@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Layout,
   Menu,
@@ -11,6 +11,7 @@ import {
   Button,
   Popover,
   message,
+  Badge,
 } from "antd";
 import {
   DownOutlined,
@@ -22,14 +23,14 @@ import {
 import { FaBars } from "react-icons/fa";
 import Banner from "../../assets/images/banner.png";
 import Logo from "../../assets/images/logo.png";
-import "./Header.scss";
-import { useState } from "react";
-import Login from "../../page/Login/Login";
-import Register from "../../page/Register/Register";
 import { useDispatch, useSelector } from "react-redux";
 import { callLogOut } from "../../service/UserService";
 import { logout } from "../../redux/UserSlice";
- 
+import { useNavigate } from "react-router-dom";
+import Login from "../../page/Login/Login";
+import Register from "../../page/Register/Register";
+import "./Header.scss"; // Import Tailwind CSS
+
 const { Header } = Layout;
 
 const categories = [
@@ -219,14 +220,16 @@ const categories = [
     ],
   },
 ];
-
 const AppHeader = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.authenticated);
-  const username = useSelector(state => state.user?.user?.fullName.split(' ')[0]);  
+  const username = useSelector(
+    (state) => state.user?.user?.fullName.split(" ")[0]
+  );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const showLoginModal = () => {
     setIsLoginOpen(true);
@@ -243,11 +246,11 @@ const AppHeader = () => {
 
   const handleLogout = async () => {
     let res = await callLogOut();
-    if(res && res.code===200){
+    if (res && res.code === 200) {
       dispatch(logout());
       localStorage.removeItem("token");
       message.success("Đăng xuất thành công!");
-    }else{
+    } else {
       message.error("Đăng xuất thất bại!");
     }
   };
@@ -283,34 +286,34 @@ const AppHeader = () => {
     </Menu>
   );
 
-
-
   return (
-    <Layout className="header-container">
-      <div className="banner">
+    <Layout className="bg-white shadow-md">
+      <div className="bg-red-700 flex items-center justify-center h-20 w-full">
         <Image width={1200} src={Banner} />
       </div>
-      <div className="header">
-        <Header className="header-content">
-          <Row style={{ width: "100%", height: "100%" }}>
-            <Col span={5} className="left-section">
-              <img src={Logo} alt="Logo" className="logo" />
+      <div className="max-w-[1200px] w-full mx-auto h-16 px-4">
+        <Header className="flex justify-between items-center bg-white p-0 h-full">
+          <Row className="w-full h-full">
+            <Col span={5} className="flex items-center h-full gap-5 px-5">
+              <img src={Logo} alt="Logo" className="h-10 mr-5" />
             </Col>
-            <Col span={13} className="center-section">
+            <Col span={13} className="flex items-center gap-2">
               <Popover
                 content={
-                  <div className="popover-container">
-                    <div className="menu-left">
-                      <h3>Danh mục sản phẩm</h3>
-                      <ul>
+                  <div className="flex p-4 w-200">
+                    <div className="w-1/3 p-3 border-r border-gray-300">
+                      <h3 className="text-lg font-semibold mb-2">
+                        Danh mục sản phẩm
+                      </h3>
+                      <ul className="list-none p-0 m-0">
                         {categories.map((category) => (
                           <li
                             key={category.name}
-                            className={
+                            className={`p-2 cursor-pointer text-base transition-colors duration-200 ${
                               selectedCategory.name === category.name
-                                ? "active"
+                                ? "bg-gray-300 font-bold"
                                 : ""
-                            }
+                            }`}
                             onMouseEnter={() => setSelectedCategory(category)}
                           >
                             {category.name}
@@ -318,15 +321,22 @@ const AppHeader = () => {
                         ))}
                       </ul>
                     </div>
-                    <div className="menu-right">
-                      <h4 className="menu-header">{selectedCategory.header}</h4>
+                    <div className="w-2/3 p-3">
+                      <h4 className="text-lg font-semibold mb-3 border-b border-gray-300 pb-1">
+                        {selectedCategory.header}
+                      </h4>
                       <Row gutter={[16, 16]}>
                         {selectedCategory.content.map((col, index) => (
                           <Col key={index} span={12}>
-                            <h5 className="menu-title">{col.title}</h5>
-                            <ul className="menu-options">
+                            <h5 className="text-base font-semibold mb-1">
+                              {col.title}
+                            </h5>
+                            <ul className="list-none p-0 m-0">
                               {col.options.map((option, i) => (
-                                <li key={i} className="menu-option">
+                                <li
+                                  key={i}
+                                  className="text-sm py-1 text-gray-600 cursor-pointer transition-colors duration-200 hover:text-gray-800"
+                                >
                                   {option}
                                 </li>
                               ))}
@@ -340,42 +350,49 @@ const AppHeader = () => {
                 trigger="hover"
                 placement="bottomLeft"
               >
-                <a className="menu-trigger">
+                <a className="flex items-center cursor-pointer">
                   <Space>
-                    <FaBars className="menu-icon" />
-                    <DownOutlined className="menu-icon" />
+                    <FaBars className="text-lg" />
+                    <DownOutlined className="text-lg" />
                   </Space>
                 </a>
               </Popover>
 
               <Input
                 placeholder="Search"
-                className="search-input"
+                className="w-full bg-white"
                 suffix={
                   <Button
                     style={{ backgroundColor: "#c12530" }}
                     icon={<SearchOutlined style={{ color: "#fff" }} />}
-                    className="search-button"
+                    className="bg-red-700 border-none"
                   />
                 }
               />
             </Col>
-            <Col span={6} className="right-section">
-              <div className="icon-section">
-                <BellOutlined className="icon" />
-                <p>Thông báo</p>
+            <Col span={6} className="flex items-center justify-between gap-5 px-5">
+              <div className="flex flex-col items-center text-center cursor-pointer">
+                <BellOutlined className="text-xl" />
+                <p className="text-xs text-black leading-tight">Thông báo</p>
               </div>
-              <div className="icon-section">
-                <ShoppingCartOutlined className="icon" />
-                <p>Giỏ hàng</p>
+              <div
+                className="flex flex-col items-center text-center cursor-pointer"
+                onClick={() => navigate("/cart")}
+              >
+                <Badge count={0} showZero>
+                  <ShoppingCartOutlined className="text-xl" />
+                  <p className="text-xs text-black leading-tight">Giỏ hàng</p>
+                </Badge>
               </div>
               <Dropdown
                 overlay={isLoggedIn ? userMenu : accountMenu}
                 trigger={["hover"]}
               >
-                <div className="icon-section">
-                  <UserOutlined className="icon" />
-                  <p>{isLoggedIn ? `Xin chào, ${username}` : "Tài khoản"}</p>
+                <div className="flex flex-col items-center text-center cursor-pointer">
+                  <UserOutlined className="text-xl" />
+                  <p className="text-xs text-black leading-tight">
+                    {isLoggedIn ? `Xin chào, ${username}` : "Tài khoản"}
+                  </p>
                 </div>
               </Dropdown>
             </Col>

@@ -157,10 +157,10 @@ const Filter = () => {
             />
           </div>
           <div className="mb-4">
-            <h4 className="font-semibold mb-2">Hình Thức</h4>
+            <h4 className="font-semibold mb-2">Năm Phát Hành</h4>
             <Checkbox.Group
               className="flex flex-col space-y-2"
-              options={["Bìa Mềm", "Bìa Cứng", "Cards"]}
+              options={["Trước Năm 2020", "Năm 2021", "Năm 2022","Năm 2023","Năm 2024","Năm 2025"]}
             />
           </div>
         </div>
