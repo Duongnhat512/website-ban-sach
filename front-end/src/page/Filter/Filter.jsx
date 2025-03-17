@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Card, Badge, Select, Pagination, Checkbox, Breadcrumb } from "antd";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Badge,
+  Select,
+  Pagination,
+  Radio,
+  Breadcrumb,
+  Button,
+  Checkbox,
+} from "antd";
+import { ShoppingCartOutlined, ReloadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { callGetBookFilter } from "../../service/BookService";
 import product1 from "../../assets/images/product1.png";
 import Suggest from "../../component/Suggest/Suggest";
-import { Button } from "antd"; // Import Button từ Ant Design
-import { ReloadOutlined } from "@ant-design/icons"; // Import biểu tượng từ Ant Design
 
 const Filter = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,7 +22,8 @@ const Filter = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [priceFilter, setPriceFilter] = useState([]);
-  const [sort, setSort] = useState("id:desc"); // Thêm trạng thái sort
+  const [releaseDateFilter, setReleaseDateFilter] = useState(null);
+  const [sort, setSort] = useState("id:desc");
   const navigate = useNavigate();
 
   const handleGetFilteredBooks = async () => {
@@ -26,22 +34,38 @@ const Filter = () => {
       priceFilter.forEach((range) => {
         switch (range) {
           case "0-150.000 đ":
+            console.log("range", range);
+            console.log("minPrice", minPrice);
+            console.log("maxPrice", maxPrice);
+
             minPrice = minPrice === null ? 0 : Math.min(minPrice, 0);
-            maxPrice = maxPrice === null ? 150000 : Math.max(maxPrice, 150000);
+            maxPrice = maxPrice === null ? 100000 : Math.max(maxPrice, 150000);
             break;
           case "150.000-300.000 đ":
+            console.log("range", range);
+            console.log("minPrice", minPrice);
+            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 150000 : Math.min(minPrice, 150000);
             maxPrice = maxPrice === null ? 300000 : Math.max(maxPrice, 300000);
             break;
           case "300.000-500.000 đ":
+            console.log("range", range);
+            console.log("minPrice", minPrice);
+            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 300000 : Math.min(minPrice, 300000);
             maxPrice = maxPrice === null ? 500000 : Math.max(maxPrice, 500000);
             break;
           case "500.000-700.000 đ":
+            console.log("range", range);
+            console.log("minPrice", minPrice);
+            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 500000 : Math.min(minPrice, 500000);
             maxPrice = maxPrice === null ? 700000 : Math.max(maxPrice, 700000);
             break;
           case "700.000 - Trở Lên":
+            console.log("range", range);
+            console.log("minPrice", minPrice);
+            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 700000 : Math.min(minPrice, 700000);
             break;
           default:
@@ -51,18 +75,29 @@ const Filter = () => {
 
       let search = "";
       if (minPrice !== null) {
-        search += `currentPrice>=${minPrice}`;
+        search += `currentPrice>${minPrice}`;
       }
       if (maxPrice !== null) {
-        search += `${search ? "," : ""}currentPrice<=${maxPrice}`;
+        search += `${search ? "," : ""}currentPrice<${maxPrice}`;
       }
+
+      if (releaseDateFilter) {
+        if (releaseDateFilter === "Trước Năm 2020") {
+          search += `${search ? "," : ""}releasedDate<2012`;
+        } else {
+          search += `${search ? "," : ""}releasedDate.${
+            releaseDateFilter.split(" ")[1]
+          }`;
+        }
+      }
+      console.log(search);
 
       const response = await callGetBookFilter(
         currentPage,
         pageSize,
         sort,
         search
-      ); // Sử dụng giá trị sort từ trạng thái
+      );
       if (response && response.code === 200) {
         setBookList(response.result.result);
         setTotalElements(response.result.totalElements);
@@ -75,7 +110,7 @@ const Filter = () => {
 
   useEffect(() => {
     handleGetFilteredBooks();
-  }, [currentPage, pageSize, priceFilter, sort]); // Cập nhật khi `currentPage`, `pageSize`, `priceFilter`, hoặc `sort` thay đổi
+  }, [currentPage, pageSize, priceFilter, releaseDateFilter, sort]);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -86,12 +121,18 @@ const Filter = () => {
 
   const handleResetFilter = () => {
     setPriceFilter([]);
+    setReleaseDateFilter(null);
     setSort("id:desc");
     setCurrentPage(1);
     setPageSize(8);
   };
+
   const handlePriceFilterChange = (checkedValues) => {
     setPriceFilter(checkedValues);
+  };
+
+  const handleReleaseDateFilterChange = (e) => {
+    setReleaseDateFilter(e.target.value);
   };
 
   const handleSortChange = (value) => {
@@ -158,9 +199,18 @@ const Filter = () => {
           </div>
           <div className="mb-4">
             <h4 className="font-semibold mb-2">Năm Phát Hành</h4>
-            <Checkbox.Group
+            <Radio.Group
               className="flex flex-col space-y-2"
-              options={["Trước Năm 2020", "Năm 2021", "Năm 2022","Năm 2023","Năm 2024","Năm 2025"]}
+              options={[
+                "Trước Năm 2020",
+                "Năm 2021",
+                "Năm 2022",
+                "Năm 2023",
+                "Năm 2024",
+                "Năm 2025",
+              ]}
+              onChange={handleReleaseDateFilterChange}
+              value={releaseDateFilter}
             />
           </div>
         </div>
@@ -240,7 +290,7 @@ const Filter = () => {
               current={currentPage}
               total={totalElements}
               pageSize={pageSize}
-              onChange={(page) => setCurrentPage(page)} // Cập nhật ngay khi đổi trang
+              onChange={(page) => setCurrentPage(page)}
             />
           </div>
         </div>
