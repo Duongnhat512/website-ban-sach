@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { callGetBookFilter } from "../../service/BookService";
 import product1 from "../../assets/images/product1.png";
 import Suggest from "../../component/Suggest/Suggest";
+import { Button } from "antd"; // Import Button từ Ant Design
+import { ReloadOutlined } from "@ant-design/icons"; // Import biểu tượng từ Ant Design
 
 const Filter = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +23,7 @@ const Filter = () => {
       let minPrice = null;
       let maxPrice = null;
 
-      priceFilter.forEach(range => {
+      priceFilter.forEach((range) => {
         switch (range) {
           case "0-150.000 đ":
             minPrice = minPrice === null ? 0 : Math.min(minPrice, 0);
@@ -55,7 +57,12 @@ const Filter = () => {
         search += `${search ? "," : ""}currentPrice<=${maxPrice}`;
       }
 
-      const response = await callGetBookFilter(currentPage, pageSize, sort, search); // Sử dụng giá trị sort từ trạng thái
+      const response = await callGetBookFilter(
+        currentPage,
+        pageSize,
+        sort,
+        search
+      ); // Sử dụng giá trị sort từ trạng thái
       if (response && response.code === 200) {
         setBookList(response.result.result);
         setTotalElements(response.result.totalElements);
@@ -71,13 +78,18 @@ const Filter = () => {
   }, [currentPage, pageSize, priceFilter, sort]); // Cập nhật khi `currentPage`, `pageSize`, `priceFilter`, hoặc `sort` thay đổi
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
   };
 
-  const handleViewAll = () => {
-    navigate('/filter');
+  const handleResetFilter = () => {
+    setPriceFilter([]);
+    setSort("id:desc");
+    setCurrentPage(1);
+    setPageSize(8);
   };
-
   const handlePriceFilterChange = (checkedValues) => {
     setPriceFilter(checkedValues);
   };
@@ -96,16 +108,20 @@ const Filter = () => {
         >
           Trang chủ
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Bộ lọc</Breadcrumb.Item>
+        <Breadcrumb.Item>Filter</Breadcrumb.Item>
       </Breadcrumb>
 
       <div className="flex gap-6">
         {/* Bộ lọc */}
         <div className="w-1/4 p-4 border rounded-lg bg-white">
-          <h3 className="text-lg font-bold mb-4">Bộ Lọc</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold">Bộ Lọc</h3>
+            <Button onClick={handleResetFilter} icon={<ReloadOutlined />} />
+          </div>
           <div className="mb-4">
             <h4 className="font-semibold mb-2">Giá</h4>
             <Checkbox.Group
+              className="flex flex-col space-y-2"
               options={[
                 "0-150.000 đ",
                 "150.000-300.000 đ",
@@ -114,11 +130,13 @@ const Filter = () => {
                 "700.000 - Trở Lên",
               ]}
               onChange={handlePriceFilterChange}
+              value={priceFilter}
             />
           </div>
-          <div>
+          <div className="mb-4">
             <h4 className="font-semibold mb-2">Nhà Cung Cấp</h4>
             <Checkbox.Group
+              className="flex flex-col space-y-2"
               options={[
                 "Cty Văn Hóa Sách Việt",
                 "Megabook",
@@ -131,15 +149,19 @@ const Filter = () => {
               ]}
             />
           </div>
-          <div>
+          <div className="mb-4">
             <h4 className="font-semibold mb-2">Ngôn Ngữ</h4>
             <Checkbox.Group
+              className="flex flex-col space-y-2"
               options={["Tiếng Việt", "Song Ngữ Anh Việt", "Tiếng Anh"]}
             />
           </div>
-          <div>
+          <div className="mb-4">
             <h4 className="font-semibold mb-2">Hình Thức</h4>
-            <Checkbox.Group options={["Bìa Mềm", "Bìa Cứng", "Cards"]} />
+            <Checkbox.Group
+              className="flex flex-col space-y-2"
+              options={["Bìa Mềm", "Bìa Cứng", "Cards"]}
+            />
           </div>
         </div>
 
@@ -147,12 +169,25 @@ const Filter = () => {
         <div className="w-3/4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Sắp Xếp Theo</h2>
-            <Select defaultValue="id:desc" className="w-48" onChange={handleSortChange}>
+            <Select
+              defaultValue="id:desc"
+              className="w-48"
+              onChange={handleSortChange}
+              value={sort}
+            >
               <Select.Option value="id:desc">Sản Phẩm Mới Nhất</Select.Option>
-              <Select.Option value="currentPrice:asc">Giá Từ Thấp Đến Cao</Select.Option>
-              <Select.Option value="currentPrice:desc">Giá Từ Cao Đến Thấp</Select.Option>
-              <Select.Option value="discount:asc">Giảm giá Từ Thấp Đến Cao</Select.Option>
-              <Select.Option value="discount:desc">Giảm giá Từ Cao Đến Thấp</Select.Option>
+              <Select.Option value="currentPrice:asc">
+                Giá Từ Thấp Đến Cao
+              </Select.Option>
+              <Select.Option value="currentPrice:desc">
+                Giá Từ Cao Đến Thấp
+              </Select.Option>
+              <Select.Option value="discount:asc">
+                Giảm giá Từ Thấp Đến Cao
+              </Select.Option>
+              <Select.Option value="discount:desc">
+                Giảm giá Từ Cao Đến Thấp
+              </Select.Option>
             </Select>
           </div>
 
