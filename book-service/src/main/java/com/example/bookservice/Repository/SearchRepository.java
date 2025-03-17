@@ -46,6 +46,7 @@ public class SearchRepository {
         if(search != null){
             for (String s : search){
                 Pattern pattern = Pattern.compile("(\\w+?)([:><!~^$.])(.*)(\\p{Punct}?)(.*)(\\p{Punct}?)");
+
                 Matcher matcher = pattern.matcher(s);
                 if(matcher.find()) {
                     specificationBuildQuery.with(matcher.group(1), matcher.group(2), matcher.group(3),

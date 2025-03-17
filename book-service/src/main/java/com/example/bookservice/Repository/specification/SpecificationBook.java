@@ -1,5 +1,6 @@
 package com.example.bookservice.Repository.specification;
 
+import com.example.bookservice.common.SearchOperation;
 import com.example.bookservice.entity.Book;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -7,6 +8,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.time.LocalDate;
 
 @RequiredArgsConstructor
 public class SpecificationBook implements Specification<Book> {
@@ -19,7 +22,13 @@ public class SpecificationBook implements Specification<Book> {
 
         // Kiểm tra nếu value là số hay không
         boolean isNumber = value.toString().matches("-?\\d+(\\.\\d+)?");
+        if (criteria.getOperation() == SearchOperation.LESS_THAN) {
+            // Nếu field là kiểu LocalDate (ví dụ: năm xuất bản dạng ngày tháng)
+            if (root.get(criteria.getKey()).getJavaType() == LocalDate.class) {
+                return criteriaBuilder.lessThanOrEqualTo(root.get(criteria.getKey()).as(LocalDate.class), LocalDate.of(Integer.parseInt(criteria.getValue().toString()), 1, 1));
+            }
 
+        }
         switch (criteria.getOperation()) {
             case EQUALITY:
                 if (fieldType.equals(String.class)) {

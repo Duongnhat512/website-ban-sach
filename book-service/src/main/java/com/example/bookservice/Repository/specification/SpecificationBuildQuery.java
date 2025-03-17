@@ -33,6 +33,7 @@ public class SpecificationBuildQuery {
                 searchOperation = SearchOperation.STARTS_WITH;
             }
         }
+
         // Kiểm tra nếu đã có key này trong danh sách
         boolean keyExists = criteria.stream().anyMatch(c -> c.getKey().equals(key));
 
