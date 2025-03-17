@@ -83,7 +83,7 @@ const Filter = () => {
 
       if (releaseDateFilter) {
         if (releaseDateFilter === "Trước Năm 2020") {
-          search += `${search ? "," : ""}releasedDate<2012`;
+          search += `${search ? "," : ""}releasedDate<2020`;
         } else {
           search += `${search ? "," : ""}releasedDate.${
             releaseDateFilter.split(" ")[1]
@@ -91,7 +91,7 @@ const Filter = () => {
         }
       }
       console.log(search);
-
+2020
       const response = await callGetBookFilter(
         currentPage,
         pageSize,
