@@ -8,66 +8,67 @@ import Suggest from "../../component/Suggest/Suggest";
 
 const Filter = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(16);
+  const [pageSize, setPageSize] = useState(8);
   const [bookList, setBookList] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [priceFilter, setPriceFilter] = useState([]);
+  const [sort, setSort] = useState("id:desc"); // Thêm trạng thái sort
   const navigate = useNavigate();
 
   const handleGetFilteredBooks = async () => {
     try {
-        let minPrice = null;
-        let maxPrice = null;
+      let minPrice = null;
+      let maxPrice = null;
 
-        priceFilter.forEach(range => {
-            switch (range) {
-                case "0-150.000 đ":
-                    minPrice = minPrice === null ? 0 : Math.min(minPrice, 0);
-                    maxPrice = maxPrice === null ? 50000 : Math.max(maxPrice, 50000);
-                    break;
-                case "150.000-300.000 đ":
-                    minPrice = minPrice === null ? 150000 : Math.min(minPrice, 150000);
-                    maxPrice = maxPrice === null ? 300000 : Math.max(maxPrice, 300000);
-                    break;
-                case "300.000-500.000 đ":
-                    minPrice = minPrice === null ? 300000 : Math.min(minPrice, 300000);
-                    maxPrice = maxPrice === null ? 500000 : Math.max(maxPrice, 500000);
-                    break;
-                case "500.000-700.000 đ":
-                    minPrice = minPrice === null ? 500000 : Math.min(minPrice, 500000);
-                    maxPrice = maxPrice === null ? 700000 : Math.max(maxPrice, 700000);
-                    break;
-                case "700.000 - Trở Lên":
-                    minPrice = minPrice === null ? 700000 : Math.min(minPrice, 700000);
-                    break;
-                default:
-                    break;
-            }
-        });
+      priceFilter.forEach(range => {
+        switch (range) {
+          case "0-150.000 đ":
+            minPrice = minPrice === null ? 0 : Math.min(minPrice, 0);
+            maxPrice = maxPrice === null ? 150000 : Math.max(maxPrice, 150000);
+            break;
+          case "150.000-300.000 đ":
+            minPrice = minPrice === null ? 150000 : Math.min(minPrice, 150000);
+            maxPrice = maxPrice === null ? 300000 : Math.max(maxPrice, 300000);
+            break;
+          case "300.000-500.000 đ":
+            minPrice = minPrice === null ? 300000 : Math.min(minPrice, 300000);
+            maxPrice = maxPrice === null ? 500000 : Math.max(maxPrice, 500000);
+            break;
+          case "500.000-700.000 đ":
+            minPrice = minPrice === null ? 500000 : Math.min(minPrice, 500000);
+            maxPrice = maxPrice === null ? 700000 : Math.max(maxPrice, 700000);
+            break;
+          case "700.000 - Trở Lên":
+            minPrice = minPrice === null ? 700000 : Math.min(minPrice, 700000);
+            break;
+          default:
+            break;
+        }
+      });
 
-        let search = "";
-        if (minPrice !== null) {
-            search += `currentPrice>${minPrice}`;
-        }
-        if (maxPrice !== null) {
-            search += `${search ? "," : ""}currentPrice<${maxPrice}`;
-        }
+      let search = "";
+      if (minPrice !== null) {
+        search += `currentPrice>=${minPrice}`;
+      }
+      if (maxPrice !== null) {
+        search += `${search ? "," : ""}currentPrice<=${maxPrice}`;
+      }
 
-        
-        const response = await callGetBookFilter(currentPage, pageSize, "id:desc", search);
-        if (response && response.code === 200) {
-            setBookList(response.result.result);
-            setTotalElements(response.result.totalElements);
-            console.log(response.result);
-        }
+      const response = await callGetBookFilter(currentPage, pageSize, sort, search); // Sử dụng giá trị sort từ trạng thái
+      if (response && response.code === 200) {
+        setBookList(response.result.result);
+        setTotalElements(response.result.totalElements);
+        setTotalPages(response.result.totalPages);
+      }
     } catch (error) {
-        console.error("Failed to fetch book list:", error);
+      console.error("Failed to fetch book list:", error);
     }
-};
+  };
 
   useEffect(() => {
     handleGetFilteredBooks();
-  }, [currentPage, pageSize, priceFilter]); // Cập nhật khi `currentPage`, `pageSize` hoặc `priceFilter` thay đổi
+  }, [currentPage, pageSize, priceFilter, sort]); // Cập nhật khi `currentPage`, `pageSize`, `priceFilter`, hoặc `sort` thay đổi
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
@@ -79,6 +80,10 @@ const Filter = () => {
 
   const handlePriceFilterChange = (checkedValues) => {
     setPriceFilter(checkedValues);
+  };
+
+  const handleSortChange = (value) => {
+    setSort(value);
   };
 
   return (
@@ -142,11 +147,11 @@ const Filter = () => {
         <div className="w-3/4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Sắp Xếp Theo</h2>
-            <Select defaultValue="bestseller" className="w-48">
-              <Select.Option value="id:isc">Sản Phẩm Mới Nhất</Select.Option>
-              <Select.Option value="currentPrice:isc">Giá Từ Thấp Đến Cao</Select.Option>
+            <Select defaultValue="id:desc" className="w-48" onChange={handleSortChange}>
+              <Select.Option value="id:desc">Sản Phẩm Mới Nhất</Select.Option>
+              <Select.Option value="currentPrice:asc">Giá Từ Thấp Đến Cao</Select.Option>
               <Select.Option value="currentPrice:desc">Giá Từ Cao Đến Thấp</Select.Option>
-              <Select.Option value="discount:isc">Giảm giá Từ Thấp Đến Cao</Select.Option>
+              <Select.Option value="discount:asc">Giảm giá Từ Thấp Đến Cao</Select.Option>
               <Select.Option value="discount:desc">Giảm giá Từ Cao Đến Thấp</Select.Option>
             </Select>
           </div>
