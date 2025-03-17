@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Badge, Select, Pagination, Checkbox, Breadcrumb } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { callGetBook } from "../../service/BookService";
+import { callGetBookFilter } from "../../service/BookService";
 import product1 from "../../assets/images/product1.png";
 import Suggest from "../../component/Suggest/Suggest";
 
@@ -11,27 +11,76 @@ const Filter = () => {
   const [pageSize, setPageSize] = useState(16);
   const [bookList, setBookList] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
+  const [priceFilter, setPriceFilter] = useState([]);
   const navigate = useNavigate();
 
-  const handleGetAllBook = async () => {
+  const handleGetFilteredBooks = async () => {
     try {
-      const response = await callGetBook(1, 16);
-      if (response && response.code === 200) {
-        setBookList(response.result.result);
-        setTotalElements(response.result.totalElements);
-        console.log(response.result.result);
-      }
+        let minPrice = null;
+        let maxPrice = null;
+
+        priceFilter.forEach(range => {
+            switch (range) {
+                case "0-150.000 đ":
+                    minPrice = minPrice === null ? 0 : Math.min(minPrice, 0);
+                    maxPrice = maxPrice === null ? 50000 : Math.max(maxPrice, 50000);
+                    break;
+                case "150.000-300.000 đ":
+                    minPrice = minPrice === null ? 150000 : Math.min(minPrice, 150000);
+                    maxPrice = maxPrice === null ? 300000 : Math.max(maxPrice, 300000);
+                    break;
+                case "300.000-500.000 đ":
+                    minPrice = minPrice === null ? 300000 : Math.min(minPrice, 300000);
+                    maxPrice = maxPrice === null ? 500000 : Math.max(maxPrice, 500000);
+                    break;
+                case "500.000-700.000 đ":
+                    minPrice = minPrice === null ? 500000 : Math.min(minPrice, 500000);
+                    maxPrice = maxPrice === null ? 700000 : Math.max(maxPrice, 700000);
+                    break;
+                case "700.000 - Trở Lên":
+                    minPrice = minPrice === null ? 700000 : Math.min(minPrice, 700000);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        let search = "";
+        if (minPrice !== null) {
+            search += `currentPrice>${minPrice}`;
+        }
+        if (maxPrice !== null) {
+            search += `${search ? "," : ""}currentPrice<${maxPrice}`;
+        }
+
+        
+        const response = await callGetBookFilter(currentPage, pageSize, "id:desc", search);
+        if (response && response.code === 200) {
+            setBookList(response.result.result);
+            setTotalElements(response.result.totalElements);
+            console.log(response.result);
+        }
     } catch (error) {
-      console.error("Failed to fetch book list:", error);
+        console.error("Failed to fetch book list:", error);
     }
-  };
+};
 
   useEffect(() => {
-    handleGetAllBook();
-  }, [currentPage, pageSize]); // Cập nhật khi `currentPage` hoặc `pageSize` thay đổi
+    handleGetFilteredBooks();
+  }, [currentPage, pageSize, priceFilter]); // Cập nhật khi `currentPage`, `pageSize` hoặc `priceFilter` thay đổi
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
   };
+
+  const handleViewAll = () => {
+    navigate('/filter');
+  };
+
+  const handlePriceFilterChange = (checkedValues) => {
+    setPriceFilter(checkedValues);
+  };
+
   return (
     <div className="p-6 max-w-6xl mx-auto flex flex-col gap-6">
       {/* Breadcrumb */}
@@ -59,6 +108,7 @@ const Filter = () => {
                 "500.000-700.000 đ",
                 "700.000 - Trở Lên",
               ]}
+              onChange={handlePriceFilterChange}
             />
           </div>
           <div>
@@ -91,10 +141,13 @@ const Filter = () => {
         {/* Danh sách sách */}
         <div className="w-3/4">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Sách Tham Khảo</h2>
+            <h2 className="text-xl font-bold">Sắp Xếp Theo</h2>
             <Select defaultValue="bestseller" className="w-48">
-              <Select.Option value="bestseller">Bán Chạy Tuần</Select.Option>
-              <Select.Option value="latest">Mới Nhất</Select.Option>
+              <Select.Option value="id:isc">Sản Phẩm Mới Nhất</Select.Option>
+              <Select.Option value="currentPrice:isc">Giá Từ Thấp Đến Cao</Select.Option>
+              <Select.Option value="currentPrice:desc">Giá Từ Cao Đến Thấp</Select.Option>
+              <Select.Option value="discount:isc">Giảm giá Từ Thấp Đến Cao</Select.Option>
+              <Select.Option value="discount:desc">Giảm giá Từ Cao Đến Thấp</Select.Option>
             </Select>
           </div>
 
@@ -106,7 +159,7 @@ const Filter = () => {
                 cover={
                   <img
                     alt={book.title}
-                    src={book.thumbnail || product1}
+                    src={product1 || book.thumbnail}
                     className="p-2"
                   />
                 }

@@ -9,3 +9,14 @@ export const callGetBook = async (page, size) => {
     throw error;
   }
 };
+export const callGetBookFilter = async (page, size, sort, search) => {
+  try {
+    const url = `/api/v1/books/search-by-keyword?page=${page}&size=${size}&sort=${sort}&search=${search}`;
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+

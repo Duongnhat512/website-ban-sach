@@ -45,7 +45,7 @@ function Suggest() {
                 cover={
                   <Image
                     alt={book.title}
-                    src={book.thumbnail || product1} // Sử dụng hình ảnh placeholder cục bộ
+                    src={product1 || book.thumbnail} // Sử dụng hình ảnh placeholder cục bộ
                     className="w-full h-48 object-cover"
                   />
                 }

@@ -30,22 +30,20 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="container">
-      <Router>
-        <Routes>
-          <Route path="/" element={<LayoutUser />}>
-            <Route index element={<HomePage />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/filter" element={<Filter />} />
-            <Route path="/Banner1" element={<Banner1 />} />
-          </Route>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="/admin" element={<LayoutAdmin />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LayoutUser />}>
+          <Route index element={<HomePage />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/filter" element={<Filter />} />
+          <Route path="/Banner1" element={<Banner1 />} />
+        </Route>
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="/admin" element={<LayoutAdmin />} />
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </Router>
   );
 }
 
