@@ -7,11 +7,13 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 
 @RequiredArgsConstructor
+@Slf4j
 public class SpecificationBook implements Specification<Book> {
     private final SpecSearchCriteria criteria;
     @Override
@@ -27,7 +29,13 @@ public class SpecificationBook implements Specification<Book> {
             if (root.get(criteria.getKey()).getJavaType() == LocalDate.class) {
                 return criteriaBuilder.lessThanOrEqualTo(root.get(criteria.getKey()).as(LocalDate.class), LocalDate.of(Integer.parseInt(criteria.getValue().toString()), 1, 1));
             }
-
+        }
+        if (criteria.getOperation() == SearchOperation.CONTAINS) {
+            // Nếu field là kiểu LocalDate (ví dụ: năm xuất bản dạng ngày tháng)
+            if (root.get(criteria.getKey()).getJavaType() == LocalDate.class) {
+                log.info("Hehe: {}", criteria);
+                return criteriaBuilder.between(root.get(criteria.getKey()).as(LocalDate.class), LocalDate.of(Integer.parseInt(criteria.getValue().toString()), 1, 1), LocalDate.of(Integer.parseInt(criteria.getValue().toString()), 12, 31));
+            }
         }
         switch (criteria.getOperation()) {
             case EQUALITY:
