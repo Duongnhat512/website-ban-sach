@@ -23,12 +23,13 @@ public class PaymentController {
         var response = paymentService.createPayment(request);
         return ResponseEntity.status(response.getCode()).body(response);
     }
-    @GetMapping("vn-pay")
+    @GetMapping("/vn-pay")
     public ResponseEntity<VNPayResponse> vnPay(HttpServletRequest request){
         return ResponseEntity.status(200).body(paymentService.createPayment(request));
     }
-    @GetMapping("vnpay-callback")
-    public ResponseEntity<VNPayResponse> vnPay_callBack(HttpServletRequest request, HttpServletResponse httpServletResponse){
-        return ResponseEntity.status(200).body(paymentService.createPayment(request));
+    @GetMapping("/vnpay-callback")
+    public ResponseEntity<VNPayResponse> callBack(HttpServletRequest request) {
+        VNPayResponse response = paymentService.callBack(request);
+        return ResponseEntity.ok(response);
     }
 }
