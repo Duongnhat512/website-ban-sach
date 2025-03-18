@@ -1,0 +1,44 @@
+.left-align-label .ant-form-item-label {
+    text-align: left;
+}
+
+.title{
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #949494;
+}
+
+.payment-container{
+    max-width: 1200px;
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.payment{
+    overflow-x: hidden;
+    background-color: #f0f0f0;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    background-color: #ffff;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.sticky-footer {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    border-top: 1px solid #e8e8e8;
+    box-shadow: 0 -2px 8px rgba(180, 124, 124, 0.15);
+    
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px
+  }
