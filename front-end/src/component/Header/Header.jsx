@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Layout,
   Menu,
@@ -226,7 +226,7 @@ const AppHeader = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.authenticated);
   const username = useSelector(
-    (state) => state.user?.user?.fullName.split(" ")[0]
+    (state) => state.user?.user?.fullName?.split(" ")[0] || ""
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -237,11 +237,6 @@ const AppHeader = () => {
 
   const showRegisterModal = () => {
     setIsRegisterOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsLoginOpen(false);
-    setIsRegisterOpen(false);
   };
 
   const handleLogout = async () => {
@@ -273,7 +268,9 @@ const AppHeader = () => {
   const userMenu = (
     <Menu>
       <Menu.Item key="1">
-        <Button type="link">Thông tin cá nhân</Button>
+        <Button type="link" onClick={() => navigate("/info")}>
+          Thông tin cá nhân
+        </Button>
       </Menu.Item>
       <Menu.Item key="2">
         <Button type="link">Lịch sử mua hàng</Button>
@@ -370,7 +367,10 @@ const AppHeader = () => {
                 }
               />
             </Col>
-            <Col span={6} className="flex items-center justify-between gap-5 px-5">
+            <Col
+              span={6}
+              className="flex items-center justify-between gap-5 px-5"
+            >
               <div className="flex flex-col items-center text-center cursor-pointer">
                 <BellOutlined className="text-xl" />
                 <p className="text-xs text-black leading-tight">Thông báo</p>

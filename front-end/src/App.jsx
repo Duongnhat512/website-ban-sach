@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LayoutUser from "./component/LayoutUser/LayoutUser";
 import LayoutAdmin from "./component/LayoutAdmin/LayoutAdmin";
@@ -13,6 +13,7 @@ import ProductDetail from "./page/ProductDetail/ProductDetail";
 import Filter from "./page/Filter/Filter";
 import Banner1 from "./page/HomeBanner/Banner1";
 import Cart from "./page/Cart/Cart";
+import UserInfo from "./page/InfoUser";
 
 function App() {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function App() {
           <Route path="/filter" element={<Filter />} />
           <Route path="/Banner1" element={<Banner1 />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/info" element={<UserInfo />} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
