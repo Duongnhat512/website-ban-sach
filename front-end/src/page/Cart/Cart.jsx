@@ -173,7 +173,7 @@ function Cart() {
               />
             </div>
           ) : (
-            <div className=" shadow-lg rounded-lg bg-white flex flex-col items-center justify-center max-w-[1200px] w-full mx-auto ">
+            <div className=" shadow-lg rounded-lg bg-white flex flex-col items-center justify-center max-w-[1280px] w-full mx-auto ">
               <Card className="w-full  " bordered={false}>
                 <h2 className="text-xl font-semibold mb-4">
                   GIỎ HÀNG <span className="text-gray-500">(0 sản phẩm)</span>

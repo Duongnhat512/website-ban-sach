@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Input, Button, Radio, Card, Menu } from "antd";
 import { Row, Col } from "antd"; // Import thêm Row và Col từ Ant Design
 import { useDispatch, useSelector } from "react-redux";
-
+import emtyCart from "../../assets/images/ico_emptycart (1).svg";
+import Suggest from "../../component/Suggest/Suggest";
 const UserInfo = () => {
   const isLoggedIn = useSelector((state) => state.user.authenticated);
   const user = useSelector((state) => state.user.user);
@@ -173,16 +174,27 @@ const UserInfo = () => {
             {/* Nút lưu */}
             <Button
               type="primary"
-             className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
+              className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
             >
               Đổi mật khẩu
             </Button>
           </div>
         );
-      case "invoice":
-        return <p>Thông tin xuất hóa đơn GTGT.</p>;
-      case "rewards":
-        return <p>Ưu đãi thành viên.</p>;
+      case "order":
+        return (
+          <div className="flex flex-col items-center justify-center h-full space-y-4">
+            {/* SVG Icon */}
+            <img
+              src={emtyCart} // Thay bằng đường dẫn SVG của bạn
+              alt="Empty Orders"
+              className="w-32 h-32"
+            />
+            {/* Text */}
+            <p className="text-gray-500 text-lg font-medium">
+              Bạn chưa có đơn hàng nào
+            </p>
+          </div>
+        );
       default:
         return null;
     }
@@ -194,41 +206,48 @@ const UserInfo = () => {
   }, [isLoggedIn]);
 
   return (
-    <div className="flex justify-center bg-gray-100 py-10">
-      <div className="max-w-screen-xl w-full rounded-lg p-6">
-        <Row gutter={[16, 16]} className="h-full flex items-stretch">
-          {/* Sidebar */}
-          <Col
-            span={6}
-            className="p-4 bg-white h-full flex flex-col rounded-lg"
-          >
-            <h2 className="text-lg font-semibold mb-4">Thông tin tài khoản</h2>
-            <Menu
-              mode="vertical"
-              selectedKeys={[selectedKey]}
-              onClick={(e) => setSelectedKey(e.key)}
+    <div className="bg-gray-100">
+      <div className="flex justify-center bg-gray-100 py-10">
+        <div className="max-w-screen-xl w-full mx-auto rounded-lg">
+          <Row gutter={[16, 16]} className="h-full flex items-stretch ">
+            {/* Sidebar */}
+            <Col
+              span={7}
+              className="p-4 bg-white h-full flex flex-col rounded-lg"
             >
-              <Menu.Item key="profile">Hồ sơ cá nhân</Menu.Item>
-              <Menu.Item key="address">Số địa chỉ</Menu.Item>
-              <Menu.Item key="password">Đổi mật khẩu</Menu.Item>
-              <Menu.Item key="invoice">Thông tin xuất hóa đơn GTGT</Menu.Item>
-              <Menu.Item key="rewards">Ưu đãi thành viên</Menu.Item>
-            </Menu>
-          </Col>
+              <h2 className="text-lg font-semibold mb-4">
+                Thông tin tài khoản
+              </h2>
+              <Menu
+                mode="vertical"
+                selectedKeys={[selectedKey]}
+                onClick={(e) => setSelectedKey(e.key)}
+              >
+                <Menu.Item key="profile">Hồ sơ cá nhân</Menu.Item>
+                <Menu.Item key="address">Số địa chỉ</Menu.Item>
+                <Menu.Item key="password">Đổi mật khẩu</Menu.Item>
+                <Menu.Item key="order">Đơn hàng của tôi</Menu.Item>
+              </Menu>
+            </Col>
 
-          {/* Main Content */}
-          <Col
-            span={16}
-            offset={1}
-            className="bg-white  h-full flex flex-col p-4 rounded-lg"
-          >
-            <h2 className="text-xl font-semibold mb-4">
-              {selectedKey === "profile" ? "Hồ sơ cá nhân" : "Thông tin khác"}
-            </h2>
-            {renderContent()}
-          </Col>
-        </Row>
+            {/* Main Content */}
+            <Col
+              span={16}
+              offset={1}
+              className="bg-white h-full flex flex-col p-4 rounded-lg"
+            >
+              <h2 className="text-xl font-semibold mb-4">
+                {selectedKey === "profile" && "Hồ sơ cá nhân"}
+                {selectedKey === "address" && "Địa chỉ của tôi"}
+                {selectedKey === "password" && "Thay đổi mật khẩu"}
+                {selectedKey === "order" && "Hồ sơ đặt hàng"}
+              </h2>
+              {renderContent()}
+            </Col>
+          </Row>
+        </div>
       </div>
+      <Suggest />
     </div>
   );
 };
