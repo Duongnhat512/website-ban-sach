@@ -14,6 +14,7 @@ import org.learning.authenticationservice.repository.RoleRepository;
 import org.learning.authenticationservice.repository.UserRepository;
 import org.learning.authenticationservice.service.UserService;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -76,8 +77,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUser(Long id, UserRequest request) {
-        UserResponse userResponse = getUserById(id);
-        return userMapper.toUserResponse(userRepository.save(userMapper.toUser(request)));
+        // Lấy thông tin người dùng hiện tại
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+
+        // Cập nhật thông tin người dùng
+        existingUser.setFirstName(request.getFirstName());
+        existingUser.setLastName(request.getLastName());
+        existingUser.setEmail(request.getEmail());
+        existingUser.setDob(request.getDob());
+        existingUser.setPhoneNumber(request.getPhoneNumber());
+        // Thêm các trường khác cần cập nhật
+
+        // Lưu người dùng đã cập nhật
+        User updatedUser = userRepository.save(existingUser);
+
+        // Chuyển đổi User thành UserResponse
+        return userMapper.toUserResponse(updatedUser);
     }
 
     @Override

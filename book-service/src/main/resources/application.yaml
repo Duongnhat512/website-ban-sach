@@ -3,10 +3,10 @@ spring:
   application:
     name: book-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/authentication-service
-    username: postgres
-    password: 12345678
-    driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://shortline.proxy.rlwy.net:54578/railway
+      username: postgres
+      password: fUOEYQwFdWztnsQnnbwaiihbTDxdOilm
+      driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
