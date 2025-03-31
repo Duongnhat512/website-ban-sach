@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LayoutUser from "./component/LayoutUser/LayoutUser";
 import LayoutAdmin from "./component/LayoutAdmin/LayoutAdmin";
@@ -13,8 +13,10 @@ import ProductDetail from "./page/ProductDetail/ProductDetail";
 import Filter from "./page/Filter/Filter";
 import Banner1 from "./page/HomeBanner/Banner1";
 import Cart from "./page/Cart/Cart";
-import Oauth2 from "./page/Login/Oauth2";
+import UserInfo from "./page/InfoUser";
+import Chatbox from "./page/ChatPage/ChatBox/ChatBox.jsx";
 
+import Oauth2 from "./page/Login/Oauth2";
 function App() {
   const dispatch = useDispatch();
 
@@ -40,12 +42,14 @@ function App() {
           <Route path="/filter" element={<Filter />} />
           <Route path="/Banner1" element={<Banner1 />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/info" element={<UserInfo />} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="/admin" element={<LayoutAdmin />} />
         <Route path="*" element={<ErrorPage />} />
         <Route path="/oauth2/callback/:clientCode" element={<Oauth2 />} />
+        <Route path="/chatBox" element={<Chatbox />} />
       </Routes>
     </Router>
   );

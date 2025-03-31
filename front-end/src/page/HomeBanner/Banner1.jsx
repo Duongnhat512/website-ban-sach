@@ -313,7 +313,7 @@ const ProductList = () => {
 };
 function Banner1() {
   return (
-    <div className="container mx-auto " style={{ backgroundColor: "#33b564",maxWidth:1200,margin:"auto" }}>
+    <div className="container mx-auto " style={{ backgroundColor: "#33b564",maxWidth:1280,margin:"auto" }}>
       <div className="mx-auto ">
         <div className="">
           <Image
