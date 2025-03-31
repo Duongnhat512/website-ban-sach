@@ -34,7 +34,7 @@ function Suggest() {
   };
 
   return (
-    <div className="suggest">
+    <div className="suggest ">
       <div className="suggest-background"></div>
       <div className="suggest-content">
         <Row gutter={[16, 16]}>

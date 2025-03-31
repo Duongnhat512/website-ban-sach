@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { callGetABook } from "../../service/BookService";
 const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState("/images/main-image.jpg");
@@ -22,6 +22,8 @@ const ProductDetail = () => {
     format: "Bìa Mềm",
     bestseller: "Top 100 sản phẩm Truyện Tranh Thiếu Nhi bán chạy của tháng"
   };
+
+  
   const increaseQuantity = () => setQuantity(quantity + 1);
   const decreaseQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 

@@ -156,7 +156,7 @@ function Cart() {
               />
             </div>
           ) : (
-            <div className=" shadow-lg rounded-lg bg-white flex flex-col items-center justify-center max-w-[1200px] w-full mx-auto ">
+            <div className=" shadow-lg rounded-lg bg-white flex flex-col items-center justify-center max-w-[1280px] w-full mx-auto ">
               <Card className="w-full  " bordered={false}>
                 <div className="flex flex-col items-center text-center">
                   <img src={Cart_Empty} alt="Empty Cart" className="w-32 mb-4" />
