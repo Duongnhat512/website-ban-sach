@@ -3,9 +3,9 @@ spring:
   application:
     name: order-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/authentication-service
+    url: jdbc:postgresql://shortline.proxy.rlwy.net:54578/railway
     username: postgres
-    password: 12345678
+    password: fUOEYQwFdWztnsQnnbwaiihbTDxdOilm
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
