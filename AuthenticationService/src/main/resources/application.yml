@@ -23,28 +23,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9094
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 416215036097-h4scpfo2ev637cfpbhg5rk0bnrncpsin.apps.googleusercontent.com
-            client-secret: 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
-            redirect-uri:  http://localhost:3000/oauth2/callback/google
-            scope:
-              - profile
-              - email
-          github:
-            client-id: Ov23lisQQDkPsSaA8tnv
-            client-secret: 8737f41e6cc548f22da69226ef7a73a9d3aac422
-            redirect-uri: http://localhost:3000/oauth2/callback/github
-            scope:
-              - user:email
-              - read:user
-          facebook:
-            client-id: 1320082529110973
-            client-secret: be36ade40fcf42487d35bb07e553fbbd
-            redirect-uri: http://localhost:3000/oauth2/callback/facebook
+
 management:
   zipkin:
     tracing:
