@@ -4,6 +4,7 @@ import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { callLoginApi, callGetUserToken } from "../../service/UserService";
 import { loginSuccess, setUser } from "../../redux/UserSlice";
+import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
 import "./Login.scss";
 
 const Login = ({ isOpen, onClose, onSwitch }) => {
@@ -35,7 +36,7 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
       localStorage.setItem("token", response.result.token);
       const userResponse = await callGetUserToken();
       console.log(userResponse);
-      
+
       dispatch(setUser(userResponse.result));
       // Xử lý logic sau khi đăng nhập thành công, ví dụ: lưu token, chuyển hướng trang, v.v.
       onClose();
@@ -45,7 +46,16 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
       setLoading(false);
     }
   };
-
+  const handleGithubLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/github";
+  };
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+  const handleFacebookLogin = () => {
+    window.location.href =
+      "http://localhost:8080/oauth2/authorization/facebook";
+  };
   return (
     <Modal
       open={isOpen}
@@ -82,10 +92,31 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
             >
               Đăng nhập
             </Button>
-            <Button block size="large" className="skip-btn" onClick={onClose}>
-              Bỏ qua
+
+            <Button id="google-login" onClick={handleGoogleLogin}>
+              <FaGoogle size={17} style={{ color: "red" }} />
+              <span className="ms-2 fs-6 flex-grow-1">
+                Continue with Google
+              </span>
+            </Button>
+
+            <Button onClick={handleFacebookLogin}>
+              <FaFacebook size={17} style={{ color: "blue" }} />
+              <span className="ms-2 fs-6 flex-grow-1">
+                Continue with Facebook
+              </span>
+            </Button>
+
+            <Button onClick={handleGithubLogin}>
+              <FaGithub size={17} />
+              <span className="ms-2 fs-6 flex-grow-1">
+                Continue with Github
+              </span>
             </Button>
           </div>
+          <Button block size="large" className="skip-btn" onClick={onClose}>
+            Bỏ qua
+          </Button>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Đăng ký" key="2">
           <p>Chuyển sang đăng ký...</p>

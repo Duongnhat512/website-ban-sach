@@ -13,6 +13,7 @@ import ProductDetail from "./page/ProductDetail/ProductDetail";
 import Filter from "./page/Filter/Filter";
 import Banner1 from "./page/HomeBanner/Banner1";
 import Cart from "./page/Cart/Cart";
+import Oauth2 from "./page/Login/Oauth2";
 
 function App() {
   const dispatch = useDispatch();
@@ -44,6 +45,7 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="/admin" element={<LayoutAdmin />} />
         <Route path="*" element={<ErrorPage />} />
+        <Route path="/oauth2/callback/:clientCode" element={<Oauth2 />} />
       </Routes>
     </Router>
   );
