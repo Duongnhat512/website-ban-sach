@@ -1,4 +1,4 @@
-package org.learning.orderservice.config;
+package iuh.fit.se.paymentservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,17 +19,15 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/internal/books/**",
-            "/orders**",
-            "/order-details**",
             "/internal/orders/**",
+            "/payment/**",
     };
     private final CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> {
-            request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll().anyRequest().authenticated();
+            request.requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll().anyRequest().authenticated();
         });
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer ->
                 jwtConfigurer.decoder(customJwtDecoder)

@@ -41,7 +41,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     @NonFinal
     private String[] publicEndpoints = {"/v3/api-docs", "/swagger-ui", "/swagger-ui.html"
-            ,"/auth/.*","/order-details/create","/books/.*" , "/comments/.*", "/promotions/.*"};
+            ,"/auth/.*","/order-details/create","/books/.*" , "/comments/.*", "/promotions/.*","/payment/vnpay-callback"};
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

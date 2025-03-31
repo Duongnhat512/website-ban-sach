@@ -109,4 +109,13 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 
+    @Override
+    public Order updatePaymentStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setPaymentStatus(status);
+        orderRepository.save(order);
+        return order;
+    }
+
 }

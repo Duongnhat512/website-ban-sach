@@ -70,7 +70,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./elastic-search-data:/usr/share/elasticsearch/data
+      - "D:/elastic-data:/usr/share/elasticsearch/data"
     ports:
       - "9200:9200"
     networks:
