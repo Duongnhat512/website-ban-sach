@@ -63,7 +63,7 @@ public class VNPayUtils {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         params.put("vnp_TxnRef", paymentInfo.getReference());
-        params.put("vnp_OrderInfo", paymentInfo.getDescription());
+        params.put("vnp_OrderInfo", String.valueOf(paymentInfo.getOrderId()));
         params.put("vnp_Amount", paymentInfo.getAmount().setScale(0, RoundingMode.DOWN).toString());
         params.put("vnp_CreateDate", formatter.format(paymentInfo.getCreatedAt().atZone(zone).toLocalDateTime()));
         params.put("vnp_ExpireDate", formatter.format(paymentInfo.getExpiredAt().atZone(zone).toLocalDateTime()));

@@ -22,6 +22,7 @@ public class PaymentInfo {
     Instant createdAt = Instant.now();
     Duration expiresIn;
     String ipAddress;
+    Long orderId;
 
     public Instant getExpiredAt() {
         return createdAt.plus(expiresIn);

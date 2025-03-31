@@ -59,7 +59,6 @@ public class UserServiceImpl implements UserService {
 
         try{
             user = userRepository.save(user);
-
             NotificationEvent notificationEvent = NotificationEvent.builder()
                     .channel("EMAIL")
                     .recipient(user.getEmail())

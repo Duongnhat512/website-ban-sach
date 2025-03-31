@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -28,8 +30,17 @@ public class PaymentController {
         return ResponseEntity.status(200).body(paymentService.createPayment(request));
     }
     @GetMapping("/vnpay-callback")
-    public ResponseEntity<VNPayResponse> callBack(HttpServletRequest request) {
-        VNPayResponse response = paymentService.callBack(request);
-        return ResponseEntity.ok(response);
+    public void callBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        {
+            VNPayResponse vnPayResponse = paymentService.callBack(request);
+            log.info("VNPay callback response: {}", response);
+            if (vnPayResponse.getCode() == 200) {
+                response.sendRedirect("http://localhost:3000/payment-success");
+            } else {
+                // Payment failed
+                // Do something
+                response.sendRedirect("http://localhost:3000/payment-failed");
+            }
+        }
     }
 }
