@@ -12,12 +12,13 @@ export const orderSlice = createSlice({
       );
 
       if (productIndex >= 0) {
-        // If the product is already in the cart, update the quantity
-        state.orders[productIndex].quantity = action.payload.quantity;
+        state.orders[productIndex].amount += action.payload.amount;
       } else {
-        // If the product is not in the cart, add it
         state.orders.push(action.payload);
+        console.log(JSON.parse(JSON.stringify(state.orders)));
+        
       }
+      
     },
     doRemoveOrder: (state, action) => {
       state.orders = state.orders.filter(

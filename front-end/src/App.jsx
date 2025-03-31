@@ -15,6 +15,7 @@ import Banner1 from "./page/HomeBanner/Banner1";
 import Cart from "./page/Cart/Cart";
 import UserInfo from "./page/InfoUser";
 import Chatbox from "./page/ChatPage/ChatBox/ChatBox.jsx";
+import Payment from "./page/Payment/Payment";
 
 import Oauth2 from "./page/Login/Oauth2";
 import PaymentSuccess from "./page/Payment/PaymentSuccess.jsx";
