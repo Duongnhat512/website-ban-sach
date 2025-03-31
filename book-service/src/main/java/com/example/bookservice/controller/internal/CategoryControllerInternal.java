@@ -23,5 +23,4 @@ public class CategoryControllerInternal {
         log.info("Getting book by id: {}", id);
         return mapper.toCategory(categoryService.getCategoryById(id));
     }
-
 }

@@ -56,6 +56,40 @@ services:
       - "9411:9411"
     networks:
       - BookStoreMicroservices
+  elasticsearch-microservice:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: elasticsearch-microservice
+    environment:
+      - discovery.type=single-node
+      - node.name=elastic-search
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elastic-search-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - BookStoreMicroservices
+    restart: unless-stopped
+
+  kibana-microservice:
+    image: docker.elastic.co/kibana/kibana:8.15.3
+    container_name: kibana-microservice
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - 'NODE_OPTIONS=--max-old-space-size=2048'
+    ports:
+      - "5601:5601"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - elasticsearch-microservice
+    restart: unless-stopped
 networks:
   BookStoreMicroservices:
     driver: bridge

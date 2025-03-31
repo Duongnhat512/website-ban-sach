@@ -1,11 +1,14 @@
 package com.example.bookservice.service.impl;
 
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import com.example.bookservice.Repository.BookElasticSearchRepository;
 import com.example.bookservice.Repository.BookRepository;
 import com.example.bookservice.Repository.SearchRepository;
 import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Book;
+import com.example.bookservice.entity.BookElasticSearch;
 import com.example.bookservice.mapper.BookMapper;
 import com.example.bookservice.service.BookService;
 import jakarta.persistence.EntityManager;
@@ -19,10 +22,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -31,24 +41,52 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     private final BookRepository repository;
     private final BookMapper bookMapper;
+    private final ElasticsearchTemplate elasticsearchTemplate;
+    private final BookElasticSearchRepository elasticsearchRepository;
 
     private final CloudinaryService cloudinaryService;
     @Autowired
     private EntityManager entityManager;
 
     private final SearchRepository searchRepository;
+
     @Override
     public BookCreationResponse createBook(BookCreationRequest request) {
         log.info("Creating book with title: {}", request.getTitle());
         Book book = bookMapper.toBook(request);
+
         repository.save(book);
+        BookElasticSearch bookElasticSearch = BookElasticSearch.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .description(book.getDescription())
+                .author(book.getAuthor())
+                .originalPrice(book.getOriginalPrice())
+                .currentPrice(book.getCurrentPrice())
+                .quantity(book.getQuantity())
+                .discount(book.getDiscount())
+                .publisher(book.getPublisher())
+                .pages(book.getPages())
+                .thumbnail(book.getThumbnail())
+                .build();
+        elasticsearchRepository.existsById(bookElasticSearch.getId())
+                .flatMap(exists -> {
+                    if (Boolean.FALSE.equals(exists)) {
+                        return elasticsearchRepository.save(bookElasticSearch)
+                                .doOnSuccess(saved -> log.info("Course {} saved to Elasticsearch", saved.getId()));
+                    }
+                    return Mono.empty(); // Nếu không tồn tại, không làm gì
+                })
+                .subscribe();
+
+
         return bookMapper.toBookCreationResponse(book);
 
     }
 
     @Override
     public PageResponse<BookCreationResponse> getBooks(int page, int size) {
-        Pageable pageable = PageRequest.of(page-1,size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Book> books = repository.findAll(pageable);
         return PageResponse.<BookCreationResponse>builder()
                 .currentPage(page)
@@ -126,8 +164,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public PageResponse<BookCreationResponse> findByCategory(String category, int page, int size) {
-        Pageable pageable = PageRequest.of(page-1,size);
-        Page<Book> books = repository.findByCategory(category,pageable);
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Book> books = repository.findByCategory(category, pageable);
         return PageResponse.<BookCreationResponse>builder()
                 .currentPage(page)
                 .pageSize(size)
@@ -163,6 +201,66 @@ public class BookServiceImpl implements BookService {
     public PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size, String sortBy, String... search) {
         return searchRepository.getBookWithSortAndSearchSpecification(page, size, sortBy, search);
     }
+    @Override
+    public PageResponse<BookElasticSearch> searchCourse(String keyword, int page, int size) {
+        try {
+            NativeQuery nativeQuery;
+            if (keyword == null || keyword.isBlank()) {
+                nativeQuery = NativeQuery.builder()
+                        .withQuery(q -> q.matchAll(m -> m))
+                        .withPageable(PageRequest.of(Math.max(0, page - 1), size))
+                        .build();
+            } else {
+                nativeQuery = NativeQuery.builder()
+                        .withQuery(q -> q.bool(b -> b
+                                .should(s -> s.match(m -> m
+                                        .field("title")  // Thêm `.keyword` nếu là field dạng text
+                                        .query(keyword)
+                                        .fuzziness("AUTO")
+                                        .minimumShouldMatch("70%")
+                                        .boost(2.0F)))
+                                .should(s -> s.match(m -> m
+                                        .field("description")
+                                        .query(keyword)
+                                        .fuzziness("AUTO")
+                                        .minimumShouldMatch("70%")
+                                        .boost(2.0F)))
+                                .should(s -> s.match(m -> m
+                                        .field("author")
+                                        .query(keyword)
+                                        .fuzziness("AUTO")
+                                        .minimumShouldMatch("70%")
+                                        .boost(2.0F)))
+                                .should(s -> s.match(m -> m
+                                        .field("publisher")
+                                        .query(keyword)
+                                        .fuzziness("AUTO")
+                                        .minimumShouldMatch("70%")
+                                        .boost(2.0F)))
+                        ))
+                        .withPageable(PageRequest.of(Math.max(0, page - 1), size))
+                        .build();
+            }
 
+            SearchHits<BookElasticSearch> searchHits = elasticsearchTemplate.search(nativeQuery, BookElasticSearch.class);
 
+            long totalElement = searchHits.getTotalHits();
+            return PageResponse.<BookElasticSearch>builder()
+                    .currentPage(page)
+                    .pageSize(size)
+                    .totalElements(totalElement)
+                    .totalPages((int) Math.ceil(totalElement / (double) size))
+                    .result(searchHits.getSearchHits().stream().map(SearchHit::getContent).toList())
+                    .build();
+        } catch (ElasticsearchException e) {
+            e.printStackTrace();
+            return PageResponse.<BookElasticSearch>builder()
+                    .currentPage(page)
+                    .pageSize(size)
+                    .totalElements(0)
+                    .totalPages(0)
+                    .result(Collections.emptyList()) // Trả về danh sách rỗng nếu có lỗi
+                    .build();
+        }
+    }
 }
