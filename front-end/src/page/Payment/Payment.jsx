@@ -1,6 +1,9 @@
 import { Form, Input, Radio, Button, Modal, List, Row, Col, Checkbox } from "antd";
 import { useEffect, useState } from "react";
 import "./Payment.scss";
+import { Typography } from "antd";
+
+const { Text } = Typography;
 
 function Payment() {
 
@@ -120,7 +123,7 @@ function Payment() {
         fetchUserInfo();
         fetchPromotions();
         fetchOrderItems();
-    })
+    }, [])
 
     useEffect(() => {
         calculateTotalPrice();
@@ -131,7 +134,7 @@ function Payment() {
             <div className="payment-container">
                 <div className="content">
                     <div className="title">
-                        <text>ĐỊA CHỈ GIAO HÀNG</text>
+                        <Text>ĐỊA CHỈ GIAO HÀNG</Text>
                     </div>
                     <Form
                         name="Dia chi giao hang"
@@ -154,7 +157,7 @@ function Payment() {
                                 },
                             ]}
                         >
-                            <Input type="text" placeholder="Nhập họ và tên" value={name} onChange={handleNameChange} />
+                            <Input type="Text" placeholder="Nhập họ và tên" value={name} onChange={handleNameChange} />
                         </Form.Item>
                         <Form.Item
                             label="Số điện thoại"
@@ -167,7 +170,7 @@ function Payment() {
                                 },
                             ]}
                         >
-                            <Input type="text" placeholder="Nhập số điện thoại" value={phone} onChange={handlePhoneChange} />
+                            <Input type="Text" placeholder="Nhập số điện thoại" value={phone} onChange={handlePhoneChange} />
                         </Form.Item>
                         <Form.Item
                             label="Địa chỉ"
@@ -180,13 +183,13 @@ function Payment() {
                                 },
                             ]}
                         >
-                            <Input type="text" placeholder="Nhập địa chỉ" value={address} onChange={handleAddressChange} />
+                            <Input type="Text" placeholder="Nhập địa chỉ" value={address} onChange={handleAddressChange} />
                         </Form.Item>
                     </Form>
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>PHƯƠNG THỨC VẬN CHUYỂN</text>
+                        <Text>PHƯƠNG THỨC VẬN CHUYỂN</Text>
                     </div>
                     <Radio.Group
                         value={shippingMethod}
@@ -200,7 +203,7 @@ function Payment() {
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>PHƯƠNG THỨC THANH TOÁN</text>
+                        <Text>PHƯƠNG THỨC THANH TOÁN</Text>
                     </div>
                     <Radio.Group
                         value={paymentMethod}
@@ -223,7 +226,7 @@ function Payment() {
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>MÃ KHUYẾN MÃI/MÃ QUÀ TẶNG</text>
+                        <Text>MÃ KHUYẾN MÃI/MÃ QUÀ TẶNG</Text>
                     </div>
                     <Form
                         name="Ma khuyen mai"
@@ -241,7 +244,7 @@ function Payment() {
                             className="left-align-label"
                         >
                             <Input
-                                type="text"
+                                type="Text"
                                 placeholder="Nhập mã khuyến mãi"
                                 value={promoCode}
                                 onChange={handlePromoCodeChange}
@@ -259,7 +262,7 @@ function Payment() {
                                 footer={null}
                             >
                                 <Input
-                                    type="text"
+                                    type="Text"
                                     placeholder="Nhập mã khuyến mãi"
                                     value={promoCode}
                                     onChange={handlePromoCodeChange}
@@ -288,7 +291,7 @@ function Payment() {
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>KIỂM TRA LẠI ĐƠN HÀNG</text>
+                        <Text>KIỂM TRA LẠI ĐƠN HÀNG</Text>
                     </div>
                     <List
                         itemLayout="horizontal"
@@ -300,34 +303,34 @@ function Payment() {
                     <div style={{ display: "flex", alignItems: "flex-end", width: "80%", flexDirection: "column", gap: "10px" }}>
                         <Row style={{ gap: "50px" }}>
                             <Col>
-                                <text>Thành tiền: </text>
+                                <Text>Thành tiền: </Text>
                             </Col>
                             <Col>
-                                <text>{formatPrice(totalPrice)}</text>
-                            </Col>
-                        </Row>
-                        <Row style={{ gap: "50px" }}>
-                            <Col>
-                                <text>Giảm giá: </text>
-                            </Col>
-                            <Col>
-                                <text>{formatPrice(totalDiscount)}</text>
+                                <Text>{formatPrice(totalPrice)}</Text>
                             </Col>
                         </Row>
                         <Row style={{ gap: "50px" }}>
                             <Col>
-                                <text>Phí vận chuyển: </text>
+                                <Text>Giảm giá: </Text>
                             </Col>
                             <Col>
-                                <text>{formatPrice(totalShippingFee)}</text>
+                                <Text>{formatPrice(totalDiscount)}</Text>
                             </Col>
                         </Row>
                         <Row style={{ gap: "50px" }}>
                             <Col>
-                                <text>Tổng thanh toán: </text>
+                                <Text>Phí vận chuyển: </Text>
                             </Col>
                             <Col>
-                                <text>{formatPrice(totalPayment)}</text>
+                                <Text>{formatPrice(totalShippingFee)}</Text>
+                            </Col>
+                        </Row>
+                        <Row style={{ gap: "50px" }}>
+                            <Col>
+                                <Text>Tổng thanh toán: </Text>
+                            </Col>
+                            <Col>
+                                <Text>{formatPrice(totalPayment)}</Text>
                             </Col>
                         </Row>
                     </div>
@@ -338,14 +341,14 @@ function Payment() {
 
                             >
                                 <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <text>Bằng việc tiến hành Mua hàng. Bạn đã đồng ý với </text>
+                                    <Text>Bằng việc tiến hành Mua hàng. Bạn đã đồng ý với </Text>
                                     <a href="/terms-and-conditions" style={{ color: "#2f80ed" }}>Điều khoản & Điều kiện của T1&apos;s store</a>
                                 </div>
                             </Checkbox>
 
                         </Col>
                         <Col>
-                            <Button type="text" size="large" style={{ color: "#ffff", backgroundColor: "#C92127" }}>Xác nhận thanh toán</Button>
+                            <Button type="Text" size="large" style={{ color: "#ffff", backgroundColor: "#C92127" }}>Xác nhận thanh toán</Button>
                         </Col>
                     </Row>
                 </div>

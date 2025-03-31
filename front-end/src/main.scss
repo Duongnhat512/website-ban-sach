@@ -32,3 +32,90 @@ td {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.chat-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 400px;
+  z-index: 1000;
+}
+
+.chat-box {
+  height: 400px;
+  overflow-y: auto;
+}
+.chat-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.chat-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chat-options {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.chat-option {
+  background: #f8f9fa;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.chat-header {
+  background: #007bff;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-body {
+  padding: 10px;
+  height: 200px;
+  overflow-y: auto;
+}
+
+.close-icon {
+  cursor: pointer;
+}
+
+.chat-button {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.chatbox {
+  z-index: 1000;
+}

@@ -14,8 +14,6 @@ export const orderSlice = createSlice({
       if (productIndex >= 0) {
         state.orders[productIndex].amount += action.payload.amount;
       } else {
-        console.log(action.payload);
-        
         state.orders.push(action.payload);
         console.log(JSON.parse(JSON.stringify(state.orders)));
         
