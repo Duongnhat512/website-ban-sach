@@ -22,7 +22,6 @@ public class WebClientConfig {
                 .baseUrl("http://localhost:8080/auth")
                 .build();
     }
-
     @Bean
     AuthenticationClient authenticationClient(WebClient webClient) {
         HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(WebClientAdapter.create(webClient)).build();
@@ -30,11 +29,14 @@ public class WebClientConfig {
     }
     @Bean
     public CorsWebFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
+        org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://myfrontend.com")); // Thay bằng domain thực tế
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // Chỉ dùng 1 giá trị, tránh lỗi
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization", "Content-Type"));
+        config.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsWebFilter(source);
