@@ -1,14 +1,18 @@
 package org.learning.authenticationservice.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.learning.authenticationservice.common.RoleName;
 import org.learning.authenticationservice.dto.request.IntrospectRequest;
 import org.learning.authenticationservice.dto.request.LogoutRequest;
 import org.learning.authenticationservice.dto.request.SignInRequest;
@@ -16,16 +20,21 @@ import org.learning.authenticationservice.dto.response.AuthenticationResponse;
 import org.learning.authenticationservice.dto.response.IntrospectResponse;
 import org.learning.authenticationservice.dto.response.UserResponse;
 import org.learning.authenticationservice.mapper.UserMapper;
+import org.learning.authenticationservice.model.Role;
 import org.learning.authenticationservice.model.User;
+import org.learning.authenticationservice.repository.RoleRepository;
 import org.learning.authenticationservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -45,6 +54,7 @@ public class AuthenticationService {
 
     private final RedisService redisService;
     private final UserMapper userMapper;
+    private final RoleRepository roleRepository;
 
     public IntrospectResponse introspect(IntrospectRequest request){
         var token = request.getToken();
@@ -163,4 +173,5 @@ public class AuthenticationService {
             throw new RuntimeException("Error while logging out user");
         }
     }
+
 }

@@ -5,7 +5,9 @@ import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.dto.response.ResponseData;
 import com.example.bookservice.entity.Book;
+import com.example.bookservice.entity.BookElasticSearch;
 import com.example.bookservice.service.BookService;
+import com.example.bookservice.service.impl.GeminiAIService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import java.util.List;
 @RequestMapping("/books")
 public class BookController {
     private final BookService bookService;
+    private final GeminiAIService geminiService;
+
     @PostMapping("/create-book")
     public ResponseData<BookCreationResponse> createBook(@RequestBody BookCreationRequest request){
         return ResponseData.<BookCreationResponse>builder()
@@ -123,6 +127,28 @@ public class BookController {
                 .message("Search Books by Keyword Successfully")
                 .code(HttpStatus.OK.value())
                 .result(bookService.getBooksBySearchSpecification(page,size,sort,search))
+                .build();
+    }
+    @GetMapping("/search-course")
+    public ResponseData<PageResponse<BookElasticSearch>> searchCourse(
+            @RequestParam String keyword,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseData.<PageResponse<BookElasticSearch>>builder()
+                .message("Search Course Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.searchCourse(keyword, page, size))
+                .build();
+    }
+    @GetMapping("/suggest")
+    public ResponseData<String> suggestProduct(@RequestParam String interest) {
+        var result = geminiService.suggestBook(interest);
+        String convertResult = result.block();
+        return ResponseData.<String>builder()
+                .message("Suggest product")
+                .code(200)
+                .result(convertResult)
                 .build();
     }
 

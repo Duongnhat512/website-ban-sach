@@ -14,6 +14,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    active: local
 server:
   port: 8081
 
@@ -31,3 +33,7 @@ cloudinary:
     cloud-name: dxkr1bbdp
     api-key: 969818675411756
     api-secret: myZphrJdZ4j7b8r29f1
+
+google:
+  gemini:
+    apiKey: AIzaSyDb3vvCgGLobKoUP9ukVYviavqCa9tcYg0

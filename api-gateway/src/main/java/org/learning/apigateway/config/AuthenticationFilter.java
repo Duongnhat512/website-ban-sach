@@ -78,9 +78,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String path = request.getPath().value();
         log.info("Request path: {}", path);
         // Kiểm tra Swagger UI & API Docs trước
-        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/api/v1/swagger-ui")) {
-            return true;
-        }
         return Arrays.stream(publicEndpoints).anyMatch(s -> request.getURI().getPath().matches(apiPrefix + s));
 
     }
