@@ -40,4 +40,7 @@ public class Order {
     @Column(name = "address")
     String address;
 
+    @Column(name = "payment_status")
+    String paymentStatus;
+
 }
