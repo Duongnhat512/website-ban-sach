@@ -4,6 +4,7 @@ import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Book;
+import com.example.bookservice.entity.BookElasticSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,5 +32,7 @@ public interface BookService {
     void uploadImage(Long id, MultipartFile image);
 
     PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size,String sortBy, String... search);
+
+    PageResponse<BookElasticSearch> searchCourse(String keyword, int page, int size);
 
 }

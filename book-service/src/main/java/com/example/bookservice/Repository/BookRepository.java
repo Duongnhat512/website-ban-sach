@@ -24,7 +24,6 @@ public interface BookRepository extends JpaRepository<Book, Long> , JpaSpecifica
             "(b.author LIKE %:author% OR :author IS NULL) AND " +
             "(b.quantity >= :minQuantity OR :minQuantity IS NULL)")
     List<Book> searchBooks(String title, Double minPrice, Double maxPrice, String author, Integer minQuantity);
-
     // Truy vấn tìm kiếm theo category
     @Query("SELECT b FROM Book b WHERE b.category.name = :category")
     Page<Book> findByCategory(String category, Pageable pageable);
