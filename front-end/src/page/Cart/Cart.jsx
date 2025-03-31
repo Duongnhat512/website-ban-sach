@@ -17,31 +17,18 @@ function Cart() {
   const [selectAll, setSelectAll] = useState(false);
 
   const orders = useSelector((state) => state.order.orders);
+  const ordersLength = useSelector((state) => state.order.orders.length || 0);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // const dispatch = useDispatch();
-
-  const item = [
-    {
-      id: 1,
-      name: "Yêu Những Điều Không Hoàn Hảo - Bìa Cứng",
-      price: 215100,
-      quantity: 2,
-      releaseDate: "Ngày NXB dự kiến phát hành 31/03/2025",
-      imageUrl: "https://via.placeholder.com/80",
-      selected: false,
-    },
-    {
-      id: 2,
-      name: "Yêu Những Điều Không Hoàn Hảo - Bìa Cứng",
-      price: 215100,
-      quantity: 2,
-      releaseDate: "Ngày NXB dự kiến phát hành 31/03/2025",
-      imageUrl: "https://via.placeholder.com/80",
-      selected: false,
-    }
-  ];
+  useEffect(() => {
+    console.log(orders);
+    
+    setOrderItems(orders);
+    calculateTotalPrice(orders);
+    calculateTotalItems(orders);
+  }, [orders]);
 
   const renderItem = (item) => {
     return (
@@ -64,30 +51,30 @@ function Cart() {
           <Col span={3}>
             <Image
               width={80}
-              src={item.imageUrl || "https://via.placeholder.com/80"}
+              src={item.thumbnail || "https://via.placeholder.com/80"}
               alt="Product Image"
             />
           </Col>
           <Col span={8}>
             <div style={{ marginLeft: 16 }}>
-              <Text strong>{item.name}</Text>
+              <Text strong>{item.title}</Text>
               <br />
               <Text type="secondary" style={{ fontSize: 12 }}>{item.releaseDate}</Text>
               <br />
-              <Text delete>{(item.price * 1.11).toLocaleString()} đ</Text> <br />
-              <Text strong style={{ color: "red" }}>{item.price.toLocaleString()} đ</Text>
+              <Text delete>{item.originalPrice ? (item.originalPrice * 1.11).toLocaleString() : ''} đ</Text> <br />
+              <Text strong style={{ color: "red" }}>{item.currentPrice ? item.currentPrice.toLocaleString() : ''} đ</Text>
             </div>
           </Col>
           <Col span={6}>
             <InputNumber
               min={1}
-              value={item.quantity}
-              onChange={(value) => handleQuantityChange(item.id, value)}
+              value={item.amount}
+              onChange={(value) => handleQuantityChange(item, value)}
             />
           </Col>
           <Col span={4}>
             <Text strong style={{ color: "red" }}>
-              {(item.price * item.quantity).toLocaleString()} đ
+              {(item.currentPrice * item.amount).toLocaleString()} đ
             </Text>
           </Col>
           <Col span={1}>
@@ -104,37 +91,37 @@ function Cart() {
     setOrderItems(orderItems.map(item => ({ ...item, selected: newSelectAll })));
   };
 
-  const handleAddItem = (item) => {
-    // dispatch(doAddOrder(item));
-    setOrderItems(item);
-  };
-
   const handleRemoveItem = (id) => {
-    // dispatch(doRemoveOrder({ id }));
+    dispatch(doRemoveOrder({ id }));
     const updatedItems = orderItems.filter(item => item.id !== id);
     setOrderItems(updatedItems);
     calculateTotalPrice(updatedItems);
     calculateTotalItems(updatedItems);
   };
 
-  const handleQuantityChange = (id, quantity) => {
-    const updatedItems = orderItems.map(item => {
-      if (item.id === id) {
-        return { ...item, quantity };
-      }
-      return item;
-    });
+  const handleQuantityChange = (item, quantity) => {
+    
+    if (typeof quantity !== "number" || isNaN(quantity)) return; // Ngăn chặn giá trị NaN
+  
+    const updatedItems = orderItems.map(orderItem =>
+      orderItem.id === item.id ? { ...orderItem, amount: quantity } : orderItem
+    );
+    console.log(updatedItems);
+    
     setOrderItems(updatedItems);
     calculateTotalPrice(updatedItems);
+    calculateTotalItems(updatedItems);
+    dispatch(doAddOrder({ item, quantity }));
   };
+  
 
   const calculateTotalPrice = (items) => {
-    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const total = items.reduce((sum, item) => sum + item.currentPrice * item.amount, 0);
     setTotalPrice(total);
   };
 
   const calculateTotalItems = (items) => {
-    const total = items.reduce((sum, item) => sum + item.quantity, 0);
+    const total = items.reduce((sum, item) => sum + item.amount, 0);
     setTotalItems(total);
   };
 
@@ -142,16 +129,12 @@ function Cart() {
     navigate("/payment");
   };
 
-  useEffect(() => {
-    // handleAddItem(item);
-  }, []);
-
   return (
     <div className="cart">
       <div className="cart-container">
-        <Title level={4}>GIỎ HÀNG ({totalItems} sản phẩm)</Title>
+        <Title level={4}>GIỎ HÀNG ({ordersLength} sản phẩm)</Title>
         <div>
-          {orderItems.length > 0 ? (
+          {ordersLength > 0 ? (
             <div className="cart-list">
               <List
                 itemLayout="horizontal"
@@ -175,9 +158,6 @@ function Cart() {
           ) : (
             <div className=" shadow-lg rounded-lg bg-white flex flex-col items-center justify-center max-w-[1200px] w-full mx-auto ">
               <Card className="w-full  " bordered={false}>
-                <h2 className="text-xl font-semibold mb-4">
-                  GIỎ HÀNG <span className="text-gray-500">(0 sản phẩm)</span>
-                </h2>
                 <div className="flex flex-col items-center text-center">
                   <img src={Cart_Empty} alt="Empty Cart" className="w-32 mb-4" />
                   <p className="text-gray-500 mb-6">

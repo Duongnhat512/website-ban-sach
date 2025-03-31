@@ -14,18 +14,29 @@ import { useNavigate } from "react-router-dom";
 import { callGetBookFilter } from "../../service/BookService";
 import product1 from "../../assets/images/product1.png";
 import Suggest from "../../component/Suggest/Suggest";
-
+import { useDispatch, useSelector } from "react-redux";
+import { doAddOrder, doRemoveOrder } from "../../redux/OrderSlice";
 const Filter = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(9);
   const [bookList, setBookList] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [priceFilter, setPriceFilter] = useState([]);
   const [releaseDateFilter, setReleaseDateFilter] = useState(null);
   const [sort, setSort] = useState("id:desc");
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.order.orders);
+
+  const handleAddItem = (item) => {
+    console.log(item);
+
+    dispatch(doAddOrder({...item,amount:1}));
+
+
+  };
   const handleGetFilteredBooks = async () => {
     try {
       let minPrice = null;
@@ -85,13 +96,11 @@ const Filter = () => {
         if (releaseDateFilter === "Trước Năm 2020") {
           search += `${search ? "," : ""}releasedDate<2020`;
         } else {
-          search += `${search ? "," : ""}releasedDate.${
-            releaseDateFilter.split(" ")[1]
-          }`;
+          search += `${search ? "," : ""}releasedDate.${releaseDateFilter.split(" ")[1]
+            }`;
         }
       }
       console.log(search);
-2020
       const response = await callGetBookFilter(
         currentPage,
         pageSize,
@@ -249,19 +258,24 @@ const Filter = () => {
                 cover={
                   <img
                     alt={book.title}
-                    src={product1 || book.thumbnail}
+                    src={book.thumbnail || product1}
                     className="p-2"
                   />
                 }
-                actions={[<ShoppingCartOutlined key="cart" />]}
+                actions={[<ShoppingCartOutlined key="cart" onClick={() => handleAddItem(book)
+
+
+                } />]}
+
               >
                 <Card.Meta
+                  onClick={() => navigate(`/product/${book.id}`)}
                   title={
                     <div className="text-lg font-semibold">{book.title}</div>
                   }
                   description={
                     <>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500" >
                         {book.originalPrice && (
                           <span className="line-through mr-2">
                             {formatCurrency(book.originalPrice)}
@@ -291,6 +305,7 @@ const Filter = () => {
               total={totalElements}
               pageSize={pageSize}
               onChange={(page) => setCurrentPage(page)}
+              showSizeChanger={false}
             />
           </div>
         </div>
