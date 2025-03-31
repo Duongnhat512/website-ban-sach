@@ -1,5 +1,6 @@
 package iuh.fit.se.paymentservice.model;
 
+import iuh.fit.se.paymentservice.enumClass.PaymentMethodName;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,9 +24,9 @@ public class Payment {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_method_id")
-    private PaymentMethod paymentMethod;
+    @JoinColumn(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodName paymentMethod;
 
     @Column(nullable = false)
     private String status;
@@ -33,12 +34,8 @@ public class Payment {
     @Column(nullable = false, name = "payment_date")
     private LocalDateTime paymentDate;
 
-
-    @Column(nullable = false, name = "customer_id")
-    private Long customerId;
-
     @Column(nullable = false, name = "order_id")
-    private String orderId;
+    private Long orderId;
 
     @Column(nullable = false, name = "confirmation_code")
     private String confirmationCode;
