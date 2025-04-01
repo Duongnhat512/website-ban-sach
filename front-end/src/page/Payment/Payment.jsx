@@ -18,7 +18,7 @@ function Payment() {
     const token = localStorage.getItem('token');
     const [form] = Form.useForm();
 
-    const [name, setName] = useState(user.fullName || "");
+    const [name, setName] = useState(user.fullName || "admin");
     const [phone, setPhone] = useState(user.phoneNumber || "");
     const [address, setAddress] = useState(user.address || "");
     const [email, setEmail] = useState(user.email || "");
@@ -85,7 +85,7 @@ function Payment() {
         }
         try {
             fetch(
-                `http://localhost:8888/api/v1/payment/vn-pay?amount=${amount}&bankCode=NCB`,
+                `http://localhost:8888/api/v1/payment/vn-pay?amount=${amount}&bankCode=NCB&orderId=10000`,
                 {
                     method: "GET",
                     headers: {
@@ -96,7 +96,7 @@ function Payment() {
             )
                 .then((response) => response.json())
                 .then((data) => {
-                    window.location.href = data.data.paymentUrl;
+                    window.location.href = data.paymentUrl;
                 })
                 .catch((error) => console.log(error));
         } catch (error) {
@@ -209,7 +209,7 @@ function Payment() {
     const setFormData = () => {
         if (user) {
             form.setFieldsValue({
-                fullName: name,
+                name: name,
                 phone: phone || "",
                 email: email || "",
                 address: address || ""
@@ -485,13 +485,6 @@ function Payment() {
                                 onClick={() => {
                                     if(paymentMethod === "Thanh toán VN Pay") {
                                         handleDeposit();
-                                    }
-                                    else if (paymentMethod === "Thanh toán khi nhận hàng") {
-                                        toast.success("Đặt hàng thành công!");
-                                        dispatch(doRemoveOrder());
-                                        navigate("/");
-                                    } else {
-                                        toast.error("Vui lòng chọn phương thức thanh toán!");
                                     }
                                 }}
                             >Xác nhận thanh toán</Button>
