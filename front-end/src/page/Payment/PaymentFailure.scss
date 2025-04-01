@@ -1,0 +1,25 @@
+.payment-failure {
+    .ant-result-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ff4d4f; /* Màu đỏ cho trạng thái thất bại */
+      margin-bottom: 10px;
+    }
+  
+    .ant-result-subtitle {
+      font-size: 1.2rem;
+      color: #000000;
+      margin-bottom: 20px;
+
+    }
+  
+    .ant-btn {
+      margin: 0 10px; /* Khoảng cách giữa các nút */
+    }
+  }
+  .payment-failure {
+    text-align: center;
+    padding: 100px;
+    background-color: #f0f0f0;
+    
+  }
