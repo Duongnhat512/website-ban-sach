@@ -48,6 +48,7 @@ function App() {
           <Route path="/info" element={<UserInfo />} />
           <Route path="/payment-failed" element={<PaymentFailure/>} />
           <Route path="/payment-success" element={<PaymentSuccess/>} />
+          <Route path="/payment" element={<Payment />} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
