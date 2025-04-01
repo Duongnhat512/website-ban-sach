@@ -45,35 +45,17 @@ const ChatBox = () => {
     let lastIndex = 0;
 
     // Xử lý ảnh trong tin nhắn
-    msg.text.replace(imgRegex, (match, offset) => {
-      if (lastIndex !== offset) {
-        elements.push(
-          <span key={`text-${offset}`}>
-            {msg.text.slice(lastIndex, offset)}
-          </span>
-        );
-      }
-      elements.push(
-        <img
-          key={`img-${offset}`}
-          src={match}
-          alt="Ảnh"
-          className="max-w-full"
-        />
-      );
-      lastIndex = offset + match.length;
-    });
-
-    let remainingText = msg.text.slice(lastIndex);
-    lastIndex = 0;
-    let finalElements = [];
+    let textWithoutImages = msg.text.replace(imgRegex, ""); // Xóa link ảnh khỏi text
 
     // Xử lý đường dẫn sản phẩm
-    remainingText.replace(bookDetailRegex, (match, bookId, offset) => {
+    let finalElements = [];
+    lastIndex = 0;
+
+    textWithoutImages.replace(bookDetailRegex, (match, bookId, offset) => {
       if (lastIndex !== offset) {
         finalElements.push(
           <span key={`text-${offset}`}>
-            {remainingText.slice(lastIndex, offset)}
+            {textWithoutImages.slice(lastIndex, offset)}
           </span>
         );
       }
@@ -89,13 +71,28 @@ const ChatBox = () => {
       lastIndex = offset + match.length;
     });
 
-    if (lastIndex < remainingText.length) {
+    if (lastIndex < textWithoutImages.length) {
       finalElements.push(
-        <span key={`text-${lastIndex}`}>{remainingText.slice(lastIndex)}</span>
+        <span key={`text-${lastIndex}`}>
+          {textWithoutImages.slice(lastIndex)}
+        </span>
       );
     }
 
-    return [...elements, ...finalElements];
+    // Thêm ảnh vào cuối tin nhắn
+    let images = [];
+    msg.text.replace(imgRegex, (match, offset) => {
+      images.push(
+        <img
+          key={`img-${offset}`}
+          src={match}
+          alt="Ảnh"
+          className="max-w-full mt-2"
+        />
+      );
+    });
+
+    return [...finalElements, ...images];
   };
 
   return (
