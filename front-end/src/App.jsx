@@ -15,8 +15,11 @@ import Banner1 from "./page/HomeBanner/Banner1";
 import Cart from "./page/Cart/Cart";
 import UserInfo from "./page/InfoUser";
 import Chatbox from "./page/ChatPage/ChatBox/ChatBox.jsx";
+import Payment from "./page/Payment/Payment";
 
 import Oauth2 from "./page/Login/Oauth2";
+import PaymentSuccess from "./page/Payment/PaymentSuccess.jsx";
+import PaymentFailure from "./page/Payment/PaymentFailure.jsx";
 function App() {
   const dispatch = useDispatch();
 
@@ -43,6 +46,8 @@ function App() {
           <Route path="/Banner1" element={<Banner1 />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/info" element={<UserInfo />} />
+          <Route path="/payment-failed" element={<PaymentFailure/>} />
+          <Route path="/payment-success" element={<PaymentSuccess/>} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
