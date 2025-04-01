@@ -5,7 +5,7 @@ import "./Cart.scss";
 import Title from "antd/es/typography/Title";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { doRemoveOrder } from "../../redux/OrderSlice";
+import { doRemoveOrder, doUpdateAmount } from "../../redux/OrderSlice";
 import Cart_Empty from "../../assets/images/ico_emptycart.svg";
 
 const { Text } = Typography;
@@ -23,17 +23,33 @@ function Cart() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setOrderItems(orders);
-    calculateTotalPrice(orders);
-    calculateTotalItems(orders);
+    const itemsWithSelection = orders.map(item => ({
+      ...item,
+      selected: item.selected !== undefined ? item.selected : false
+    }));
+
+    setOrderItems(itemsWithSelection);
+    calculateTotalPrice(itemsWithSelection);
+    calculateTotalItems(itemsWithSelection);
   }, [orders]);
 
+  // Cập nhật hàm handleSelectAll để tính lại tổng tiền
   const handleSelectAll = () => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
-    setOrderItems(orderItems.map(item => ({ ...item, selected: newSelectAll })));
+
+    // Cập nhật trạng thái selected cho tất cả các item
+    const updatedItems = orderItems.map(item => ({
+      ...item,
+      selected: newSelectAll
+    }));
+
+    setOrderItems(updatedItems);
+    // Tính lại tổng tiền sau khi cập nhật trạng thái các item
+    calculateTotalPrice(updatedItems);
   };
 
+  // Xóa sản phẩm khỏi giỏ hàng
   const handleRemoveItem = (id) => {
     dispatch(doRemoveOrder({ id }));
     const updatedItems = orderItems.filter(item => item.id !== id);
@@ -50,13 +66,20 @@ function Cart() {
       }
       return orderItem;
     });
+    dispatch(doUpdateAmount({ id: item.id, amount: newQuantity }));
     setOrderItems(updatedItems);
     calculateTotalPrice(updatedItems);
     calculateTotalItems(updatedItems);
   };
 
   const calculateTotalPrice = (items) => {
-    const total = items.reduce((sum, item) => sum + item.currentPrice * item.amount, 0);
+    const total = items.reduce((sum, item) => {
+      // Chỉ cộng giá trị nếu item được chọn
+      if (item.selected) {
+        return sum + item.currentPrice * item.amount;
+      }
+      return sum;
+    }, 0);
     setTotalPrice(total);
   };
 
@@ -65,7 +88,13 @@ function Cart() {
   };
 
   const handlePayment = () => {
-    // Điều hướng sang trang thanh toán
+    const selectedItems = orderItems.filter(item => item.selected);
+    
+    if (selectedItems.length === 0) {
+      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+      return;
+    }
+    // Chuyển hướng đến trang thanh toán
     navigate("/payment");
   };
 
@@ -84,6 +113,7 @@ function Cart() {
                   return orderItem;
                 });
                 setOrderItems(updatedItems);
+                calculateTotalPrice(updatedItems);
               }}
             />
           </Col>
