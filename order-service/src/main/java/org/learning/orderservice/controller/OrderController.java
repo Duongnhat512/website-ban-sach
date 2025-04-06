@@ -6,6 +6,7 @@ import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.request.OrderDetailsCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
 import org.learning.orderservice.dto.response.OrderDetailCreateResponse;
+import org.learning.orderservice.dto.response.PageResponse;
 import org.learning.orderservice.dto.response.ResponseData;
 import org.learning.orderservice.service.OrderService;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,15 @@ public class OrderController {
                 .build();
     }
 
-
-
+    @GetMapping("/get-all-orders")
+    public ResponseData<PageResponse<OrderCreateResponse>> getAllOrders(@RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "10") int size) {
+        log.info("Getting all orders");
+        PageResponse<OrderCreateResponse> response = orderService.getOrders(page, size);
+        return ResponseData.<PageResponse<OrderCreateResponse>>builder()
+                .code(200)
+                .message("Orders retrieved successfully")
+                .result(response)
+                .build();
+    }
 }

@@ -8,11 +8,13 @@ import org.learning.orderservice.client.BookClient;
 import org.learning.orderservice.common.OrderStatus;
 import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
+import org.learning.orderservice.dto.response.PageResponse;
 import org.learning.orderservice.extenal.Book;
 import org.learning.orderservice.extenal.OrderDetail;
 import org.learning.orderservice.model.Order;
 import org.learning.orderservice.repository.OrderRepository;
 import org.learning.orderservice.service.OrderService;
+import org.springframework.data.domain.Page;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -116,6 +118,27 @@ public class OrderServiceImpl implements OrderService {
         order.setPaymentStatus(status);
         orderRepository.save(order);
         return order;
+    }
+
+    @Override
+    public PageResponse<OrderCreateResponse> getOrders(int page, int size) {
+        Page<Order> orderPage = orderRepository.findAll(org.springframework.data.domain.PageRequest.of(page - 1, size));
+        List<OrderCreateResponse> orderCreateResponses = orderPage.get().map(order -> OrderCreateResponse.builder()
+                .id(order.getId())
+                .total(order.getTotal())
+                .address(order.getAddress())
+                .status(order.getOrderStatus())
+                .userId(order.getUserId())
+                .orderDate(order.getOrderDate())
+                .build()).toList();
+
+        return PageResponse.<OrderCreateResponse>builder()
+                .currentPage(page)
+                .pageSize(size)
+                .result(orderCreateResponses)
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .build();
     }
 
 }

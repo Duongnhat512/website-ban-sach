@@ -29,16 +29,17 @@ public class WebClientConfig {
     }
     @Bean
     public CorsWebFilter corsFilter() {
-        org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Cho phép origin
+        config.addAllowedOrigin("http://localhost:3000"); // Hoặc "*"
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // Chỉ dùng 1 giá trị, tránh lỗi
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization", "Content-Type"));
-        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/**", config); // Áp dụng cho tất cả route
+
         return new CorsWebFilter(source);
     }
 }

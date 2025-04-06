@@ -57,8 +57,6 @@ public class PaymentServiceImpl implements PaymentService {
         // Log the callback parameters
         log.info("VNPay callback received: vnp_ResponseCode={}, vnp_TxnRef={}, vnp_Amount={}, vnp_TransactionNo={}, vnp_BankCode={}, vnp_PayDate={}, vnp_OrderInfo={}",
                 vnpResponseCode, vnpTxnRef, vnpAmount, vnpTransactionNo, vnpBankCode, vnpPayDate, vnpOrderInfo);
-
-
         // Validate the response code
         if ("00".equals(vnpResponseCode)) {
             Payment payment = new Payment();

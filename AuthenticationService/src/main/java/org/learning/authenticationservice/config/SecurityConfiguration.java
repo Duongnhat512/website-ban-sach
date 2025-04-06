@@ -30,6 +30,7 @@ import java.util.List;
 public class SecurityConfiguration {
 
     private final CustomJwtDecoder customJwtDecoder;
+    private final Oauth2SuccessHandle oauth2SuccessHandle;
     private static final String[] PUBLIC_ENDPOINTS = {
             "/auth/user/create-user", "/auth/sign-in", "/auth/sign-out", "/auth/introspect", "/auth/refresh", "/auth/role/create-role",
             "/auth/user/send-otp-register","/login/**","/oauth2/**","/auth/oauth2-login/**"
@@ -49,6 +50,7 @@ public class SecurityConfiguration {
             jwtConfigurer.decoder(customJwtDecoder)
                     .jwtAuthenticationConverter(jwtAuthenticationConverter());
         }));
+
         security.csrf(AbstractHttpConfigurer::disable);
         return security.build();
     }

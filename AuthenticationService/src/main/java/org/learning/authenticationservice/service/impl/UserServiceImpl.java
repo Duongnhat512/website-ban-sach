@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.learning.authenticationservice.common.RoleName;
 import org.learning.authenticationservice.dto.request.OTPRequest;
 import org.learning.authenticationservice.dto.request.UserRequest;
+import org.learning.authenticationservice.dto.response.PageResponse;
 import org.learning.authenticationservice.dto.response.UserResponse;
 import org.learning.event.NotificationEvent;
 import org.learning.authenticationservice.mapper.UserMapper;
@@ -13,6 +14,8 @@ import org.learning.authenticationservice.model.User;
 import org.learning.authenticationservice.repository.RoleRepository;
 import org.learning.authenticationservice.repository.UserRepository;
 import org.learning.authenticationservice.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -103,8 +107,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getUsers() {
-        return userMapper.toUserList(userRepository.findAll());
+    public PageResponse<UserResponse> getUsers(int page, int size) {
+        Page<User> userPage = userRepository.findAll(PageRequest.of(page-1, size));
+        List<UserResponse> userResponses = userPage.get().map(userMapper::toUserResponse).collect(Collectors.toList());
+        return PageResponse.<UserResponse>builder()
+                .currentPage(page)
+                .totalElements(userPage.getTotalElements())
+                .result(userResponses)
+                .totalPages(userPage.getTotalPages())
+                .build();
     }
 
     @Override
