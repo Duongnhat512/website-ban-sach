@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   role: null,
@@ -8,12 +8,12 @@ const initialState = {
     email: "",
     fullName: "",
     dob: "",
-    phoneNumber:"",
+    phoneNumber: "",
   },
 };
 
 export const userSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     loginSuccess: (state, action) => {
@@ -37,4 +37,3 @@ export const userSlice = createSlice({
 });
 
 export const { loginSuccess, setUser, logout } = userSlice.actions;
-

@@ -72,7 +72,7 @@ const Oauth2 = () => {
         .catch(handleError);
     } else if (clientCode === "google") {
       fetch(
-        `http://localhost:8888/login/oauth2/code/google?${query.toString()}`,
+        `http://localhost:8080/login/oauth2/code/google?${query.toString()}`,
         {
           credentials: "include",
           headers: {
