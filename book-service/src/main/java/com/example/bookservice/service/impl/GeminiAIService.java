@@ -29,7 +29,6 @@ public class GeminiAIService {
     private final WebClient webClient;
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
-
     private static String historyKey = "guest" ; // Key chung trong Redis
 
     public GeminiAIService(WebClient.Builder webClientBuilder) {
@@ -45,12 +44,10 @@ public class GeminiAIService {
                     if (history == null) {
                         history = new ArrayList<>();
                     }
-
                     // Chuyển danh sách sách thành chuỗi mô tả
                     String bookData = bookList.stream()
                             .map(book ->
                                     "- Tựa sách: " + book.getTitle()
-                                            + " (Mô tả: " + book.getDescription()
                                             + ") - Giá gốc: " + book.getOriginalPrice() + " VND"
                                             + " - Giá giảm: " + book.getCurrentPrice() + " VND"
                                             + " (Giảm " + book.getDiscount() + "%)"
@@ -63,8 +60,6 @@ public class GeminiAIService {
                                             + " - Tác giả: " + book.getAuthor()
                             )
                             .collect(Collectors.joining("\n"));
-
-
                     // Thêm câu hỏi mới vào lịch sử
                     history.add("Khách hàng: " + customerInterest);
 
@@ -92,13 +87,12 @@ public class GeminiAIService {
                             .map(response -> {
                                 // Thêm phản hồi vào lịch sử
                                 finalHistory.add("AI: " + extractTextFromResponse(response));
-
                                 // Cập nhật lại lịch sử hội thoại trong Redis (lưu tối đa 10 phút)
                                 redisTemplate.opsForValue().set(historyKey, finalHistory, Duration.ofMinutes(10));
 
                                 return finalHistory.get(finalHistory.size() - 1); // Trả về câu trả lời mới nhất từ AI
                             })
-                            .onErrorReturn("Lỗi khi gọi Gemini API.");
+                            .onErrorReturn("Đợi tôi 1 tẹo");
                 });
     }
 

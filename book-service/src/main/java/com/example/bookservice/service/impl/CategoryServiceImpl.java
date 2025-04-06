@@ -2,11 +2,14 @@ package com.example.bookservice.service.impl;
 import com.example.bookservice.Repository.CategoryRepository;
 import com.example.bookservice.dto.request.CategoryCreationRequest;
 import com.example.bookservice.dto.response.CategoryResponse;
+import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Category;
 import com.example.bookservice.mapper.CategoryMapper;
 import com.example.bookservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,10 +37,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getAllCategories() {
-        return categoryRepository.findAll().stream()
+    public PageResponse<CategoryResponse> getAllCategories(int page, int size) {
+        Page<Category> categories = categoryRepository.findAll(PageRequest.of(page-1, size));
+        List<CategoryResponse> categoryResponses = categories.getContent().stream()
                 .map(categoryMapper::toCategoryCreationResponse)
                 .collect(Collectors.toList());
+
+        return PageResponse.<CategoryResponse>builder()
+                .result(categoryResponses)
+                .pageSize(size)
+                .totalPages(categories.getTotalPages())
+                .currentPage(page)
+                .totalElements(categories.getTotalElements())
+                .build();
     }
 
     @Override

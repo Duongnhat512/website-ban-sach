@@ -44,7 +44,6 @@ public class ApplicationConfig {
                                 .pages(book.getPages())
                                 .thumbnail(book.getThumbnail())
                                 .build();
-
                         Boolean exists = elasticSearchRepository.existsById(bookElasticSearch.getId()).block(); // Chặn để kiểm tra
 
                         if (Boolean.FALSE.equals(exists)) {
