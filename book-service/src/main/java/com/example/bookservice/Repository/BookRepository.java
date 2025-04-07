@@ -29,7 +29,7 @@ public interface BookRepository extends JpaRepository<Book, Long> , JpaSpecifica
     Page<Book> findByCategory(String category, Pageable pageable);
 
     // Truy vấn lấy ra các sách đang giảm giá
-    @Query("SELECT b FROM Book b WHERE b.discount > 0")
+    @Query("SELECT b FROM Book b WHERE b.discount > 0.3")
     Page<Book> findByDiscountGreaterThan(Pageable pageable);
 }
 
