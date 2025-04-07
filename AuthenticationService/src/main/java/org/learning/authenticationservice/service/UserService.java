@@ -19,5 +19,7 @@ public interface UserService {
 
     PageResponse<UserResponse> getUsers(int page, int size,String sortBy);
 
+    Long totalUser();
+
     void sendOtpByEmail(OTPRequest email);
 }

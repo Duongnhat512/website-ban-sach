@@ -71,4 +71,12 @@ public class UserController {
                 .result(userService.updateUser(id, request))
                 .build();
         }
+    @GetMapping("/total-user")
+    public ResponseData<Long> totalUser(){
+        return ResponseData.<Long>builder()
+                .message("Total User Successfully")
+                .code(HttpStatus.OK.value())
+                .result(userService.totalUser())
+                .build();
+    }
 }

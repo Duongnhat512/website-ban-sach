@@ -129,6 +129,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long totalUser() {
+        return userRepository.totalUser();
+    }
+
+    @Override
     public void sendOtpByEmail(OTPRequest request) {
 
         if(userRepository.existsByEmail(request.getEmail())){
