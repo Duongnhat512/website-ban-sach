@@ -47,4 +47,13 @@ public class CategoryController {
                 .result(categoryService.getCategoryById(id))
                 .build();
     }
+
+    @GetMapping("/total")
+    public ResponseData<Long> totalCategory() {
+        return ResponseData.<Long>builder()
+                .code(HttpStatus.OK.value())
+                .message("Total categories retrieved successfully")
+                .result(categoryService.totalCategory())
+                .build();
+    }
 }

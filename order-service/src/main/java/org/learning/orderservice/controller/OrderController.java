@@ -66,4 +66,14 @@ public class OrderController {
                 .result(response)
                 .build();
     }
+    @GetMapping("/get-total-order/{userId}")
+    public ResponseData<Long> getTotalOrder(@PathVariable Long userId) {
+        log.info("Getting total orders for user: {}", userId);
+        Long totalOrders = orderService.totalOrder(userId);
+        return ResponseData.<Long>builder()
+                .code(200)
+                .message("Total orders retrieved successfully")
+                .result(totalOrders)
+                .build();
+    }
 }

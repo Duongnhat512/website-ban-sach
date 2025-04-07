@@ -153,4 +153,13 @@ public class BookController {
                 .build();
     }
 
+    @GetMapping("/total-book")
+    public ResponseData<Long> totalBook(){
+        return ResponseData.<Long>builder()
+                .message("Total Book Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.totalBook())
+                .build();
+    }
+
 }

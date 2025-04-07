@@ -272,4 +272,13 @@ public class BookServiceImpl implements BookService {
                     .build();
         }
     }
+    @Override
+    public Long totalBook() {
+        try {
+            return repository.count();
+        } catch (Exception e) {
+            log.error("Error while counting books", e);
+            throw new RuntimeException("Error while counting books");
+        }
+    }
 }

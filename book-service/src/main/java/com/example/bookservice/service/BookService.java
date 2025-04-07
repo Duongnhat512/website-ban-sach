@@ -35,4 +35,6 @@ public interface BookService {
 
     PageResponse<BookElasticSearch> searchCourse(String keyword, int page, int size);
 
+    Long totalBook();
+
 }

@@ -11,4 +11,6 @@ public interface CategoryService {
     public CategoryResponse createCategory(CategoryCreationRequest request);
     public PageResponse<CategoryResponse> getAllCategories(int page, int size,String sortBy);
     public CategoryResponse getCategoryById(Long id);
+
+    Long totalCategory();
 }

@@ -61,11 +61,15 @@ public class CategoryServiceImpl implements CategoryService {
                 .totalElements(categories.getTotalElements())
                 .build();
     }
-
     @Override
     public CategoryResponse getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
         return categoryMapper.toCategoryCreationResponse(category);
+    }
+
+    @Override
+    public Long totalCategory() {
+        return categoryRepository.count();
     }
 }
