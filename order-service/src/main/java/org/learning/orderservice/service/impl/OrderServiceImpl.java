@@ -157,4 +157,9 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.countByUserId(userId);
     }
 
+    @Override
+    public Long totalOrder() {
+        return orderRepository.count();
+    }
+
 }

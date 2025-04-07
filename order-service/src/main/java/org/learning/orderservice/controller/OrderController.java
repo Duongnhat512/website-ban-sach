@@ -76,4 +76,15 @@ public class OrderController {
                 .result(totalOrders)
                 .build();
     }
+    @GetMapping("/total-order")
+    public ResponseData<Long> totalOrder() {
+        log.info("Getting total orders");
+        Long totalOrders = orderService.totalOrder();
+        return ResponseData.<Long>builder()
+                .code(200)
+                .message("Total orders retrieved successfully")
+                .result(totalOrders)
+                .build();
+    }
+
 }
