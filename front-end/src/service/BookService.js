@@ -2,7 +2,9 @@ import axios from "../until/customize-axios";
 
 export const callGetBook = async (page, size) => {
   try {
-    const response = await axios.get("/api/v1/books/get-all-books", { params: { page, size } });
+    const response = await axios.get("/api/v1/books/get-all-books", {
+      params: { page, size },
+    });
     return response;
   } catch (error) {
     console.error("Get books error:", error.response?.data || error.message);
@@ -11,7 +13,7 @@ export const callGetBook = async (page, size) => {
 };
 export const callGetABook = async (id) => {
   try {
-    const response = await axios.get(`/api/v1/books/${id}`, { params: {id} });
+    const response = await axios.get(`/api/v1/books/${id}`, { params: { id } });
     return response;
   } catch (error) {
     console.error("Get books error:", error.response?.data || error.message);
@@ -29,4 +31,14 @@ export const callGetBookFilter = async (page, size, sort, search) => {
     throw error;
   }
 };
-
+export const callGetAllBooks = async (limit, page, sortBy, sortOrder) => {
+  try {
+    const response = await axios.get(
+      `/api/v1/books/get-all-books?limit=${limit}&page=${page}`
+    );
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+};

@@ -225,6 +225,8 @@ const AppHeader = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.authenticated);
+  const role = useSelector((state) => state.user.role);
+  
   const username = useSelector(
     (state) => state.user?.user?.fullName?.split(" ")[0] || ""
   );
@@ -280,6 +282,13 @@ const AppHeader = () => {
           Đăng xuất
         </Button>
       </Menu.Item>
+      {role === "ADMIN" && (
+        <Menu.Item key="4">
+          <Button type="link" onClick={() => navigate("/admin")}>
+            Quản lý Admin
+          </Button>
+        </Menu.Item>
+      )}
     </Menu>
   );
 

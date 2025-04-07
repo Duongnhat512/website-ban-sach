@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LayoutUser from "./component/LayoutUser/LayoutUser";
-import LayoutAdmin from "./component/LayoutAdmin/LayoutAdmin";
 import ErrorPage from "./component/ErrorPage/ErrorPage";
 import HomePage from "./page/Home/HomePage";
 import Login from "./page/Login/Login";
@@ -14,6 +13,8 @@ import Filter from "./page/Filter/Filter";
 import Banner1 from "./page/HomeBanner/Banner1";
 import Cart from "./page/Cart/Cart";
 import UserInfo from "./page/InfoUser";
+import LayoutAdmin from "./page/Admin/LayoutAdmin";
+import { setAuthToken } from "./until/customize-axios";
 
 function App() {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ function App() {
     const fetchUser = async () => {
       try {
         const response = await callGetUserToken();
+        setAuthToken(localStorage.getItem("token"));
         dispatch(setUser(response.result));
       } catch (error) {
         console.error("Failed to fetch user:", error);
