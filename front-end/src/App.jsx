@@ -19,6 +19,8 @@ import { setAuthToken } from "./until/customize-axios";
 import Oauth2 from "./page/Login/Oauth2";
 import PaymentSuccess from "./page/Payment/PaymentSuccess.jsx";
 import PaymentFailure from "./page/Payment/PaymentFailure.jsx";
+import Payment from "./page/Payment/Payment.jsx";
+import ChatBox from "./page/ChatPage/ChatBox/ChatBox.jsx";
 function App() {
   const dispatch = useDispatch();
 
@@ -55,7 +57,7 @@ function App() {
         <Route path="/admin" element={<LayoutAdmin />} />
         <Route path="*" element={<ErrorPage />} />
         <Route path="/oauth2/callback/:clientCode" element={<Oauth2 />} />
-        <Route path="/chatBox" element={<Chatbox />} />
+        <Route path="/chatBox" element={<ChatBox />} />
       </Routes>
     </Router>
   );

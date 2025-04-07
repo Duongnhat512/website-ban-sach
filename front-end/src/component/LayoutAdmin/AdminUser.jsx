@@ -16,7 +16,7 @@ function AdminUser() {
   const [visible, setVisible] = useState(false);
   const [visibleUpdateUser, setVisibleUpdateUser] = useState(false);
   const [user, setUser] = useState({});
-  const [sort, setSort] = useState({ field: "updatedAt", order: "desc" });
+  const [sort, setSort] = useState({ field: "id", order: "desc" });
   const [search, setSearch] = useState("");
   const getUser = async () => {
     console.log(sort.field, sort.order);
@@ -54,40 +54,40 @@ function AdminUser() {
   };
   const columns = [
     {
-      title: "Id",
+      title: "ID",
       dataIndex: "id",
       sorter: true,
+      width: 100, // Chiều rộng cố định
     },
     {
       title: "Email",
       dataIndex: "email",
       sorter: true,
-      render: (text, record) => <a>{text}</a>,
+      width: 200,
     },
     {
       title: "First Name",
       dataIndex: "firstName",
       sorter: true,
+      width: 150,
     },
     {
       title: "Last Name",
       dataIndex: "lastName",
       sorter: true,
-    },
-    {
-      title: "Full Name",
-      dataIndex: "fullName",
-      sorter: true,
+      width: 150,
     },
     {
       title: "Phone Number",
       dataIndex: "phoneNumber",
       sorter: true,
+      width: 150,
     },
     {
       title: "Date of Birth",
       dataIndex: "dob",
       sorter: true,
+      width: 150,
     },
     {
       title: "Action",
@@ -108,6 +108,7 @@ function AdminUser() {
           </button>
         </div>
       ),
+      width: 150,
     },
   ];
   const exportToExcel = (data, fileName) => {
@@ -122,7 +123,7 @@ function AdminUser() {
     setLimit(pagination.pageSize);
     if (sorter?.order === undefined) {
       // If the order is undefined, reset the sort state
-      setSort({ field: "", order: "" });
+      setSort({ field: "id", order: "desc" });
     } else {
       // Otherwise, update the sort state with the new field and order
       setSort({
@@ -175,6 +176,10 @@ function AdminUser() {
             `${range[0]}-${range[1]} of ${total} items`,
         }}
         className="bg-white shadow-md rounded-lg"
+        scroll={{ x: "max-content" }}
+        rowClassName={(record, index) =>
+          `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
+        } 
       />
       {/* <ModalCreateUser
         visible={visible}

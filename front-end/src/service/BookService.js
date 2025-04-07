@@ -34,7 +34,7 @@ export const callGetBookFilter = async (page, size, sort, search) => {
 export const callGetAllBooks = async (limit, page, sortBy, sortOrder) => {
   try {
     const response = await axios.get(
-      `/api/v1/books/get-all-books?limit=${limit}&page=${page}`
+      `/api/v1/books/get-all-books?size=${limit}&page=${page}&sort=${sortBy}:${sortOrder}`,
     );
     return response;
   } catch (error) {
@@ -42,3 +42,12 @@ export const callGetAllBooks = async (limit, page, sortBy, sortOrder) => {
     throw error;
   }
 };
+export const getBookById = async (id) => {
+  try {
+    const response = await axios.get(`/api/v1/books/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching book by ID:", error);
+    throw error;
+  }
+}

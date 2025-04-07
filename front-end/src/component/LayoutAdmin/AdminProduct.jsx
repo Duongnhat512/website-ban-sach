@@ -16,9 +16,11 @@ const AdminProduct = () => {
   const [visible, setVisible] = useState(false);
   const [visibleUpdateProduct, setVisibleUpdateProduct] = useState(false);
   const [product, setProduct] = useState({});
-  const [sort, setSort] = useState({ field: "releasedDate", order: "desc" });
+  const [sort, setSort] = useState({ field: "id", order: "desc" });
 
   const getProduct = async () => {
+    console.log(limit, currentPage, sort.field, sort.order);
+
     let res = await callGetAllBooks(limit, currentPage, sort.field, sort.order);
     if (res && res.code === 200) {
       setTotal(res.result.totalElements);
@@ -50,28 +52,52 @@ const AdminProduct = () => {
       title: "ID",
       dataIndex: "id",
       sorter: true,
+      width: 100, // Chiều rộng cố định
+    },
+    {
+      title: "Hình Ảnh",
+      dataIndex: "thumbnail",
+      render: (thumbnail) => (
+        <img
+          src={thumbnail}
+          alt="Thumbnail"
+          className="w-16 h-16 object-cover rounded-md"
+        />
+      ),
+      width: 120,
     },
     {
       title: "Tên Sách",
       dataIndex: "title",
       sorter: true,
+      width: 200,
     },
     {
       title: "Tác Giả",
       dataIndex: "author",
       sorter: true,
+      width: 150,
     },
     {
       title: "Giá Gốc",
       dataIndex: "originalPrice",
       render: (price) => `${parseFloat(price).toLocaleString("vi-VN")} VND`,
       sorter: true,
+      width: 150,
     },
     {
       title: "Giá Hiện Tại",
       dataIndex: "currentPrice",
       render: (price) => `${parseFloat(price).toLocaleString("vi-VN")} VND`,
       sorter: true,
+      width: 150,
+    },
+    {
+      title: "Giảm Giá",
+      dataIndex: "discount",
+      render: (discount) => `${discount * 100}%`,
+      sorter: true,
+      width: 100,
     },
     {
       title: "Ngày Phát Hành",
@@ -81,16 +107,25 @@ const AdminProduct = () => {
         return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
       },
       sorter: true,
+      width: 150,
     },
     {
       title: "Số Lượng",
       dataIndex: "quantity",
       sorter: true,
+      width: 100,
     },
     {
       title: "Nhà Xuất Bản",
       dataIndex: "publisher",
       sorter: true,
+      width: 150,
+    },
+    {
+      title: "Số Trang",
+      dataIndex: "pages",
+      sorter: true,
+      width: 100,
     },
     {
       title: "Hành Động",
@@ -111,6 +146,7 @@ const AdminProduct = () => {
           </button>
         </div>
       ),
+      width: 150,
     },
   ];
 
@@ -124,8 +160,10 @@ const AdminProduct = () => {
   const onChange = (pagination, filters, sorter) => {
     setCurrentPage(pagination.current);
     setLimit(pagination.pageSize);
+    console.log("Sorter", sorter, filters);
+
     if (sorter?.order === undefined) {
-      setSort({ field: "", order: "" });
+      setSort({ field: "id", order: "desc" });
     } else {
       setSort({
         field: sorter.field,
@@ -178,6 +216,10 @@ const AdminProduct = () => {
             `${range[0]}-${range[1]} of ${total} items`,
         }}
         className="bg-white shadow-md rounded-lg"
+        scroll={{ x: "max-content" }}
+        rowClassName={(record, index) =>
+          `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
+        } 
       />
     </div>
   );

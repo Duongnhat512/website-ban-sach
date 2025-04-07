@@ -1,6 +1,7 @@
 import { Card, Col, Row, Statistic } from "antd";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
+import { callGetTotalCategories, callGetTotalOrder, callGetTotalProduct, callGetTotalUser } from "../../service/AdminService";
 function AdminMain() {
   const [countValue, setCountValue] = useState({
     totalCategory: 0,
@@ -9,8 +10,38 @@ function AdminMain() {
     totalUser: 0,
   });
   const formatter = (value) => <CountUp end={value} separator="," />;
+  const getValue = async () => {
+    let resCate = await callGetTotalCategories();
+    let resOrder = await callGetTotalOrder();
+    let resProduct = await callGetTotalProduct();
+    let resUser = await callGetTotalUser();
+    if (resCate && resCate.code === 200) {
+      setCountValue((prev) => ({
+        ...prev,
+        totalCategory: resCate.result,
+      }));
+    }
+    if (resOrder && resOrder.code === 200) {
+      setCountValue((prev) => ({
+        ...prev,
+        totalOrder: resOrder.result,
+      }));
+    }
+    if (resProduct && resProduct.code === 200) {
+      setCountValue((prev) => ({
+        ...prev,
+        totalProduct: resProduct.result,
+      }));
+    }
+    if (resUser && resUser.code === 200) {
+      setCountValue((prev) => ({
+        ...prev,
+        totalUser: resUser.result,
+      }));
+    }
+  };
   useEffect(() => {
-   
+   getValue();
   }, []);
 
   return (

@@ -66,7 +66,7 @@ export const callSendOtpApi = async (email) => {
 export const callGetAllUsers = async (limit, page, sortBy,sortOrder) => {
   try {
     const response = await axios.get(
-      `/api/v1/auth/user/get-all-users?limit=${limit}&page=${page}`
+      `/api/v1/auth/user/get-all-users?size=${limit}&page=${page}&sort=${sortBy}:${sortOrder}`
     );
     return response;
   } catch (error) {
