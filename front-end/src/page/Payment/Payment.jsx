@@ -1,12 +1,27 @@
-import { Form, Input, Radio, Button, Modal, List, Row, Col, Checkbox } from "antd";
+import { Form, Input, Radio, Button, Modal, List, Row, Col, Checkbox, Image, InputNumber } from "antd";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import { doRemoveOrder } from "../../redux/OrderSlice";
 import "./Payment.scss";
+import { Typography } from "antd";
+
+const { Text } = Typography;
 
 function Payment() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const orders = useSelector((state) => state.order.orders);
+    const user = useSelector((state) => state.user.user);
+    const token = localStorage.getItem('token');
+    const [form] = Form.useForm();
 
-    const [name, setName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [address, setAddress] = useState("");
+    const [name, setName] = useState(user.fullName || "admin");
+    const [phone, setPhone] = useState(user.phoneNumber || "");
+    const [address, setAddress] = useState(user.address || "");
+    const [email, setEmail] = useState(user.email || "");
     const [shippingMethod, setShippingMethod] = useState();
     const [paymentMethod, setPaymentMethod] = useState("Thanh toán khi nhận hàng");
     const [promoCode, setPromoCode] = useState("");
@@ -17,6 +32,7 @@ function Payment() {
     const [totalShippingFee, setTotalShippingFee] = useState(0);
     const [totalPayment, setTotalPayment] = useState(0);
     const [userInfo, setUserInfo] = useState({})
+    const [loading, setLoading] = useState(false);
 
     const handleNameChange = (e) => {
         setName(e.target.value);
@@ -24,6 +40,10 @@ function Payment() {
 
     const handlePhoneChange = (e) => {
         setPhone(e.target.value);
+    }
+
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
     }
 
     const handleAddressChange = (e) => {
@@ -55,6 +75,37 @@ function Payment() {
         setTotalShippingFee(e.target.value);
         setShippingMethod(e.target.value);
     }
+
+    const handleDeposit = () => {
+        setLoading(true);
+        const amount = totalPayment;
+        if (!amount || amount < 1000) {
+            toast.error("Please enter a valid amount to deposit (>= 1000 VND)");
+            return;
+        }
+        try {
+            fetch(
+                `http://localhost:8888/api/v1/payment/vn-pay?amount=${amount}&bankCode=NCB&orderId=10000`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+                .then((response) => response.json())
+                .then((data) => {
+                    window.location.href = data.paymentUrl;
+                })
+                .catch((error) => console.log(error));
+        } catch (error) {
+            toast.error("An error occurred. Please try again later.");
+            setLoading(false);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
@@ -90,16 +141,19 @@ function Payment() {
         }
     ];
 
-    const fetchUserInfo = () => {
-
-    }
-
     const fetchPromotions = () => {
 
     }
 
-    const fetchOrderItems = () => {
-
+    const getOrderItems = () => {
+        if (orders.length > 0) {
+            setOrderItems(orders.map((item) => ({ ...item, selected: true })));
+            let total = 0;
+            orders.forEach((item) => {
+                total += item.currentPrice * item.amount;
+            });
+            setTotalPrice(total);
+        }
     }
 
     const calculateTotalPrice = () => {
@@ -112,15 +166,62 @@ function Payment() {
 
     const renderItem = (item) => {
         return (
-            <></>
+            <Row style={{ width: "100%" }} align="middle">
+                <Col span={3}>
+                    <Image
+                        width={80}
+                        src={item.thumbnail || "https://via.placeholder.com/80"}
+                        alt="Product Image"
+                    />
+                </Col>
+                <Col span={9}>
+                    <div>
+                        <Text strong>{item.title}</Text>
+                        <br />
+                        <Text type="secondary" style={{ fontSize: 12 }}>{item.releaseDate}</Text>
+                        <br />
+                        <Text delete>
+                            {item.originalPrice ? (item.currentPrice * 1.11).toLocaleString() : ""}
+                            &nbsp;đ
+                        </Text>
+                        <br />
+                        <Text strong style={{ color: "red" }}>
+                            {item.currentPrice ? item.currentPrice.toLocaleString() : ""} đ
+                        </Text>
+                    </div>
+                </Col>
+                <Col span={6}>
+                    <InputNumber
+                        min={1}
+                        value={item.amount}
+                        disabled={true}
+                    />
+                </Col>
+                <Col span={6}>
+                    <Text strong style={{ color: "red" }}>
+                        {(item.currentPrice * item.amount).toLocaleString()} đ
+                    </Text>
+                </Col>
+            </Row>
         )
     }
 
+    const setFormData = () => {
+        if (user) {
+            form.setFieldsValue({
+                name: name,
+                phone: phone || "",
+                email: email || "",
+                address: address || ""
+            });
+        }
+    }
+
     useEffect(() => {
-        fetchUserInfo();
         fetchPromotions();
-        fetchOrderItems();
-    })
+        setFormData();
+        getOrderItems();
+    }, [user])
 
     useEffect(() => {
         calculateTotalPrice();
@@ -131,9 +232,10 @@ function Payment() {
             <div className="payment-container">
                 <div className="content">
                     <div className="title">
-                        <text>ĐỊA CHỈ GIAO HÀNG</text>
+                        <Text>ĐỊA CHỈ GIAO HÀNG</Text>
                     </div>
                     <Form
+                        form={form}
                         name="Dia chi giao hang"
                         layout="horizontal"
                         labelCol={{
@@ -145,7 +247,7 @@ function Payment() {
                     >
                         <Form.Item
                             label="Họ và tên"
-                            name="Họ và tên"
+                            name="name"
                             className="left-align-label"
                             rules={[
                                 {
@@ -154,11 +256,11 @@ function Payment() {
                                 },
                             ]}
                         >
-                            <Input type="text" placeholder="Nhập họ và tên" value={name} onChange={handleNameChange} />
+                            <Input type="text" placeholder="Nhập họ và tên" value={name} onChange={handleNameChange} disabled={user ? true : false} />
                         </Form.Item>
                         <Form.Item
                             label="Số điện thoại"
-                            name="Số điện thoại"
+                            name="phone"
                             className="left-align-label"
                             rules={[
                                 {
@@ -167,11 +269,24 @@ function Payment() {
                                 },
                             ]}
                         >
-                            <Input type="text" placeholder="Nhập số điện thoại" value={phone} onChange={handlePhoneChange} />
+                            <Input type="text" placeholder="Nhập số điện thoại" value={phone} onChange={handlePhoneChange} disabled={user ? true : false} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Email"
+                            name="email"
+                            className="left-align-label"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng nhập email!",
+                                },
+                            ]}
+                        >
+                            <Input type="text" placeholder="Nhập email" value={email} onChange={handleEmailChange} disabled={user ? true : false} />
                         </Form.Item>
                         <Form.Item
                             label="Địa chỉ"
-                            name="Địa chỉ"
+                            name="address"
                             className="left-align-label"
                             rules={[
                                 {
@@ -186,7 +301,7 @@ function Payment() {
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>PHƯƠNG THỨC VẬN CHUYỂN</text>
+                        <Text>PHƯƠNG THỨC VẬN CHUYỂN</Text>
                     </div>
                     <Radio.Group
                         value={shippingMethod}
@@ -200,7 +315,7 @@ function Payment() {
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>PHƯƠNG THỨC THANH TOÁN</text>
+                        <Text>PHƯƠNG THỨC THANH TOÁN</Text>
                     </div>
                     <Radio.Group
                         value={paymentMethod}
@@ -223,7 +338,7 @@ function Payment() {
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>MÃ KHUYẾN MÃI/MÃ QUÀ TẶNG</text>
+                        <Text>MÃ KHUYẾN MÃI/MÃ QUÀ TẶNG</Text>
                     </div>
                     <Form
                         name="Ma khuyen mai"
@@ -241,7 +356,7 @@ function Payment() {
                             className="left-align-label"
                         >
                             <Input
-                                type="text"
+                                type="Text"
                                 placeholder="Nhập mã khuyến mãi"
                                 value={promoCode}
                                 onChange={handlePromoCodeChange}
@@ -259,7 +374,7 @@ function Payment() {
                                 footer={null}
                             >
                                 <Input
-                                    type="text"
+                                    type="Text"
                                     placeholder="Nhập mã khuyến mãi"
                                     value={promoCode}
                                     onChange={handlePromoCodeChange}
@@ -288,46 +403,68 @@ function Payment() {
                 </div>
                 <div className="content">
                     <div className="title">
-                        <text>KIỂM TRA LẠI ĐƠN HÀNG</text>
+                        <Text>KIỂM TRA LẠI ĐƠN HÀNG</Text>
                     </div>
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={orderItems}
-                        renderItem={renderItem}
-                    />
+                    <div className="order-items">
+                        {orderItems.length === 0 ? (
+                            <Text>Không có sản phẩm nào trong giỏ hàng</Text>
+                        ) : (
+                            <>
+                                <Row justify="space-between" align="middle" className="cart-header" style={{ marginBottom: "10px" }}>
+                                    <Col span={3}>
+                                        <Text strong>Hình ảnh</Text>
+                                    </Col>
+                                    <Col span={9}>
+                                        <Text strong>Sản phẩm</Text>
+                                    </Col>
+                                    <Col span={6}>
+                                        <Text strong>Số lượng</Text>
+                                    </Col>
+                                    <Col span={6}>
+                                        <Text strong>Thành tiền</Text>
+                                    </Col>
+                                </Row>
+                                <List
+                                    itemLayout="horizontal"
+                                    dataSource={orderItems}
+                                    renderItem={renderItem}
+                                />
+                            </>
+                        )}
+                    </div>
                 </div>
                 <div className="sticky-footer">
                     <div style={{ display: "flex", alignItems: "flex-end", width: "80%", flexDirection: "column", gap: "10px" }}>
                         <Row style={{ gap: "50px" }}>
                             <Col>
-                                <text>Thành tiền: </text>
+                                <Text>Thành tiền: </Text>
                             </Col>
                             <Col>
-                                <text>{formatPrice(totalPrice)}</text>
-                            </Col>
-                        </Row>
-                        <Row style={{ gap: "50px" }}>
-                            <Col>
-                                <text>Giảm giá: </text>
-                            </Col>
-                            <Col>
-                                <text>{formatPrice(totalDiscount)}</text>
+                                <Text>{formatPrice(totalPrice)}</Text>
                             </Col>
                         </Row>
                         <Row style={{ gap: "50px" }}>
                             <Col>
-                                <text>Phí vận chuyển: </text>
+                                <Text>Giảm giá: </Text>
                             </Col>
                             <Col>
-                                <text>{formatPrice(totalShippingFee)}</text>
+                                <Text>{formatPrice(totalDiscount)}</Text>
                             </Col>
                         </Row>
                         <Row style={{ gap: "50px" }}>
                             <Col>
-                                <text>Tổng thanh toán: </text>
+                                <Text>Phí vận chuyển: </Text>
                             </Col>
                             <Col>
-                                <text>{formatPrice(totalPayment)}</text>
+                                <Text>{formatPrice(totalShippingFee)}</Text>
+                            </Col>
+                        </Row>
+                        <Row style={{ gap: "50px" }}>
+                            <Col>
+                                <Text>Tổng thanh toán: </Text>
+                            </Col>
+                            <Col>
+                                <Text>{formatPrice(totalPayment)}</Text>
                             </Col>
                         </Row>
                     </div>
@@ -335,17 +472,22 @@ function Payment() {
                         <Col>
                             <Checkbox
                                 defaultChecked={false}
-
                             >
                                 <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <text>Bằng việc tiến hành Mua hàng. Bạn đã đồng ý với </text>
+                                    <Text>Bằng việc tiến hành Mua hàng. Bạn đã đồng ý với </Text>
                                     <a href="/terms-and-conditions" style={{ color: "#2f80ed" }}>Điều khoản & Điều kiện của T1&apos;s store</a>
                                 </div>
                             </Checkbox>
 
                         </Col>
                         <Col>
-                            <Button type="text" size="large" style={{ color: "#ffff", backgroundColor: "#C92127" }}>Xác nhận thanh toán</Button>
+                            <Button type="Text" size="large" style={{ color: "#ffff", backgroundColor: "#C92127" }}
+                                onClick={() => {
+                                    if(paymentMethod === "Thanh toán VN Pay") {
+                                        handleDeposit();
+                                    }
+                                }}
+                            >Xác nhận thanh toán</Button>
                         </Col>
                     </Row>
                 </div>

@@ -12,11 +12,11 @@ export const orderSlice = createSlice({
       );
 
       if (productIndex >= 0) {
-        // If the product is already in the cart, update the quantity
-        state.orders[productIndex].quantity = action.payload.quantity;
+        state.orders[productIndex].amount += action.payload.amount;
       } else {
-        // If the product is not in the cart, add it
         state.orders.push(action.payload);
+        console.log(JSON.parse(JSON.stringify(state.orders)));
+
       }
     },
     doRemoveOrder: (state, action) => {
@@ -24,7 +24,23 @@ export const orderSlice = createSlice({
         (order) => order.id !== action.payload.id
       );
     },
+    doUpdateAmount: (state, action) => {
+      const productIndex = state.orders.findIndex(
+        (order) => order.id === action.payload.id
+      );
+      if (productIndex >= 0) {
+        state.orders[productIndex].amount = action.payload.amount;
+      }
+    },
+    doRemoveMultipleOrders: (state, action) => {
+      // action.payload là mảng chứa các ID cần xóa
+      const orderIdsToRemove = action.payload;
+      state.orders = state.orders.filter(
+        (order) => !orderIdsToRemove.includes(order.id)
+      );
+    },
+
   },
 });
 
-export const { doAddOrder, doRemoveOrder } = orderSlice.actions;
+export const { doAddOrder, doRemoveOrder, doUpdateAmount, doRemoveMultipleOrders } = orderSlice.actions;

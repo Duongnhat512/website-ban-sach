@@ -230,6 +230,7 @@ const AppHeader = () => {
   const username = useSelector(
     (state) => state.user?.user?.fullName?.split(" ")[0] || ""
   );
+  const ordersLength = useSelector((state) => state.order.orders.length || 0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -388,7 +389,7 @@ const AppHeader = () => {
                 className="flex flex-col items-center text-center cursor-pointer"
                 onClick={() => navigate("/cart")}
               >
-                <Badge count={0} showZero>
+                <Badge count={ordersLength} showZero>
                   <ShoppingCartOutlined className="text-xl" />
                   <p className="text-xs text-black leading-tight">Giỏ hàng</p>
                 </Badge>

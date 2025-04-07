@@ -8,8 +8,20 @@
     margin: 0 auto;
     padding: 20px;
 
+    .cart-header {
+        display: flex;
+        align-items: center;
+        background-color: #ffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+
     .cart-list{
         background-color: white;
         padding: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
     }
 }
