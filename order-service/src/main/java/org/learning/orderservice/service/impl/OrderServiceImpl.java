@@ -15,6 +15,9 @@ import org.learning.orderservice.model.Order;
 import org.learning.orderservice.repository.OrderRepository;
 import org.learning.orderservice.service.OrderService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -121,8 +124,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageResponse<OrderCreateResponse> getOrders(int page, int size) {
-        Page<Order> orderPage = orderRepository.findAll(org.springframework.data.domain.PageRequest.of(page - 1, size));
+    public PageResponse<OrderCreateResponse> getOrders(int page, int size, String sortBy) {
+        String field = sortBy.split(":")[0];
+        String direction = sortBy.split(":")[1];
+        Pageable pageable;
+        if (direction.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
+        } else {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).descending());
+        }
+        Page<Order> orderPage = orderRepository.findAll(pageable);
         List<OrderCreateResponse> orderCreateResponses = orderPage.get().map(order -> OrderCreateResponse.builder()
                 .id(order.getId())
                 .total(order.getTotal())

@@ -15,7 +15,7 @@ public interface BookService {
 
     BookCreationResponse createBook(BookCreationRequest request);
 
-    PageResponse<BookCreationResponse> getBooks(int page, int size);
+    PageResponse<BookCreationResponse> getBooks(int page, int size, String sortBy);
 
     BookCreationResponse getBookById(Long id);
 

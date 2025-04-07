@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,8 +39,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public PageResponse<CategoryResponse> getAllCategories(int page, int size) {
-        Page<Category> categories = categoryRepository.findAll(PageRequest.of(page-1, size));
+    public PageResponse<CategoryResponse> getAllCategories(int page, int size,String sortBy) {
+        String field = sortBy.split(":")[0];
+        String direction = sortBy.split(":")[1];
+        Pageable pageable;
+        if (direction.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
+        } else {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).descending());
+        }
+        Page<Category> categories = categoryRepository.findAll(pageable);
         List<CategoryResponse> categoryResponses = categories.getContent().stream()
                 .map(categoryMapper::toCategoryCreationResponse)
                 .collect(Collectors.toList());

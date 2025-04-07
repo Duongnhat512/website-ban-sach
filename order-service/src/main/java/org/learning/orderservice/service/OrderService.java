@@ -12,6 +12,6 @@ public interface OrderService {
     OrderCreateResponse updateStatus(Long orderId, String status);
     Order updatePaymentStatus(Long orderId, String status);
 
-    PageResponse<OrderCreateResponse> getOrders(int page, int size);
+    PageResponse<OrderCreateResponse> getOrders(int page, int size, String sortBy);
 
 }

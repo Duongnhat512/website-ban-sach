@@ -56,9 +56,10 @@ public class OrderController {
 
     @GetMapping("/get-all-orders")
     public ResponseData<PageResponse<OrderCreateResponse>> getAllOrders(@RequestParam(defaultValue = "1") int page,
-                                                                        @RequestParam(defaultValue = "10") int size) {
+                                                                        @RequestParam(defaultValue = "10") int size,
+                                                                        @RequestParam(value = "sort") String sort) {
         log.info("Getting all orders");
-        PageResponse<OrderCreateResponse> response = orderService.getOrders(page, size);
+        PageResponse<OrderCreateResponse> response = orderService.getOrders(page, size,sort);
         return ResponseData.<PageResponse<OrderCreateResponse>>builder()
                 .code(200)
                 .message("Orders retrieved successfully")

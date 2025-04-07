@@ -30,11 +30,12 @@ public class UserController {
     }
     @GetMapping("/get-all-users")
     public ResponseData<PageResponse<UserResponse>> getAllUsers(@RequestParam (defaultValue = "1") int page,
-                                                                @RequestParam(defaultValue = "10") int size){
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(value = "sort") String sort){
         return ResponseData.<PageResponse<UserResponse>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get All Users Successfully")
-                .result(userService.getUsers(page,size))
+                .result(userService.getUsers(page,size,sort))
                 .build();
     }
 

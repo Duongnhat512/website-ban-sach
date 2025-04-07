@@ -36,11 +36,12 @@ public class BookController {
     @GetMapping("/get-all-books")
     public ResponseData<PageResponse<BookCreationResponse>> getBooks(
            @RequestParam(value = "page",defaultValue = "1") int page,
-           @RequestParam(value = "size",defaultValue = "10")   int size){
+           @RequestParam(value = "size",defaultValue = "10")   int size,
+           @RequestParam(value = "sort") String sortBy){
         return ResponseData.<PageResponse<BookCreationResponse>>builder()
                 .message("Get All Books Successfully")
                 .code(HttpStatus.OK.value())
-                .result(bookService.getBooks(page, size))
+                .result(bookService.getBooks(page, size,sortBy))
                 .build();
     }
     @GetMapping("/{id}")

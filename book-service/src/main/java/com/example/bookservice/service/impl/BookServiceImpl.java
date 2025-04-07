@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -85,8 +86,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<BookCreationResponse> getBooks(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+    public PageResponse<BookCreationResponse> getBooks(int page, int size, String sortBy) {
+        log.info("Getting all books");
+        String field = sortBy.split(":")[0];
+        String direction = sortBy.split(":")[1];
+        Pageable pageable;
+        if (direction.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
+        } else {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).descending());
+        }
         Page<Book> books = repository.findAll(pageable);
         return PageResponse.<BookCreationResponse>builder()
                 .currentPage(page)

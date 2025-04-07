@@ -16,6 +16,8 @@ import org.learning.authenticationservice.repository.UserRepository;
 import org.learning.authenticationservice.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -107,8 +109,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResponse<UserResponse> getUsers(int page, int size) {
-        Page<User> userPage = userRepository.findAll(PageRequest.of(page-1, size));
+    public PageResponse<UserResponse> getUsers(int page, int size,String sortBy) {
+        String field = sortBy.split(":")[0];
+        String direction = sortBy.split(":")[1];
+        Pageable pageable;
+        if (direction.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
+        } else {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).descending());
+        }
+        Page<User> userPage = userRepository.findAll(pageable);
         List<UserResponse> userResponses = userPage.get().map(userMapper::toUserResponse).collect(Collectors.toList());
         return PageResponse.<UserResponse>builder()
                 .currentPage(page)

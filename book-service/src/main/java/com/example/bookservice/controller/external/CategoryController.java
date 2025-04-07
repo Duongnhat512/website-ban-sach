@@ -30,11 +30,12 @@ public class CategoryController {
 
     @GetMapping("/all")
     public ResponseData<PageResponse<CategoryResponse>> getAllCategories(@RequestParam(defaultValue = "1") int page,
-                                                                         @RequestParam(defaultValue = "10") int size) {
+                                                                         @RequestParam(defaultValue = "10") int size,
+                                                                         @RequestParam(value = "sort") String sort) {
         return ResponseData.<PageResponse<CategoryResponse>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Fetched all categories successfully")
-                .result(categoryService.getAllCategories(page,size))
+                .result(categoryService.getAllCategories(page,size,sort))
                 .build();
     }
 

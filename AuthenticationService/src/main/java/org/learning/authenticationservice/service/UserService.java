@@ -17,7 +17,7 @@ public interface UserService {
 
     UserResponse deleteUser(Long id);
 
-    PageResponse<UserResponse> getUsers(int page, int size);
+    PageResponse<UserResponse> getUsers(int page, int size,String sortBy);
 
     void sendOtpByEmail(OTPRequest email);
 }
