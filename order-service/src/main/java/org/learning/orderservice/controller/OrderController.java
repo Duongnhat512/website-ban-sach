@@ -6,6 +6,7 @@ import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.request.OrderDetailsCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
 import org.learning.orderservice.dto.response.OrderDetailCreateResponse;
+import org.learning.orderservice.dto.response.PageResponse;
 import org.learning.orderservice.dto.response.ResponseData;
 import org.learning.orderservice.service.OrderService;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,37 @@ public class OrderController {
                 .build();
     }
 
-
+    @GetMapping("/get-all-orders")
+    public ResponseData<PageResponse<OrderCreateResponse>> getAllOrders(@RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "10") int size,
+                                                                        @RequestParam(value = "sort") String sort) {
+        log.info("Getting all orders");
+        PageResponse<OrderCreateResponse> response = orderService.getOrders(page, size,sort);
+        return ResponseData.<PageResponse<OrderCreateResponse>>builder()
+                .code(200)
+                .message("Orders retrieved successfully")
+                .result(response)
+                .build();
+    }
+    @GetMapping("/get-total-order/{userId}")
+    public ResponseData<Long> getTotalOrder(@PathVariable Long userId) {
+        log.info("Getting total orders for user: {}", userId);
+        Long totalOrders = orderService.totalOrder(userId);
+        return ResponseData.<Long>builder()
+                .code(200)
+                .message("Total orders retrieved successfully")
+                .result(totalOrders)
+                .build();
+    }
+    @GetMapping("/total-order")
+    public ResponseData<Long> totalOrder() {
+        log.info("Getting total orders");
+        Long totalOrders = orderService.totalOrder();
+        return ResponseData.<Long>builder()
+                .code(200)
+                .message("Total orders retrieved successfully")
+                .result(totalOrders)
+                .build();
+    }
 
 }

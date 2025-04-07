@@ -2,6 +2,7 @@ package com.example.bookservice.controller.external;
 
 import com.example.bookservice.dto.request.CategoryCreationRequest;
 import com.example.bookservice.dto.response.CategoryResponse;
+import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.dto.response.ResponseData;
 import com.example.bookservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/categories")
+@RequestMapping("/books/categories")
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -28,11 +29,13 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
-    public ResponseData<List<CategoryResponse>> getAllCategories() {
-        return ResponseData.<List<CategoryResponse>>builder()
+    public ResponseData<PageResponse<CategoryResponse>> getAllCategories(@RequestParam(defaultValue = "1") int page,
+                                                                         @RequestParam(defaultValue = "10") int size,
+                                                                         @RequestParam(value = "sort") String sort) {
+        return ResponseData.<PageResponse<CategoryResponse>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Fetched all categories successfully")
-                .result(categoryService.getAllCategories())
+                .result(categoryService.getAllCategories(page,size,sort))
                 .build();
     }
 
@@ -42,6 +45,15 @@ public class CategoryController {
                 .code(HttpStatus.OK.value())
                 .message("Category retrieved successfully")
                 .result(categoryService.getCategoryById(id))
+                .build();
+    }
+
+    @GetMapping("/total")
+    public ResponseData<Long> totalCategory() {
+        return ResponseData.<Long>builder()
+                .code(HttpStatus.OK.value())
+                .message("Total categories retrieved successfully")
+                .result(categoryService.totalCategory())
                 .build();
     }
 }

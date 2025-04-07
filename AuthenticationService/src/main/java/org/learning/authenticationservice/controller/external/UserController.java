@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.learning.authenticationservice.dto.request.OTPRequest;
 import org.learning.authenticationservice.dto.request.UserRequest;
+import org.learning.authenticationservice.dto.response.PageResponse;
 import org.learning.authenticationservice.dto.response.ResponseData;
 import org.learning.authenticationservice.dto.response.UserResponse;
 import org.learning.authenticationservice.service.UserService;
@@ -28,11 +29,13 @@ public class UserController {
                 .build();
     }
     @GetMapping("/get-all-users")
-    public ResponseData<List<UserResponse>> getAllUsers(){
-        return ResponseData.<List<UserResponse>>builder()
+    public ResponseData<PageResponse<UserResponse>> getAllUsers(@RequestParam (defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(value = "sort") String sort){
+        return ResponseData.<PageResponse<UserResponse>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get All Users Successfully")
-                .result(userService.getUsers())
+                .result(userService.getUsers(page,size,sort))
                 .build();
     }
 
@@ -68,4 +71,12 @@ public class UserController {
                 .result(userService.updateUser(id, request))
                 .build();
         }
+    @GetMapping("/total-user")
+    public ResponseData<Long> totalUser(){
+        return ResponseData.<Long>builder()
+                .message("Total User Successfully")
+                .code(HttpStatus.OK.value())
+                .result(userService.totalUser())
+                .build();
+    }
 }

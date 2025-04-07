@@ -8,11 +8,16 @@ import org.learning.orderservice.client.BookClient;
 import org.learning.orderservice.common.OrderStatus;
 import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
+import org.learning.orderservice.dto.response.PageResponse;
 import org.learning.orderservice.extenal.Book;
 import org.learning.orderservice.extenal.OrderDetail;
 import org.learning.orderservice.model.Order;
 import org.learning.orderservice.repository.OrderRepository;
 import org.learning.orderservice.service.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -116,6 +121,45 @@ public class OrderServiceImpl implements OrderService {
         order.setPaymentStatus(status);
         orderRepository.save(order);
         return order;
+    }
+
+    @Override
+    public PageResponse<OrderCreateResponse> getOrders(int page, int size, String sortBy) {
+        String field = sortBy.split(":")[0];
+        String direction = sortBy.split(":")[1];
+        Pageable pageable;
+        if (direction.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
+        } else {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).descending());
+        }
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        List<OrderCreateResponse> orderCreateResponses = orderPage.get().map(order -> OrderCreateResponse.builder()
+                .id(order.getId())
+                .total(order.getTotal())
+                .address(order.getAddress())
+                .status(order.getOrderStatus())
+                .userId(order.getUserId())
+                .orderDate(order.getOrderDate())
+                .build()).toList();
+
+        return PageResponse.<OrderCreateResponse>builder()
+                .currentPage(page)
+                .pageSize(size)
+                .result(orderCreateResponses)
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public Long totalOrder(Long userId) {
+        return orderRepository.countByUserId(userId);
+    }
+
+    @Override
+    public Long totalOrder() {
+        return orderRepository.count();
     }
 
 }
