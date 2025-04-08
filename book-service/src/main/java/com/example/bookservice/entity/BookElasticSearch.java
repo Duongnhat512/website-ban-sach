@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class BookElasticSearch implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 1L;
     @Id
