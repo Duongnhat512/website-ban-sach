@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { getBookById } from "../../service/BookService";
+import { useDispatch } from "react-redux";
+import { doAddOrder } from "../../redux/OrderSlice";
 const ProductDetail = () => {
   const id = 1;
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
   const thumbnails = [
     "http://localhost:3000/src/assets/images/product1.png",
     "http://localhost:3000/src/assets/images/product1.png",
     "http://localhost:3000/src/assets/images/product1.png",
     "http://localhost:3000/src/assets/images/product1.png",
   ];
+  const handleAddItem = (item) => {
+    console.log(item);
 
+    dispatch(doAddOrder({ ...item, amount: 1 }));
+  };
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -49,7 +56,10 @@ const ProductDetail = () => {
           </div>
           {/* Buttons below thumbnails */}
           <div className="mt-4 flex gap-2">
-            <button className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded w-full bg-white h-10 text-xs">
+            <button
+              onClick={() => handleAddItem(product)}
+              className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded w-full bg-white h-10 text-xs"
+            >
               Thêm vào giỏ hàng
             </button>
             <button className="bg-red-700 text-white px-4 py-1 text-sm rounded w-full h-10 text-xs">
