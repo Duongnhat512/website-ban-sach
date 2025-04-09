@@ -1,10 +1,8 @@
 import axios from "../until/customize-axios";
 
-export const callGetBook = async (page, size) => {
+export const callGetBook = async (page, size, sort = "id", order = "asc") => {
   try {
-    const response = await axios.get("/api/v1/books/get-all-books", {
-      params: { page, size },
-    });
+    const response = await axios.get(`/api/v1/books/get-all-books?page=${page}&size=${size}&sort=${sort}:${order}`);
     return response;
   } catch (error) {
     console.error("Get books error:", error.response?.data || error.message);
@@ -34,7 +32,7 @@ export const callGetBookFilter = async (page, size, sort, search) => {
 export const callGetAllBooks = async (limit, page, sortBy, sortOrder) => {
   try {
     const response = await axios.get(
-      `/api/v1/books/get-all-books?size=${limit}&page=${page}&sort=${sortBy}:${sortOrder}`,
+      `/api/v1/books/get-all-books?size=${limit}&page=${page}&sort=${sortBy}:${sortOrder}`
     );
     return response;
   } catch (error) {
@@ -50,4 +48,28 @@ export const getBookById = async (id) => {
     console.error("Error fetching book by ID:", error);
     throw error;
   }
-}
+};
+export const callGetBookFlashSale = async () => {
+  try {
+    const response = await axios.get("/api/v1/books/flash-sale");
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+export const callGetBookByCategory = async (
+  categoryName,
+  page = 1,
+  size = 5
+) => {
+  try {
+    const response = await axios.get(
+      `/api/v1/books/search-by-category?category=${categoryName}&page=${page}&size=${size}`
+    );
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+};
