@@ -1,6 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { getBookById } from "../../service/BookService";
+import { getCommentsByBookId, createComment } from "../../service/CommentService";
 const ProductDetail = () => {
+const [comments, setComments] = useState([]);
+const [newComment, setNewComment] = useState("");
+
+useEffect(() => {
+  const fetchComments = async () => {
+    try {
+      const res = await getCommentsByBookId(id);
+      setComments(res);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+  fetchComments();
+}, []);
+
+const handleCommentSubmit = async () => {
+  try {
+    const commentData = {
+      userId: 1, // giả sử user id là 1
+      bookId: id,
+      content: newComment,
+      dateTime: new Date(),
+    };
+    console.log(commentData);
+    await createComment(commentData);
+    setNewComment("");
+    const updatedComments = await getCommentsByBookId(id);
+    setComments(updatedComments);
+  } catch (err) {
+    console.error("Error submitting comment", err);
+  }
+};
+
   const id = 1;
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -209,6 +243,41 @@ const ProductDetail = () => {
           .
         </p>
       </div>
+      {/* Comment Section */}
+<div className="mt-6 p-4 bg-white rounded-lg shadow border">
+  <h3 className="text-lg font-semibold mb-2">Bình luận</h3>
+
+  {/* Input new comment */}
+  <textarea
+    value={newComment}
+    onChange={(e) => setNewComment(e.target.value)}
+    className="w-full p-2 border border-gray-300 rounded mb-2"
+    rows={3}
+    placeholder="Viết bình luận của bạn..."
+  />
+  <button
+    onClick={handleCommentSubmit}
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+  >
+    Gửi bình luận
+  </button>
+
+  {/* List of comments */}
+  <div className="mt-4 space-y-4">
+    {comments.length === 0 ? (
+      <p className="text-sm text-gray-500">Chưa có bình luận nào.</p>
+    ) : (
+      comments.map((comment) => (
+        <div key={comment.id} className="border-b pb-2">
+          <p className="text-sm text-gray-800">{comment.content}</p>
+          <p className="text-xs text-gray-500">
+            Người dùng #{comment.userId} - {new Date(comment.dateTime).toLocaleString()}
+          </p>
+        </div>
+      ))
+    )}
+  </div>
+</div>
     </div>
   );
 };
