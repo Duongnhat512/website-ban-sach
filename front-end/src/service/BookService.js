@@ -43,7 +43,8 @@ export const callGetAllBooks = async (limit, page, sortBy, sortOrder) => {
 export const getBookById = async (id) => {
   try {
     const response = await axios.get(`/api/v1/books/${id}`);
-    return response.data;
+    console.log(response.result);
+    return response.result;
   } catch (error) {
     console.error("Error fetching book by ID:", error);
     throw error;
