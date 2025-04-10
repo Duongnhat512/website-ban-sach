@@ -3,6 +3,7 @@ import com.example.commentservice.dto.request.CommentCreationRequest;
 import com.example.commentservice.dto.response.CommentCreationResponse;
 import com.example.commentservice.entity.Comment;
 import com.example.commentservice.mapper.CommentMapper;
+import com.example.commentservice.mapper.CommentsMapper;
 import com.example.commentservice.repository.CommentRepository;
 import com.example.commentservice.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +17,28 @@ import java.util.List;
 @Slf4j
 public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
-    private final CommentMapper commentMapper;
     @Override
     public CommentCreationResponse createComment(CommentCreationRequest request)
     {
         log.info("Creating book with content: {}", request.getContent());
-        Comment comment = commentMapper.toComment(request);
+        //Comment comment = commentMapper.toComment(request);
+        Comment comment = Comment.builder()
+                .userId(request.getUserId())
+                .bookId(request.getBookId())
+                .content(request.getContent())
+                .dateTime(request.getDateTime())
+                .build();
+        System.out.println("📤 Content in entity: " + comment.getContent());
         commentRepository.save(comment);
-        return commentMapper.toCommentCreationResponse(comment);
+        CommentCreationResponse response = CommentCreationResponse.builder()
+                .id(comment.getId())
+                .userId(comment.getUserId())
+                .bookId(comment.getBookId())
+                .content(comment.getContent())
+                .dateTime(comment.getDateTime())
+                .build();
+
+        return response;
     }
     public CommentCreationResponse updateComment(Long id,CommentCreationRequest request)
     {
@@ -33,25 +48,25 @@ public class CommentServiceImpl implements CommentService{
         comment.setBookId(request.getBookId());
         comment.setUserId(request.getUserId());
         commentRepository.save(comment);
-        return commentMapper.toCommentCreationResponse(comment);
+        return CommentsMapper.toCommentCreationResponse(comment);
     }
     public CommentCreationResponse deleteComment(Long id)
     {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
         commentRepository.delete(comment);
-        return commentMapper.toCommentCreationResponse(comment);
+        return CommentsMapper.toCommentCreationResponse(comment);
     }
     public List<CommentCreationResponse> getCommentsByProductId(Long bookId)
     {
         List<Comment> comments = commentRepository.findByBookId(bookId);
         return comments.stream()
-                .map(commentMapper::toCommentCreationResponse)
+                .map(CommentsMapper::toCommentCreationResponse)
                 .toList();
     }
     public CommentCreationResponse findComment(Long id)
     {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
-        return commentMapper.toCommentCreationResponse(comment);
+        return CommentsMapper.toCommentCreationResponse(comment);
     }
 
 }
