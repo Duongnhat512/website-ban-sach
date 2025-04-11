@@ -21,6 +21,8 @@ public class CommentController {
 
     @PostMapping
     public ResponseData<CommentCreationResponse> createComment(@RequestBody CommentCreationRequest request) {
+
+        System.out.println("🔍 DEBUG request: " + request.getContent());
         return ResponseData.<CommentCreationResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Create comment successfully")
