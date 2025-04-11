@@ -45,26 +45,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserRequest request,String otp) {
-        if(userRepository.existsByEmail(request.getEmail())){
+    public UserResponse createUser(UserRequest request, String otp) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             log.error("Email already exists");
             throw new RuntimeException("Email already exists");
         }
+
         String storedOtp = redisService.get(request.getEmail());
-        if(storedOtp == null || !storedOtp.equals(otp)){
+        if (storedOtp == null || !storedOtp.equals(otp)) {
             log.error("OTP not found");
             throw new RuntimeException("OTP not found");
         }
-        User user = userMapper.toUser(request);
 
+        User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Role role = roleRepository.findByName(RoleName.USER.name()).orElseThrow(()->new RuntimeException("Role not found"));
+        // Kiểm tra roleId có tồn tại không
+        Role role = roleRepository.findById(request.getRoleId())
+                .orElseThrow(() -> new RuntimeException("Role not found"));
         user.setRole(role);
-        user.setFullName(request.getFirstName()+ " "+ request.getLastName());
 
-        try{
+        user.setFullName(request.getFirstName() + " " + request.getLastName());
+
+        try {
             user = userRepository.save(user);
+
             NotificationEvent notificationEvent = NotificationEvent.builder()
                     .channel("EMAIL")
                     .recipient(user.getEmail())
@@ -72,13 +77,14 @@ public class UserServiceImpl implements UserService {
                     .subject("Welcome to Fahasa")
                     .build();
 
-            kafkaTemplate.send("notification-delivery",notificationEvent);
+            kafkaTemplate.send("notification-delivery", notificationEvent);
             return userMapper.toUserResponse(user);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error while saving user", e);
             throw new RuntimeException("Error while saving user");
         }
     }
+
 
     @Override
     public UserResponse updateUser(Long id, UserRequest request) {
@@ -103,10 +109,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse deleteUser(Long id) {
-        UserResponse userResponse = getUserById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Kiểm tra nếu roleId = 1 (admin) thì không được xóa
+        if (user.getRole() != null && user.getRole().getId() == 1) {
+            throw new RuntimeException("Cannot delete admin user");
+        }
+
         userRepository.deleteById(id);
-        return userResponse;
+        return userMapper.toUserResponse(user);
     }
+
 
     @Override
     public PageResponse<UserResponse> getUsers(int page, int size,String sortBy) {

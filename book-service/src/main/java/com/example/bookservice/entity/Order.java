@@ -1,12 +1,11 @@
-package org.learning.orderservice.model;
+package com.example.bookservice.entity;
 
+import com.example.bookservice.common.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.learning.orderservice.common.OrderStatus;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -37,7 +36,7 @@ public class Order {
     @Column(name = "total_price")
     Double total;
 
-    @Column(name = "address" , length = 1000)
+    @Column(name = "address")
     String address;
 
     @Column(name = "payment_status")

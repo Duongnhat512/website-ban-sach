@@ -26,13 +26,23 @@ public class BookController {
     private final GeminiAIService geminiService;
 
     @PostMapping("/create-book")
-    public ResponseData<BookCreationResponse> createBook(@RequestBody BookCreationRequest request){
-        return ResponseData.<BookCreationResponse>builder()
-                .code(HttpStatus.CREATED.value())
-                .message("Create Book Successfully")
-                .result(bookService.createBook(request))
-                .build();
+    public ResponseData<BookCreationResponse> createBook(@RequestBody BookCreationRequest request) {
+        try {
+            BookCreationResponse response = bookService.createBook(request);
+            return ResponseData.<BookCreationResponse>builder()
+                    .code(HttpStatus.CREATED.value())
+                    .message("Create Book Successfully")
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Failed to create book: " + ex.getMessage())
+                    .result(null)
+                    .build();
+        }
     }
+
     @GetMapping("/get-all-books")
     public ResponseData<PageResponse<BookCreationResponse>> getBooks(
            @RequestParam(value = "page",defaultValue = "1") int page,
@@ -45,31 +55,61 @@ public class BookController {
                 .build();
     }
     @GetMapping("/{id}")
-    public ResponseData<BookCreationResponse> getBookById(@PathVariable  Long id){
-        return ResponseData.<BookCreationResponse>builder()
-                .message("Get Book Successfully")
-                .code(HttpStatus.OK.value())
-                .result(bookService.getBookById(id))
-                .build();
+    public ResponseData<BookCreationResponse> getBookById(@PathVariable Long id) {
+        try {
+            BookCreationResponse response = bookService.getBookById(id);
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Get Book Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Book Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
     }
+
 
     @GetMapping("/delete/{id}")
     public ResponseData<BookCreationResponse> deleteBookById(@PathVariable Long id){
-        return ResponseData.<BookCreationResponse>builder()
-                .message("Delete Book Successfully")
-                .code(HttpStatus.OK.value())
-                .result(bookService.deleteBookById(id))
-                .build();
+        try {
+            BookCreationResponse response = bookService.deleteBookById(id);
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Delete Book Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Book Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
     }
 
+
     @PutMapping("/update/{id}")
-    public ResponseData<BookCreationResponse> updateBook(@PathVariable Long id, @RequestBody BookCreationRequest request){
-        return ResponseData.<BookCreationResponse>builder()
-                .message("Update Book Successfully")
-                .code(HttpStatus.OK.value())
-                .result(bookService.updateBook(id, request))
-                .build();
+    public ResponseData<BookCreationResponse> updateBook(@PathVariable Long id, @RequestBody BookCreationRequest request) {
+        try {
+            BookCreationResponse response = bookService.updateBook(id, request);
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Update Book Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Book Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
     }
+
 
     // Endpoint tìm kiếm sách theo các tiêu chí: title, price, author, quantity
     @GetMapping("/search")
@@ -110,11 +150,14 @@ public class BookController {
     }
 
     @GetMapping("/flash-sale")
-    public ResponseData<PageResponse<BookCreationResponse>> getFlashSaleBooks() {
+    public ResponseData<PageResponse<BookCreationResponse>> getFlashSaleBooks(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
         return ResponseData.<PageResponse<BookCreationResponse>>builder()
                 .message("Get Flash Sale Books Successfully")
                 .code(HttpStatus.OK.value())
-                .result(bookService.getFlashSaleBooks())
+                .result(bookService.getFlashSaleBooks(page, size))
                 .build();
     }
     @GetMapping("/search-by-keyword")
@@ -122,12 +165,13 @@ public class BookController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sort" , required = false) String sort,
+            @RequestParam(value = "categoryNames" , required = false) List<String> categoryNames,
             @RequestParam(value = "search" ,required = false) String... search
             ) {
         return ResponseData.<PageResponse<BookCreationResponse>>builder()
                 .message("Search Books by Keyword Successfully")
                 .code(HttpStatus.OK.value())
-                .result(bookService.getBooksBySearchSpecification(page,size,sort,search))
+                .result(bookService.getBooksBySearchSpecification(page,size,sort,categoryNames,search))
                 .build();
     }
     @GetMapping("/search-course")
@@ -162,4 +206,26 @@ public class BookController {
                 .build();
     }
 
+    @GetMapping("/trending")
+    public ResponseData<PageResponse<BookCreationResponse>> findTopTrendingBooks(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseData.<PageResponse<BookCreationResponse>>builder()
+                .message("Get Top Trending Books Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.findTopTrendingBooks(page, size))
+                .build();
+    }
+
+    @GetMapping("/get-book-by-category")
+    public ResponseData<PageResponse<BookCreationResponse>> getBookByCategory(
+            @RequestParam String category
+    ) {
+        return ResponseData.<PageResponse<BookCreationResponse>>builder()
+                .message("Get Book By Category Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.findByCategory(category, 1, 10))
+                .build();
+    }
 }

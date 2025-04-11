@@ -21,12 +21,22 @@ public class CategoryController {
 
     @PostMapping("/create")
     public ResponseData<CategoryResponse> createCategory(@RequestBody CategoryCreationRequest request) {
-        return ResponseData.<CategoryResponse>builder()
-                .code(HttpStatus.CREATED.value())
-                .message("Category created successfully")
-                .result(categoryService.createCategory(request))
-                .build();
+        try {
+            CategoryResponse response = categoryService.createCategory(request);
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.CREATED.value())
+                    .message("Category created successfully")
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Category has already existed")
+                    .result(null)
+                    .build();
+        }
     }
+
 
     @GetMapping("/all")
     public ResponseData<PageResponse<CategoryResponse>> getAllCategories(@RequestParam(defaultValue = "1") int page,
@@ -41,12 +51,94 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ResponseData<CategoryResponse> getCategoryById(@PathVariable Long id) {
-        return ResponseData.<CategoryResponse>builder()
-                .code(HttpStatus.OK.value())
-                .message("Category retrieved successfully")
-                .result(categoryService.getCategoryById(id))
-                .build();
+        try {
+            CategoryResponse response = categoryService.getCategoryById(id);
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Category retrieved successfully")
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .message("Category Not Found")
+                    .result(null)
+                    .build();
+        }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseData<CategoryResponse> deleteCategoryById(@PathVariable Long id) {
+        try {
+            CategoryResponse response = categoryService.deleteCategoryById(id);
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Category deleted successfully")
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            String errorMessage = ex.getMessage();
+
+            if ("Category not found".equals(errorMessage)) {
+                return ResponseData.<CategoryResponse>builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .message("Category Not Found")
+                        .result(null)
+                        .build();
+            } else if ("Cannot delete category because it still contains books".equals(errorMessage)) {
+                return ResponseData.<CategoryResponse>builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Cannot delete category because it still contains books")
+                        .result(null)
+                        .build();
+            }
+
+            // fallback: lỗi chưa rõ
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message("Unexpected error: " + errorMessage)
+                    .result(null)
+                    .build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseData<CategoryResponse> updateCategory(@PathVariable Long id,
+                                                         @RequestBody CategoryCreationRequest request) {
+        try {
+            CategoryResponse response = categoryService.updateCategory(id, request);
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Category updated successfully")
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            String errorMessage = ex.getMessage();
+
+            if ("Category not found".equals(errorMessage)) {
+                return ResponseData.<CategoryResponse>builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .message("Category not found")
+                        .result(null)
+                        .build();
+            } else if ("Category name already exists".equals(errorMessage)) {
+                return ResponseData.<CategoryResponse>builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Category name already exists")
+                        .result(null)
+                        .build();
+            }
+
+            // fallback: lỗi chưa xác định
+            return ResponseData.<CategoryResponse>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message("Unexpected error: " + errorMessage)
+                    .result(null)
+                    .build();
+        }
+    }
+
+
 
     @GetMapping("/total")
     public ResponseData<Long> totalCategory() {
