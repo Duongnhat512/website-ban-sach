@@ -15,4 +15,5 @@ public class UserResponse {
     private String email;
     private LocalDate dob;
     private String phoneNumber;
+    private Long roleId;
 }

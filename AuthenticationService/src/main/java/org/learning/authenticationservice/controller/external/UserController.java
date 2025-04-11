@@ -75,13 +75,29 @@ public class UserController {
                     .result(response)
                     .build();
         } catch (RuntimeException ex) {
+            String errorMessage = ex.getMessage();
+            if ("User not found".equals(errorMessage)) {
+                return ResponseData.<UserResponse>builder()
+                        .message("User Not Found")
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .result(null)
+                        .build();
+            } else if ("Cannot delete admin user".equals(errorMessage)) {
+                return ResponseData.<UserResponse>builder()
+                        .message("Cannot delete admin user")
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .result(null)
+                        .build();
+            }
+
             return ResponseData.<UserResponse>builder()
-                    .message("User Not Found")
-                    .code(HttpStatus.NOT_FOUND.value())
+                    .message("Unexpected error: " + errorMessage)
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .result(null)
                     .build();
         }
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseData<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest request) {

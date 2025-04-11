@@ -17,4 +17,5 @@ public class UserRequest {
     private String password;
     private LocalDate dob;
     private String phoneNumber;
+    private Long roleId;
 }
