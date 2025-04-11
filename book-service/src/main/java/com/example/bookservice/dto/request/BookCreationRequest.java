@@ -22,5 +22,6 @@ public class BookCreationRequest {
     private Float discount;
     private String publisher;
     private Long pages;
+    private Long categoryId;
 
 }

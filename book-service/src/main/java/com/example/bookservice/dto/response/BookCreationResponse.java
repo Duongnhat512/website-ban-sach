@@ -22,5 +22,6 @@ public class BookCreationResponse {
     private Float discount;
     private String publisher;
     private Long pages;
+    private Long categoryId;
 
 }

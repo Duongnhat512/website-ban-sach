@@ -3,12 +3,14 @@ package com.example.bookservice.service.impl;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import com.example.bookservice.Repository.BookElasticSearchRepository;
 import com.example.bookservice.Repository.BookRepository;
+import com.example.bookservice.Repository.CategoryRepository;
 import com.example.bookservice.Repository.SearchRepository;
 import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Book;
 import com.example.bookservice.entity.BookElasticSearch;
+import com.example.bookservice.entity.Category;
 import com.example.bookservice.mapper.BookMapper;
 import com.example.bookservice.service.BookService;
 import jakarta.persistence.EntityManager;
@@ -50,13 +52,22 @@ public class BookServiceImpl implements BookService {
     private EntityManager entityManager;
 
     private final SearchRepository searchRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public BookCreationResponse createBook(BookCreationRequest request) {
         log.info("Creating book with title: {}", request.getTitle());
+
+        // Lấy Category từ categoryId trong request
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with id = " + request.getCategoryId()));
+
+        // Tạo Book từ request và gán category
         Book book = bookMapper.toBook(request);
+        book.setCategory(category);
 
         repository.save(book);
+
         BookElasticSearch bookElasticSearch = BookElasticSearch.builder()
                 .id(book.getId())
                 .title(book.getTitle())
@@ -70,20 +81,20 @@ public class BookServiceImpl implements BookService {
                 .pages(book.getPages())
                 .thumbnail(book.getThumbnail())
                 .build();
+
         elasticsearchRepository.existsById(bookElasticSearch.getId())
                 .flatMap(exists -> {
                     if (Boolean.FALSE.equals(exists)) {
                         return elasticsearchRepository.save(bookElasticSearch)
-                                .doOnSuccess(saved -> log.info("Course {} saved to Elasticsearch", saved.getId()));
+                                .doOnSuccess(saved -> log.info("Book {} saved to Elasticsearch", saved.getId()));
                     }
-                    return Mono.empty(); // Nếu không tồn tại, không làm gì
+                    return Mono.empty();
                 })
                 .subscribe();
 
-
         return bookMapper.toBookCreationResponse(book);
-
     }
+
 
     @Override
     public PageResponse<BookCreationResponse> getBooks(int page, int size, String sortBy) {

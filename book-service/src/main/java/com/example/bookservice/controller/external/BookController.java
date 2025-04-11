@@ -26,13 +26,23 @@ public class BookController {
     private final GeminiAIService geminiService;
 
     @PostMapping("/create-book")
-    public ResponseData<BookCreationResponse> createBook(@RequestBody BookCreationRequest request){
-        return ResponseData.<BookCreationResponse>builder()
-                .code(HttpStatus.CREATED.value())
-                .message("Create Book Successfully")
-                .result(bookService.createBook(request))
-                .build();
+    public ResponseData<BookCreationResponse> createBook(@RequestBody BookCreationRequest request) {
+        try {
+            BookCreationResponse response = bookService.createBook(request);
+            return ResponseData.<BookCreationResponse>builder()
+                    .code(HttpStatus.CREATED.value())
+                    .message("Create Book Successfully")
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Failed to create book: " + ex.getMessage())
+                    .result(null)
+                    .build();
+        }
     }
+
     @GetMapping("/get-all-books")
     public ResponseData<PageResponse<BookCreationResponse>> getBooks(
            @RequestParam(value = "page",defaultValue = "1") int page,
@@ -208,4 +218,14 @@ public class BookController {
                 .build();
     }
 
+    @GetMapping("/get-book-by-category")
+    public ResponseData<PageResponse<BookCreationResponse>> getBookByCategory(
+            @RequestParam String category
+    ) {
+        return ResponseData.<PageResponse<BookCreationResponse>>builder()
+                .message("Get Book By Category Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.findByCategory(category, 1, 10))
+                .build();
+    }
 }

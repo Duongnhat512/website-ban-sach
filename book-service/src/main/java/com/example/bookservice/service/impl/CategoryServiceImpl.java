@@ -1,8 +1,11 @@
 package com.example.bookservice.service.impl;
+import com.example.bookservice.Repository.BookRepository;
 import com.example.bookservice.Repository.CategoryRepository;
 import com.example.bookservice.dto.request.CategoryCreationRequest;
+import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.CategoryResponse;
 import com.example.bookservice.dto.response.PageResponse;
+import com.example.bookservice.entity.Book;
 import com.example.bookservice.entity.Category;
 import com.example.bookservice.mapper.CategoryMapper;
 import com.example.bookservice.service.CategoryService;
@@ -26,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final BookRepository bookRepository;
 
     @Override
     public CategoryResponse createCategory(CategoryCreationRequest request) {
@@ -67,6 +71,40 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
         return categoryMapper.toCategoryCreationResponse(category);
     }
+
+    @Override
+    public CategoryResponse updateCategory(Long id, CategoryCreationRequest request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+
+        if (categoryRepository.existsByName(request.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category name already exists");
+        }
+
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+        category = categoryRepository.save(category);
+        return categoryMapper.toCategoryCreationResponse(category);
+    }
+
+    @Override
+    public CategoryResponse deleteCategoryById(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        // Kiểm tra xem category có sách không
+
+        Pageable pageable = PageRequest.of(0, 1); // chỉ cần 1 cuốn là biết có tồn tại
+        Page<Book> books = bookRepository.findByCategory(category.getName(), pageable);
+        if (!books.isEmpty()) {
+            throw new RuntimeException("Cannot delete category because it still contains books");
+        }
+
+        categoryRepository.delete(category);
+        return categoryMapper.toCategoryCreationResponse(category); // Trả về thông tin category đã xóa
+    }
+
+
 
     @Override
     public Long totalCategory() {
