@@ -40,13 +40,23 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public ResponseData<UserResponse> getUserById(@PathVariable Long id){
-        return ResponseData.<UserResponse>builder()
-                .message("Get User Successfully")
-                .code(HttpStatus.OK.value())
-                .result(userService.getUserById(id))
-                .build();
+    public ResponseData<UserResponse> getUserById(@PathVariable Long id) {
+        try {
+            UserResponse response = userService.getUserById(id);
+            return ResponseData.<UserResponse>builder()
+                    .message("Get User Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<UserResponse>builder()
+                    .message("User Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
     }
+
     @PostMapping("/send-otp-register")
     public ResponseData<Void> sendOtpByEmail(@RequestBody OTPRequest email){
         userService.sendOtpByEmail(email);
@@ -56,21 +66,41 @@ public class UserController {
                 .build();
     }
     @GetMapping("/delete/{id}")
-    public ResponseData<UserResponse> deleteUser(@PathVariable Long id){
-        return ResponseData.<UserResponse>builder()
-                .message("Delete User Successfully")
-                .code(HttpStatus.OK.value())
-                .result(userService.deleteUser(id))
-                .build();
-    }
-    @PutMapping("/update/{id}")
-    public ResponseData<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest request){
-        return ResponseData.<UserResponse>builder()
-                .message("Update User Successfully")
-                .code(HttpStatus.OK.value())
-                .result(userService.updateUser(id, request))
-                .build();
+    public ResponseData<UserResponse> deleteUser(@PathVariable Long id) {
+        try {
+            UserResponse response = userService.deleteUser(id);
+            return ResponseData.<UserResponse>builder()
+                    .message("Delete User Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<UserResponse>builder()
+                    .message("User Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
         }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseData<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
+        try {
+            UserResponse response = userService.updateUser(id, request);
+            return ResponseData.<UserResponse>builder()
+                    .message("Update User Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<UserResponse>builder()
+                    .message("User Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
+    }
+
     @GetMapping("/total-user")
     public ResponseData<Long> totalUser(){
         return ResponseData.<Long>builder()
