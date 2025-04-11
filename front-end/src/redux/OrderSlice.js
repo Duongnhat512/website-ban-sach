@@ -19,6 +19,15 @@ export const orderSlice = createSlice({
 
       }
     },
+    doAddToOrder: (state, action) => {
+      const existingItem = state.orders.find(item => item.id === action.payload.id);
+      if (existingItem) {
+        existingItem.amount += action.payload.amount;
+      } else {
+        state.orders.push(action.payload);
+      }
+    }    
+    ,
     doRemoveOrder: (state, action) => {
       state.orders = state.orders.filter(
         (order) => order.id !== action.payload.id
@@ -43,4 +52,4 @@ export const orderSlice = createSlice({
   },
 });
 
-export const { doAddOrder, doRemoveOrder, doUpdateAmount, doRemoveMultipleOrders } = orderSlice.actions;
+export const { doAddOrder, doRemoveOrder, doUpdateAmount, doRemoveMultipleOrders,doAddToOrder } = orderSlice.actions;

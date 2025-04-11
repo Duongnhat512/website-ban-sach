@@ -1,15 +1,93 @@
 import React, { useEffect, useState } from "react";
 import { getBookById } from "../../service/BookService";
-import { getCommentsByBookId, createComment } from "../../service/CommentService";
+import { getCommentsByBookId, createComment,deleteComment } from "../../service/CommentService";
+import { useDispatch } from "react-redux";
+import { doAddToOrder } from "../../redux/OrderSlice"; // Đảm bảo bạn có action này trong slice
+import { useNavigate } from "react-router-dom";
+import { GiftOutlined, CreditCardOutlined, CarOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+
+import "./ProductDetail.css";
 const ProductDetail = () => {
 const [comments, setComments] = useState([]);
+const [token,setToken] = useState("");
 const [newComment, setNewComment] = useState("");
+const [selectedImage, setSelectedImage] = useState(null);
+const { user = {} } = useSelector((state) => state.user);
+const dispatch = useDispatch();
+const navigate = useNavigate();
+const promotions = [
+  {
+    icon: <ThunderboltOutlined style={{ color: "#FFA500" }} />,
+    text: "Mã giảm 50k - toàn quốc",
+  },
+  {
+    icon: <CarOutlined style={{ color: "#28a745" }} />,
+    text: "Mã giảm 20k - hỗ trợ vận chuyển",
+  },
+  {
+    icon: <CreditCardOutlined style={{ color: "#1890ff" }} />,
+    text: "Home credit: giảm 10%",
+  },
+  {
+    icon: <GiftOutlined style={{ color: "#722ed1" }} />,
+    text: "Tặng 01 sổ tay hiện đại",
+  },
+];
+function Promotions() {
+  return (
+    <div className="promotion-wrapper">
+      <div className="promo-list">
+        {promotions.map((promo, index) => (
+          <button className="promo-item" key={index} onClick={()=>navigate("/cart")}>
+            <span className="promo-icon">{promo.icon}</span>
+            <span className="promo-text">{promo.text}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+const handleAddToCart = () => {
+  const item = {
+    id: product.id,
+    title: product.title,
+    thumbnail: product.thumbnail,
+    currentPrice: product.currentPrice,
+    amount: quantity,
+    releaseDate: product.releaseDate,
+    selected: true
+  };
+
+  dispatch(doAddToOrder(item));
+  alert("Đã thêm vào giỏ hàng!");
+};
+const handleDeleteComment = async (commentId) => {
+  try {
+    await deleteComment(commentId);
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.id !== commentId)
+    );
+  } catch (error) {
+    console.error("Xóa bình luận thất bại:", error);
+  }
+};
+
+const handleBuyNow = () => {
+  handleAddToCart(); // Thêm vào giỏ trước
+  navigate("/cart"); // Chuyển hướng đến trang giỏ hàng
+};
+
+
 
 useEffect(() => {
   const fetchComments = async () => {
     try {
       const res = await getCommentsByBookId(id);
       setComments(res);
+      
+      setToken(localStorage.getItem("token"));
+      console.log("Token lấy từ localStorage:", token);   
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
@@ -18,10 +96,12 @@ useEffect(() => {
 }, []);
 
 const handleCommentSubmit = async () => {
+  console.log("name"+user.fullName);
   try {
     const commentData = {
-      userId: 1, // giả sử user id là 1
+      userId: user.id, // giả sử user id là 1
       bookId: id,
+      userName:user.fullName,
       content: newComment,
       dateTime: new Date(),
     };
@@ -38,19 +118,27 @@ const handleCommentSubmit = async () => {
   const id = 1;
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
-  const thumbnails = [
+  const [thumbnails, setThumbnails] = useState([ "http://localhost:3000/src/assets/images/product1.png",
     "http://localhost:3000/src/assets/images/product1.png",
     "http://localhost:3000/src/assets/images/product1.png",
-    "http://localhost:3000/src/assets/images/product1.png",
-    "http://localhost:3000/src/assets/images/product1.png",
-  ];
-
+    "http://localhost:3000/src/assets/images/product1.png",]);
+  const formatVND = (price) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(price);
+  };
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
         const response = await getBookById(id);
         console.log(response);
         setProduct(response);
+        setThumbnails((prev) => {
+          const updated = [...prev];
+          updated[0] = response.thumbnail;
+          return updated;
+        });
       } catch (error) {
         console.error("Error fetching product details:", error);
       }
@@ -63,11 +151,11 @@ const handleCommentSubmit = async () => {
 
   return (
     <div className="max-w-5xl mx-auto bg-white p-6 shadow-lg rounded-lg border flex flex-col">
-      <div className="max-w-5xl mx-auto p-4 bg-white shadow-lg rounded-lg flex gap-6">
+      <div className="max-w-5xl mx-auto p-4 bg-white rounded-lg flex gap-6">
         {/* Left Section - product Image & Thumbnails */}
         <div className="w-1/3">
           <img
-            src={product.thumbnail}
+            src={selectedImage || product.thumbnail}
             alt="Main Product"
             className="w-full h-80 object-cover"
           />
@@ -77,16 +165,17 @@ const handleCommentSubmit = async () => {
                 key={index}
                 src={thumb}
                 alt={`Thumbnail ${index + 1}`}
-                className="w-16 h-12 object-cover cursor-pointer border border-gray-300 hover:border-red-500"
+                className={`w-16 h-12 object-cover cursor-pointer border ${selectedImage === thumb ? 'border-red-500' : 'border-gray-300'}`}
+                onClick={() => setSelectedImage(thumb)}
               />
             ))}
           </div>
           {/* Buttons below thumbnails */}
           <div className="mt-4 flex gap-2">
-            <button className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded w-full bg-white h-10 text-xs">
+            <button className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded w-full bg-white h-10 text-xs" onClick={()=>handleAddToCart()}>
               Thêm vào giỏ hàng
             </button>
-            <button className="bg-red-700 text-white px-4 py-1 text-sm rounded w-full h-10 text-xs">
+            <button className="bg-red-700 text-white px-4 py-1 text-sm rounded w-full h-10 text-xs" onClick={()=>handleBuyNow()}>
               Mua ngay
             </button>
           </div>
@@ -130,12 +219,12 @@ const handleCommentSubmit = async () => {
             FLASH SALE
           </div>
           <p className="text-red-500 font-bold text-lg">
-            {product.originalPrice} đ{" "}
+          {formatVND(product.currentPrice)} {" "}
             <span className="line-through text-gray-500">
               {" "}
-              {product.currentPrice} đ
+              {formatVND(product.originalPrice)}
             </span>{" "}
-            {product.discount * 100}%
+           <span className="discount-badge"> {product.discount}%</span>
           </p>
 
           {/* Shipping Info */}
@@ -158,18 +247,7 @@ const handleCommentSubmit = async () => {
               </a>
             </h3>
             <div className="flex gap-2 mt-2">
-              <div className="p-2 border rounded bg-yellow-200">
-                Mã giảm 10k - toàn quốc
-              </div>
-              <div className="p-2 border rounded bg-yellow-200">
-                Mã giảm 25k - toàn quốc
-              </div>
-              <div className="p-2 border rounded bg-blue-200">
-                Home Credit: giảm...
-              </div>
-              <div className="p-2 border rounded bg-blue-200">
-                Zalopay: giảm 15%...
-              </div>
+            <Promotions />
             </div>
           </div>
 
@@ -245,41 +323,64 @@ const handleCommentSubmit = async () => {
       </div>
       {/* Comment Section */}
 <div className="mt-6 p-4 bg-white rounded-lg shadow border">
-  <h3 className="text-lg font-semibold mb-2">Bình luận</h3>
 
-  {/* Input new comment */}
-  <textarea
-    value={newComment}
-    onChange={(e) => setNewComment(e.target.value)}
-    className="w-full p-2 border border-gray-300 rounded mb-2"
-    rows={3}
-    placeholder="Viết bình luận của bạn..."
-  />
-  <button
-    onClick={handleCommentSubmit}
-    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-  >
-    Gửi bình luận
-  </button>
+{user && (
+  <>
+    <h3 className="text-lg font-semibold mb-2">Bình luận</h3>
+
+    {/* Input new comment */}
+    <textarea
+      value={newComment}
+      onChange={(e) => setNewComment(e.target.value)}
+      className="w-full p-2 border border-gray-300 rounded mb-2"
+      rows={3}
+      placeholder="Viết bình luận của bạn..."
+    />
+    <button
+      onClick={handleCommentSubmit}
+      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      Gửi bình luận
+    </button>
+  </>
+)}
 
   {/* List of comments */}
   <div className="mt-4 space-y-4">
-    {comments.length === 0 ? (
-      <p className="text-sm text-gray-500">Chưa có bình luận nào.</p>
-    ) : (
-      comments.map((comment) => (
-        <div key={comment.id} className="border-b pb-2">
-          <p className="text-sm text-gray-800">{comment.content}</p>
-          <p className="text-xs text-gray-500">
-            Người dùng #{comment.userId} - {new Date(comment.dateTime).toLocaleString()}
-          </p>
-        </div>
-      ))
-    )}
+  {user && comments.map((comment) => (
+  <div key={comment.id} className="comment">
+    <div className="comment-item">
+      <p className="comment-text">
+        {comment.userName}: {comment.content}
+      </p>
+      <div className="comment-meta">
+        <span className="comment-date">
+          {new Date(comment.dateTime).toLocaleString("vi-VN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
+        </span>
+        {/* Chỉ hiển thị nút xóa nếu comment của user hiện tại */}
+        {comment.userId == user.id && (
+          <button
+            className="delete-comment"
+            onClick={() => handleDeleteComment(comment.id)}
+          >
+            <span style={{ fontSize: "12px", color: "blue" }}>
+              xóa bình luận
+            </span>
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+))}
   </div>
 </div>
     </div>
   );
 };
-
 export default ProductDetail;
