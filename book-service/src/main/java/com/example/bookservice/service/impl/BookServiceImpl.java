@@ -185,12 +185,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<BookCreationResponse> getFlashSaleBooks() {
-        Pageable pageable = PageRequest.of(0, 10);
+    public PageResponse<BookCreationResponse> getFlashSaleBooks(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Book> books = repository.findByDiscountGreaterThan(pageable);
         return PageResponse.<BookCreationResponse>builder()
-                .currentPage(1)
-                .pageSize(10)
+                .currentPage(page)
+                .pageSize(size)
                 .totalElements(books.getTotalElements())
                 .totalPages(books.getTotalPages())
                 .result(books.map(bookMapper::toBookCreationResponse).getContent())
@@ -280,5 +280,18 @@ public class BookServiceImpl implements BookService {
             log.error("Error while counting books", e);
             throw new RuntimeException("Error while counting books");
         }
+    }
+
+    @Override
+    public PageResponse<BookCreationResponse> findTopTrendingBooks(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Book> books = repository.findTopTrendingBooks(pageable);
+        return PageResponse.<BookCreationResponse>builder()
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(books.getTotalElements())
+                .totalPages(books.getTotalPages())
+                .result(books.map(bookMapper::toBookCreationResponse).getContent())
+                .build();
     }
 }

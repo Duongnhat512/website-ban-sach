@@ -14,6 +14,7 @@ import java.util.List;
 
 import java.util.List;
 
+
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> , JpaSpecificationExecutor<Book> {
 
@@ -31,5 +32,13 @@ public interface BookRepository extends JpaRepository<Book, Long> , JpaSpecifica
     // Truy vấn lấy ra các sách đang giảm giá
     @Query("SELECT b FROM Book b WHERE b.discount > 0.3")
     Page<Book> findByDiscountGreaterThan(Pageable pageable);
+
+    // Truy vấn top trending sách theo ngày dựa vào order
+    @Query("SELECT b FROM Book b JOIN OrderDetail od ON b.id = od.bookId " +
+            "JOIN Order o ON od.orderId = o.id " +
+            "WHERE FUNCTION('DATE', o.orderDate) = CURRENT_DATE " +
+            "GROUP BY b.id " +
+            "ORDER BY SUM(od.quantity) DESC")
+    Page<Book> findTopTrendingBooks(Pageable pageable);
 }
 

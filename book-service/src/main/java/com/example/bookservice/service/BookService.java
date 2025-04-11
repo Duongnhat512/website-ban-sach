@@ -27,7 +27,9 @@ public interface BookService {
 
     PageResponse<BookCreationResponse> findByCategory(String category, int page, int size);
 
-    PageResponse<BookCreationResponse> getFlashSaleBooks();
+    PageResponse<BookCreationResponse> getFlashSaleBooks(int page, int size);
+
+    PageResponse<BookCreationResponse> findTopTrendingBooks(int page, int size);
 
     void uploadImage(Long id, MultipartFile image);
 

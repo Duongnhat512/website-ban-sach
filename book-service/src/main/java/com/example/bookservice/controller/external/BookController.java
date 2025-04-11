@@ -110,11 +110,14 @@ public class BookController {
     }
 
     @GetMapping("/flash-sale")
-    public ResponseData<PageResponse<BookCreationResponse>> getFlashSaleBooks() {
+    public ResponseData<PageResponse<BookCreationResponse>> getFlashSaleBooks(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
         return ResponseData.<PageResponse<BookCreationResponse>>builder()
                 .message("Get Flash Sale Books Successfully")
                 .code(HttpStatus.OK.value())
-                .result(bookService.getFlashSaleBooks())
+                .result(bookService.getFlashSaleBooks(page, size))
                 .build();
     }
     @GetMapping("/search-by-keyword")
@@ -159,6 +162,18 @@ public class BookController {
                 .message("Total Book Successfully")
                 .code(HttpStatus.OK.value())
                 .result(bookService.totalBook())
+                .build();
+    }
+
+    @GetMapping("/trending")
+    public ResponseData<PageResponse<BookCreationResponse>> findTopTrendingBooks(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseData.<PageResponse<BookCreationResponse>>builder()
+                .message("Get Top Trending Books Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookService.findTopTrendingBooks(page, size))
                 .build();
     }
 
