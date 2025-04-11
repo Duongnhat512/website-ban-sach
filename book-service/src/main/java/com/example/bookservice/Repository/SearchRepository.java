@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public class SearchRepository {
     @Autowired
     private BookMapper bookMapper;
 
-    public PageResponse<BookCreationResponse> getBookWithSortAndSearchSpecification(int page, int size, String sortBy, String... search){
+    public PageResponse<BookCreationResponse> getBookWithSortAndSearchSpecification(int page, int size, String sortBy, List<String> categoryNames , String... search){
         String sortByy = sortBy.split(":")[0];
         String order = sortBy.split(":")[1];
         Sort sort = null;
@@ -42,11 +43,12 @@ public class SearchRepository {
             sort = Sort.by(sortByy).ascending();
         }
         Pageable pageable = PageRequest.of(page-1,size,sort);
+
+
         SpecificationBuildQuery specificationBuildQuery = new SpecificationBuildQuery();
         if(search != null){
             for (String s : search){
                 Pattern pattern = Pattern.compile("(\\w+?)([:><!~^$.])(.*)(\\p{Punct}?)(.*)(\\p{Punct}?)");
-
                 Matcher matcher = pattern.matcher(s);
                 if(matcher.find()) {
                     specificationBuildQuery.with(matcher.group(1), matcher.group(2), matcher.group(3),
@@ -54,6 +56,8 @@ public class SearchRepository {
                 }
             }
         }
+        specificationBuildQuery.withCategoryNames(categoryNames);
+
         Page<Book> pageBooks = bookRepository.findAll(specificationBuildQuery.buildQuery(), pageable);
         return PageResponse.<BookCreationResponse>builder()
                 .currentPage(page)

@@ -9,7 +9,12 @@ import java.util.List;
 
 public class SpecificationBuildQuery {
     private final List<SpecSearchCriteria> criteria;
+    private List<String> categoryNames; // ✅ Mảng tên danh mục
 
+    // ✅ Gọi khi truyền mảng category name vào
+    public void withCategoryNames(List<String> categoryNames) {
+        this.categoryNames = categoryNames;
+    }
     public SpecificationBuildQuery() {
         this.criteria = new ArrayList<>();
     }
@@ -62,6 +67,16 @@ public class SpecificationBuildQuery {
                         : specification.and(new SpecificationBook(criteria.get(i)));
             }
         }
+
+        if (categoryNames != null && !categoryNames.isEmpty()) {
+            Specification<Book> categorySpec = (root, query, cb) ->
+                    root.get("category").get("name").in(categoryNames);
+
+            specification = (specification == null)
+                    ? categorySpec
+                    : specification.and(categorySpec);
+        }
+
         return specification;
     }
 

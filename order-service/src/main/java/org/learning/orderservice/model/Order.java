@@ -37,7 +37,7 @@ public class Order {
     @Column(name = "total_price")
     Double total;
 
-    @Column(name = "address")
+    @Column(name = "address" , length = 1000)
     String address;
 
     @Column(name = "payment_status")
