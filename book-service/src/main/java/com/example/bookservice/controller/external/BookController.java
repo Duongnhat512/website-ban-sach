@@ -45,31 +45,61 @@ public class BookController {
                 .build();
     }
     @GetMapping("/{id}")
-    public ResponseData<BookCreationResponse> getBookById(@PathVariable  Long id){
-        return ResponseData.<BookCreationResponse>builder()
-                .message("Get Book Successfully")
-                .code(HttpStatus.OK.value())
-                .result(bookService.getBookById(id))
-                .build();
+    public ResponseData<BookCreationResponse> getBookById(@PathVariable Long id) {
+        try {
+            BookCreationResponse response = bookService.getBookById(id);
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Get Book Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Book Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
     }
+
 
     @GetMapping("/delete/{id}")
     public ResponseData<BookCreationResponse> deleteBookById(@PathVariable Long id){
-        return ResponseData.<BookCreationResponse>builder()
-                .message("Delete Book Successfully")
-                .code(HttpStatus.OK.value())
-                .result(bookService.deleteBookById(id))
-                .build();
+        try {
+            BookCreationResponse response = bookService.deleteBookById(id);
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Delete Book Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Book Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
     }
 
+
     @PutMapping("/update/{id}")
-    public ResponseData<BookCreationResponse> updateBook(@PathVariable Long id, @RequestBody BookCreationRequest request){
-        return ResponseData.<BookCreationResponse>builder()
-                .message("Update Book Successfully")
-                .code(HttpStatus.OK.value())
-                .result(bookService.updateBook(id, request))
-                .build();
+    public ResponseData<BookCreationResponse> updateBook(@PathVariable Long id, @RequestBody BookCreationRequest request) {
+        try {
+            BookCreationResponse response = bookService.updateBook(id, request);
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Update Book Successfully")
+                    .code(HttpStatus.OK.value())
+                    .result(response)
+                    .build();
+        } catch (RuntimeException ex) {
+            return ResponseData.<BookCreationResponse>builder()
+                    .message("Book Not Found")
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .result(null)
+                    .build();
+        }
     }
+
 
     // Endpoint tìm kiếm sách theo các tiêu chí: title, price, author, quantity
     @GetMapping("/search")
