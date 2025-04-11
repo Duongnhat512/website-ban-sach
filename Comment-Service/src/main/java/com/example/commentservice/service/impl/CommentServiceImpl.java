@@ -20,24 +20,12 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public CommentCreationResponse createComment(CommentCreationRequest request)
     {
-        log.info("Creating book with content: {}", request.getContent());
+        log.info("Creating book with content: {}", request.getUserName());
         //Comment comment = commentMapper.toComment(request);
-        Comment comment = Comment.builder()
-                .userId(request.getUserId())
-                .bookId(request.getBookId())
-                .content(request.getContent())
-                .dateTime(request.getDateTime())
-                .build();
+        Comment comment = CommentsMapper.toComment(request);
         System.out.println("📤 Content in entity: " + comment.getContent());
         commentRepository.save(comment);
-        CommentCreationResponse response = CommentCreationResponse.builder()
-                .id(comment.getId())
-                .userId(comment.getUserId())
-                .bookId(comment.getBookId())
-                .content(comment.getContent())
-                .dateTime(comment.getDateTime())
-                .build();
-
+        CommentCreationResponse response = CommentsMapper.toCommentCreationResponse(comment);
         return response;
     }
     public CommentCreationResponse updateComment(Long id,CommentCreationRequest request)

@@ -12,7 +12,7 @@ public class CommentsMapper {
                 .id(comment.getId())
                 .userId(comment.getUserId())
                 .bookId(comment.getBookId())
-                .content(comment.getContent())
+                .content(comment.getContent()).userName(comment.getUserName())
                 .dateTime(comment.getDateTime())
                 .build();
     }
@@ -22,7 +22,7 @@ public class CommentsMapper {
         return Comment.builder()
                 .userId(request.getUserId())
                 .bookId(request.getBookId())
-                .content(request.getContent())
+                .content(request.getContent()).userName(request.getUserName())
                 .dateTime(request.getDateTime())
                 .build();
     }

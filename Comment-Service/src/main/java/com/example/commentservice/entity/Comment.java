@@ -18,6 +18,8 @@ public class Comment {
 
     @Column(name = "user_id")
     private Long userId;
+    @Column(name = "user_name")
+    private String userName;
 
     @Column(name = "book_id")
     private Long bookId;
