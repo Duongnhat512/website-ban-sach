@@ -6,6 +6,7 @@ import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.CategoryResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 @Service
@@ -17,4 +18,5 @@ public interface CategoryService {
     CategoryResponse updateCategory(Long id, CategoryCreationRequest request);
     CategoryResponse deleteCategoryById(Long id);
     Long totalCategory();
+    void uploadImage(Long id, List<MultipartFile> images) ;
 }

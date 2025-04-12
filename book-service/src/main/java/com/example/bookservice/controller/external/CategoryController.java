@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -146,6 +147,17 @@ public class CategoryController {
                 .code(HttpStatus.OK.value())
                 .message("Total categories retrieved successfully")
                 .result(categoryService.totalCategory())
+                .build();
+    }
+
+
+    @PostMapping("/upload/{id}")
+    public ResponseData<String> upload(@PathVariable Long id, @RequestPart("images") List<MultipartFile> images){
+        categoryService.uploadImage(id, images);
+        return  ResponseData.<String>builder()
+                .message("Upload Image Successfully")
+                .code(HttpStatus.OK.value())
+                .result("Upload Image Successfully")
                 .build();
     }
 }

@@ -12,8 +12,11 @@
         <module name="book-service" />
         <module name="api-gateway" />
         <module name="NotificationService" />
+        <module name="order-service" />
+        <module name="orderDetail-service" />
         <module name="server-config" />
         <module name="AuthenticationService" />
+        <module name="file-service" />
         <module name="service-registry" />
       </profile>
     </annotationProcessing>
@@ -25,6 +28,9 @@
       <module name="api-gateway" options="-parameters" />
       <module name="book-service" options="-parameters" />
       <module name="cart-service" options="-parameters" />
+      <module name="file-service" options="-parameters" />
+      <module name="order-service" options="-parameters" />
+      <module name="orderDetail-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />
       <module name="server-config" options="-parameters" />
       <module name="service-registry" options="-parameters" />
