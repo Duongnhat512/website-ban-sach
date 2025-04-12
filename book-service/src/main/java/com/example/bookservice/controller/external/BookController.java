@@ -6,6 +6,7 @@ import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.dto.response.ResponseData;
 import com.example.bookservice.entity.Book;
 import com.example.bookservice.entity.BookElasticSearch;
+import com.example.bookservice.entity.BookImages;
 import com.example.bookservice.service.BookService;
 import com.example.bookservice.service.impl.GeminiAIService;
 import lombok.RequiredArgsConstructor;
@@ -145,8 +146,8 @@ public class BookController {
                 .build();
     }
     @PostMapping("/upload-image/{id}")
-    public ResponseData<String> uploadImage(@PathVariable Long id, @RequestPart("image") MultipartFile image){
-        bookService.uploadImage(id, image);
+    public ResponseData<String> uploadImage(@PathVariable Long id, @RequestPart("images") List<MultipartFile> images){
+        bookService.uploadImage(id, images);
         return  ResponseData.<String>builder()
                 .message("Upload Image Successfully")
                 .code(HttpStatus.OK.value())
@@ -244,6 +245,16 @@ public class BookController {
                 .message("Get Book By Category Successfully")
                 .code(HttpStatus.OK.value())
                 .result(bookService.findByCategory(category, 1, 10))
+                .build();
+    }
+
+    @GetMapping("/get-book-images/{bookId}")
+    public ResponseData<List<BookImages>> getBookImagesByBookId(@PathVariable Long bookId) {
+        List<BookImages> bookImages = bookService.getBookImagesByBookId(bookId);
+        return ResponseData.<List<BookImages>>builder()
+                .message("Get Book Images Successfully")
+                .code(HttpStatus.OK.value())
+                .result(bookImages)
                 .build();
     }
 }

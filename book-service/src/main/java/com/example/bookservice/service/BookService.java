@@ -5,10 +5,12 @@ import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Book;
 import com.example.bookservice.entity.BookElasticSearch;
+import com.example.bookservice.entity.BookImages;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface BookService {
 
@@ -31,12 +33,14 @@ public interface BookService {
 
     PageResponse<BookCreationResponse> findTopTrendingBooks(int page, int size);
 
-    void uploadImage(Long id, MultipartFile image);
+    void uploadImage(Long id, List<MultipartFile> images) ;
 
     PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size,String sortBy,List<String> categoryNames, String... search);
 
     PageResponse<BookElasticSearch> searchCourse(String keyword, int page, int size);
 
     Long totalBook();
+
+    List<BookImages> getBookImagesByBookId(Long bookId);
 
 }

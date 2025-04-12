@@ -1,15 +1,14 @@
 package com.example.bookservice.service.impl;
 
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
-import com.example.bookservice.Repository.BookElasticSearchRepository;
-import com.example.bookservice.Repository.BookRepository;
-import com.example.bookservice.Repository.CategoryRepository;
-import com.example.bookservice.Repository.SearchRepository;
+import com.example.bookservice.Repository.*;
+import com.example.bookservice.client.FileClient;
 import com.example.bookservice.dto.request.BookCreationRequest;
 import com.example.bookservice.dto.response.BookCreationResponse;
 import com.example.bookservice.dto.response.PageResponse;
 import com.example.bookservice.entity.Book;
 import com.example.bookservice.entity.BookElasticSearch;
+import com.example.bookservice.entity.BookImages;
 import com.example.bookservice.entity.Category;
 import com.example.bookservice.mapper.BookMapper;
 import com.example.bookservice.service.BookService;
@@ -30,6 +29,7 @@ import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
@@ -37,6 +37,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +54,8 @@ public class BookServiceImpl implements BookService {
 
     private final SearchRepository searchRepository;
     private final CategoryRepository categoryRepository;
+    private final FileClient fileClient;
+    private final BookImagesRepository bookImagesRepository;
 
     @Override
     public BookCreationResponse createBook(BookCreationRequest request) {
@@ -211,13 +214,39 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void uploadImage(Long id, MultipartFile image) {
+    public void uploadImage(Long id, List<MultipartFile> images) {
+        Book book = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
-        String imageUrl = cloudinaryService.uploadImage(image);
-        book.setThumbnail(imageUrl);
+        if (images == null || images.isEmpty()) {
+            throw new RuntimeException("Image list is empty");
+        }
+
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile image = images.get(i);
+            String imageUrl = fileClient.getStringUrl(image);
+
+            if (imageUrl == null || imageUrl.isEmpty()) {
+                throw new RuntimeException("Failed to upload image");
+            }
+            if (i == 0) {
+                // Ảnh đầu tiên => thumbnail
+                book.setThumbnail(imageUrl);
+                BookImages bookImage = new BookImages();
+                bookImage.setImageUrl(imageUrl);
+                bookImage.setBook(book);
+                bookImagesRepository.save(bookImage);
+            } else {
+                // Các ảnh còn lại => thêm vào BookImages
+                BookImages bookImage = new BookImages();
+                bookImage.setImageUrl(imageUrl);
+                bookImage.setBook(book);
+                bookImagesRepository.save(bookImage);
+            }
+        }
         repository.save(book);
     }
+
 
     @Override
     public PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size, String sortBy,List<String> categoryNames ,String... search) {
@@ -293,6 +322,11 @@ public class BookServiceImpl implements BookService {
             log.error("Error while counting books", e);
             throw new RuntimeException("Error while counting books");
         }
+    }
+
+    @Override
+    public List<BookImages> getBookImagesByBookId(Long bookId) {
+        return bookImagesRepository.findByBookId(bookId);
     }
 
     @Override

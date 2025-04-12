@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -32,5 +33,4 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-
 }
