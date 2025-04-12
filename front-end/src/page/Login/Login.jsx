@@ -6,6 +6,7 @@ import { callLoginApi, callGetUserToken } from "../../service/UserService";
 import { loginSuccess, setUser } from "../../redux/UserSlice";
 import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
 import "./Login.scss";
+import { setAuthToken } from "../../until/customize-axios";
 
 const Login = ({ isOpen, onClose, onSwitch }) => {
   const [activeKey, setActiveKey] = useState("1");
@@ -34,9 +35,8 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
       const response = await callLoginApi(email, password);
       message.success("Đăng nhập thành công!");
       localStorage.setItem("token", response.result.token);
+      setAuthToken(response.result.token);
       const userResponse = await callGetUserToken();
-      console.log(userResponse);
-
       dispatch(setUser(userResponse.result));
       // Xử lý logic sau khi đăng nhập thành công, ví dụ: lưu token, chuyển hướng trang, v.v.
       onClose();

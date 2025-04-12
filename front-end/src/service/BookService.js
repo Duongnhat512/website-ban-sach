@@ -31,14 +31,32 @@ export const callGetBookFilter = async (page, size, sort, search) => {
     throw error;
   }
 };
-
+export const callGetAllBooks = async (limit, page, sortBy, sortOrder) => {
+  try {
+    const response = await axios.get(
+      `/api/v1/books/get-all-books?size=${limit}&page=${page}&sort=${sortBy}:${sortOrder}`
+    );
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+};
 export const getBookById = async (id) => {
   try {
     const response = await axios.get(`/api/v1/books/${id}`);
-
-    return response.result;
+    return response.data;
   } catch (error) {
     console.error("Error fetching book by ID:", error);
+    throw error;
+  }
+};
+export const callGetBookFlashSale = async () => {
+  try {
+    const response = await axios.get("/api/v1/books/flash-sale");
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
     throw error;
   }
 };

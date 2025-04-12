@@ -1,5 +1,14 @@
-import React from "react";
-import { Card, Row, Col, Tag, Typography, Progress, Statistic, Image } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  Row,
+  Col,
+  Tag,
+  Typography,
+  Progress,
+  Statistic,
+  Image,
+} from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import product1 from "../../assets/images/product1.png";
 import "./HomePage.scss";
@@ -7,6 +16,7 @@ import ContainerHome1 from "./contanerhome1/containerhome1";
 import FlashIcon from "../../assets/images/label-flashsale.svg?url";
 import CateProductList from "./cateproductlist/cateproductlist";
 import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
+import { callGetBookFlashSale } from "../../service/BookService";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -53,6 +63,21 @@ const products = [
 const deadline = Date.now() + 1000 * 60 * 60 * 24; // 24 hours from now
 
 const HomePage = () => {
+  const [flashSaleData, setFlashSaleData] = useState([]);
+  const handleGetFlashSale = async () => {
+    try {
+      const response = await callGetBookFlashSale();
+      console.log("Flash sale data:", response);
+      if (response && response.code === 200) {
+        setFlashSaleData(response.result.result.slice(0, 4));
+      }
+    } catch (error) {
+      console.error("Error fetching flash sale data:", error);
+    }
+  };
+  useEffect(() => {
+    handleGetFlashSale();
+  }, []);
   return (
     <div className="home-page">
       <div className="main-container">
@@ -70,14 +95,18 @@ const HomePage = () => {
               Kết thúc trong <Countdown value={deadline} format="HH:mm:ss" />
             </div>
           </div>
-          <Row gutter={16} style={{position:"relative",zIndex:10}}>
-            {products.map((product) => (
+          <Row gutter={16} style={{ position: "relative", zIndex: 10 }}>
+            {flashSaleData.map((product) => (
               <Col span={6} key={product.id}>
                 <Card
                   hoverable
                   cover={
                     <div className="image-container">
-                      <Image preview={false} alt={product.title} src={product.image} width={190} />
+                      <Image
+                        preview={false}
+                        src={product.thumbnail}
+                        width={190}
+                      />
                     </div>
                   }
                 >
@@ -86,20 +115,20 @@ const HomePage = () => {
                   </Title>
                   <div className="price">
                     <Text className="discount-price">
-                      {product.price.toLocaleString()} đ
+                      {product.currentPrice.toLocaleString()} đ
                     </Text>
-                    <Tag color="red">-{product.discount}%</Tag>
+                    <Tag color="red">-{product.discount * 100}%</Tag>
                   </div>
                   <Text delete>{product.originalPrice.toLocaleString()} đ</Text>
-                  <Progress percent={product.sold * 50} showInfo={false} />
-                  <Text>Đã bán {product.sold}</Text>
+                  <Progress percent={25} showInfo={false} />
+                  <Text>Đã bán 5</Text>
                 </Card>
               </Col>
             ))}
           </Row>
           <div className="background"></div>
         </div>
-        <CateProductList/>
+        <CateProductList />
         <BestSellerRanking />
       </div>
     </div>

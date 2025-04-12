@@ -62,3 +62,15 @@ export const callSendOtpApi = async (email) => {
     throw error;
   }
 };
+
+export const callGetAllUsers = async (limit, page, sortBy,sortOrder) => {
+  try {
+    const response = await axios.get(
+      `/api/v1/auth/user/get-all-users?size=${limit}&page=${page}&sort=${sortBy}:${sortOrder}`
+    );
+    return response;
+  } catch (error) {
+    console.error("Get all users error:", error.response?.data || error.message);
+    throw error;
+  }
+}
