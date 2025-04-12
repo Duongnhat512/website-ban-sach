@@ -165,7 +165,6 @@ const Filter = () => {
   };
   return (
     <div className="p-6 max-w-6xl mx-auto flex flex-col gap-6">
-      {/* Breadcrumb */}
       <Breadcrumb>
         <Breadcrumb.Item
           onClick={() => navigate("/")}
@@ -177,7 +176,6 @@ const Filter = () => {
       </Breadcrumb>
 
       <div className="flex gap-6">
-        {/* Bộ lọc */}
         <div className="w-1/4 p-4 border rounded-lg bg-white">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold">Bộ Lọc</h3>
@@ -207,10 +205,10 @@ const Filter = () => {
                 ? categories
                 : categories.slice(0, 6)
               ).map((category) => ({
-                label: category.name, // Hiển thị tên danh mục
-                value: category.name, // Giá trị là tên danh mục (phải khớp với categoryName)
+                label: category.name, 
+                value: category.name, 
               }))}
-              value={category} // Đặt giá trị mặc định là categoryName
+              value={category} 
               onChange={(e) => handleCategoryChange(e.target.value)}
             />
             {categories.length > 6 && (
@@ -307,6 +305,8 @@ const Filter = () => {
                     alt={book.title}
                     src={book.thumbnail || product1}
                     className="p-2"
+                    height={250}
+                    width={250}
                   />
                 }
                 actions={[

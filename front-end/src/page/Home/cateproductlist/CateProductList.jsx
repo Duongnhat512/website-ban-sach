@@ -14,35 +14,17 @@ import {
   Progress,
   Spin,
 } from "antd";
-import { ShoppingOutlined } from "@ant-design/icons";
 import "./cateproductlist.scss";
 
 const { Content } = Layout;
 const { Meta } = Card;
 const { Title } = Typography;
 
-import Cate1 from "../../../assets/images/cate1.png";
-import Cate2 from "../../../assets/images/cate2.png";
-import Cate3 from "../../../assets/images/cate3.png";
-import Cate4 from "../../../assets/images/cate4.png";
-import Cate5 from "../../../assets/images/cate5.png";
-import Cate6 from "../../../assets/images/cate6.png";
-import Cate7 from "../../../assets/images/cate7.png";
-import Cate9 from "../../../assets/images/cate9.png";
 import product1 from "../../../assets/images/product1.png";
 import xuHuongIcon from "../../../assets/images/xuHuongIcon.png";
 import { callGetBookByCategory } from "../../../service/BookService";
 import { useNavigate } from "react-router-dom";
-const categories = [
-  { name: "Card Game", image: Cate1 },
-  { name: "Đồ Chơi Mô Hình", image: Cate2 },
-  { name: "Đèn Chống Cận", image: Cate3 },
-  { name: "Đam Mỹ", image: Cate4 },
-  { name: "Kinh Tế", image: Cate5 },
-  { name: "Văn Học", image: Cate6 },
-  { name: "Tâm Lý Kỹ Năng", image: Cate7 },
-  { name: "Thiếu Nhi", image: Cate9 },
-];
+import { callGetAllCate } from "../../../service/AdminService";
 
 const productsByTag = {
   "Xu hướng theo ngày": [
@@ -253,23 +235,46 @@ const productsByTag = {
   ],
 };
 
-const Categories = () => (
-  <Layout className="cate-product-list">
-    <Title level={3} className="category-title">
-      Danh mục sản phẩm
-    </Title>
-    <Row gutter={[16, 16]}>
-      {categories.map((category, index) => (
-        <Col span={3} key={index}>
-          <div className="category-card">
-            <Image src={category.image} preview={false} />
-            <p>{category.name}</p>
-          </div>
-        </Col>
-      ))}
-    </Row>
-  </Layout>
-);
+const Categories = () => {
+  const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const handleGetCategory = async () => {
+    let res = await callGetAllCate();
+    console.log("category", res);
+
+    if (res && res.code === 200) {
+      setData(res.result.result.slice(0, 8)); // Giới hạn số lượng danh mục hiển thị
+    }
+  };
+  useEffect(() => {
+    handleGetCategory();
+  }, []);
+  return (
+    <Layout className="cate-product-list">
+      <Title level={3} className="category-title">
+        Danh mục sản phẩm
+      </Title>
+      <Row gutter={[16, 16]}>
+        {data.map((category, index) => (
+          <Col
+            span={3}
+            key={category.id}
+            onClick={() =>
+              navigate("/filter", {
+                state: { categoryName: category.name },
+              })
+            }
+          >
+            <div className="category-card cursor-pointer">
+              <Image src={category.image} preview={false} />
+              <p>{category.name}</p>
+            </div>
+          </Col>
+        ))}
+      </Row>
+    </Layout>
+  );
+};
 
 const ProductList = () => {
   const [selectedTag, setSelectedTag] = useState("Xu hướng theo ngày");
@@ -282,7 +287,7 @@ const ProductList = () => {
           <img
             src={xuHuongIcon}
             alt="Xu Hướng Icon"
-            className="xu-huong-icon"
+            className="xu-huong-icon "
           />
           <h2>Xu Hướng Mua Sắm</h2>
         </div>
@@ -315,6 +320,7 @@ const ProductList = () => {
                 <Card
                   hoverable
                   cover={<Image src={item.img} alt={item.title} />}
+                  className="cursor-pointer"
                 >
                   <Meta
                     title={item.title}
@@ -362,26 +368,26 @@ const ProductBook = () => {
   const [selectedCategory, setSelectedCategory] = useState(categoriesBooks[0]); // Danh mục mặc định
   const [products, setProducts] = useState([]); // State lưu danh sách sản phẩm
   const [loading, setLoading] = useState(false); // State quản lý trạng thái loading
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   // Hàm gọi API để lấy sách theo danh mục
   const handleGetBooksByCategory = async (categoryName) => {
     setLoading(true); // Bắt đầu loading
     try {
       console.log("Fetching books by category:", categoryName);
-      
+
       const response = await callGetBookByCategory(categoryName);
       console.log("Books by category:", response);
-      
+
       if (response && response.code === 200) {
-        setProducts(response.result.result); 
+        setProducts(response.result.result);
       } else {
-        setProducts([]); 
+        setProducts([]);
       }
     } catch (error) {
       console.error("Error fetching books by category:", error);
-      setProducts([]); 
+      setProducts([]);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -390,7 +396,7 @@ const ProductBook = () => {
   }, [selectedCategory]);
   const handleNavigateToFilter = () => {
     navigate("/filter", {
-      state: { categoryName: selectedCategory }, 
+      state: { categoryName: selectedCategory },
     });
   };
   return (
@@ -424,6 +430,7 @@ const ProductBook = () => {
                   <Card
                     hoverable
                     cover={<Image src={item.thumbnail} alt={item.title} />}
+                    className="cursor-pointer"
                   >
                     <Meta
                       title={item.title}
@@ -459,7 +466,11 @@ const ProductBook = () => {
             )}
           />
         )}
-        <Row justify="center" style={{ marginTop: "20px" }} onClick={handleNavigateToFilter}>
+        <Row
+          justify="center"
+          style={{ marginTop: "20px" }}
+          onClick={handleNavigateToFilter}
+        >
           <Button type="primary">Xem Thêm</Button>
         </Row>
       </Content>
