@@ -67,13 +67,13 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setStatus("SUCCESS");
             payment.setConfirmationCode(vnpTxnRef);
             paymentRepository.save(payment);
+            orderClient.updateOrder(Long.valueOf(vnpOrderInfo), "SUCCESS");
             // Payment successful
             return VNPayResponse.builder()
                     .code(200)
                     .message("Payment successful")
                     .build();
         } else {
-            orderClient.updateOrder(Long.valueOf(vnpOrderInfo), "SUCCESS");
             // Payment failed
             return VNPayResponse.builder()
                     .code(400)
