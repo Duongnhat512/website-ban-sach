@@ -18,15 +18,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -124,6 +127,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrderCreateResponse deleteOrder(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+        orderRepository.delete(order);
+        return OrderCreateResponse.builder()
+                .id(order.getId())
+                .total(order.getTotal())
+                .address(order.getAddress())
+                .status(order.getOrderStatus())
+                .userId(order.getUserId())
+                .orderDate(order.getOrderDate())
+                .build();
+    }
+
+    @Override
     public PageResponse<OrderCreateResponse> getOrders(int page, int size, String sortBy) {
         String field = sortBy.split(":")[0];
         String direction = sortBy.split(":")[1];
@@ -152,6 +171,60 @@ public class OrderServiceImpl implements OrderService {
                 .totalPages(orderPage.getTotalPages())
                 .build();
     }
+
+    @Override
+    public PageResponse<OrderCreateResponse> getOrderByStatus(String status, int page, int size, String sortBy) {
+        // Chuyển đổi status từ String sang OrderStatus enum
+        OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());  // Chuyển đổi string thành enum
+
+        // Kiểm tra nếu sortBy không hợp lệ
+        String field = "id";  // Mặc định là "id" nếu không có tham số sắp xếp
+        String direction = "asc";  // Mặc định là "asc" nếu không có tham số sắp xếp
+
+        if (sortBy != null && sortBy.contains(":")) {
+            String[] sortParams = sortBy.split(":");
+            if (sortParams.length == 2) {
+                field = sortParams[0];
+                direction = sortParams[1];
+            }
+        }
+
+
+        Pageable pageable;
+        if (direction.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
+        } else {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).descending());
+        }
+
+
+        Page<Order> orderPage = orderRepository.findByOrderStatus(orderStatus, pageable);
+
+
+        List<OrderCreateResponse> orderCreateResponses = orderPage.get().map(order -> OrderCreateResponse.builder()
+                .id(order.getId())
+                .total(order.getTotal())
+                .address(order.getAddress())
+                .status(order.getOrderStatus())
+                .userId(order.getUserId())
+                .orderDate(order.getOrderDate())
+                .paymentStatus(order.getPaymentStatus())
+                .build()).toList();
+
+
+        return PageResponse.<OrderCreateResponse>builder()
+                .currentPage(page)
+                .pageSize(size)
+                .result(orderCreateResponses)
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .build();
+    }
+
+
+
+
+
 
     @Override
     public Long totalOrder(Long userId) {
