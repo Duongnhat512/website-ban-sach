@@ -6,14 +6,14 @@ import org.learning.orderservice.service.OrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
-@Service
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/internal/orders")
 public class InternalOrderController {
 
     private final OrderService orderService;
     @PostMapping("/update/{id}")
-    public Order updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
+    public Order updateOrderStatus(@PathVariable Long id, @RequestBody String status) {
         return orderService.updatePaymentStatus(id,status);
     }
 }

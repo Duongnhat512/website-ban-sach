@@ -141,6 +141,7 @@ public class OrderServiceImpl implements OrderService {
                 .status(order.getOrderStatus())
                 .userId(order.getUserId())
                 .orderDate(order.getOrderDate())
+                .paymentStatus(order.getPaymentStatus())
                 .build()).toList();
 
         return PageResponse.<OrderCreateResponse>builder()

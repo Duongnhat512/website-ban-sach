@@ -17,4 +17,5 @@ public class OrderCreateResponse {
     private OrderStatus status;
     private Long userId;
     private LocalDateTime orderDate;
+    private String paymentStatus;
 }
