@@ -93,7 +93,8 @@ public class BookController {
 
 
     @PutMapping("/update/{id}")
-    public ResponseData<BookCreationResponse> updateBook(@PathVariable Long id, @RequestBody BookCreationRequest request) {
+    public ResponseData<BookCreationResponse> updateBook(@PathVariable Long id,
+                                                         @RequestBody BookCreationRequest request) {
         try {
             BookCreationResponse response = bookService.updateBook(id, request);
             return ResponseData.<BookCreationResponse>builder()
@@ -102,13 +103,30 @@ public class BookController {
                     .result(response)
                     .build();
         } catch (RuntimeException ex) {
+            String errorMessage = ex.getMessage();
+
+            if ("Book not found".equals(errorMessage)) {
+                return ResponseData.<BookCreationResponse>builder()
+                        .message("Book Not Found")
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .result(null)
+                        .build();
+            } else if (errorMessage != null && errorMessage.startsWith("Category not found")) {
+                return ResponseData.<BookCreationResponse>builder()
+                        .message(errorMessage)
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .result(null)
+                        .build();
+            }
+
             return ResponseData.<BookCreationResponse>builder()
-                    .message("Book Not Found")
-                    .code(HttpStatus.NOT_FOUND.value())
+                    .message("Unexpected Error: " + errorMessage)
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .result(null)
                     .build();
         }
     }
+
 
 
     // Endpoint tìm kiếm sách theo các tiêu chí: title, price, author, quantity

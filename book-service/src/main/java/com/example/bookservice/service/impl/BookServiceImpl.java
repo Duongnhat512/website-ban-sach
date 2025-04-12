@@ -136,6 +136,8 @@ public class BookServiceImpl implements BookService {
         book.setDiscount(request.getDiscount());
         book.setPublisher(request.getPublisher());
         book.setPages(request.getPages());
+        book.setCategory(request.getCategoryId() != null ? categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with id = " + request.getCategoryId())) : book.getCategory());
         repository.save(book);
         return bookMapper.toBookCreationResponse(book);
     }
