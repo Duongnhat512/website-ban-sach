@@ -16,5 +16,4 @@ public class InternalOrderController {
     public Order updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
         return orderService.updatePaymentStatus(id,status);
     }
-
 }
