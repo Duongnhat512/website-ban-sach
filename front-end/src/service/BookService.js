@@ -111,3 +111,13 @@ export const callDeleteImageBook = async (imageId) => {
     throw error;
   }
 }
+export const callGetBookSearch = async (page, size, sort,order, column,value) => {
+  try {
+    const url = `/api/v1/books/search-by-keyword?page=${page}&size=${size}&sort=${sort}:${order}&search=${column}.${value}`;
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+}

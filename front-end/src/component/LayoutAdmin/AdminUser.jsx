@@ -19,12 +19,15 @@ function AdminUser() {
   const [user, setUser] = useState({});
   const [sort, setSort] = useState({ field: "id", order: "desc" });
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
   const getUser = async () => {
+    setLoading(true);
     let res = await callGetAllUsers(limit, currentPage, sort.field);
     if (res && res.code === 200) {
       setTotal(res.result.totalElements);
       setData(res.result.result);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -189,6 +192,7 @@ function AdminUser() {
         rowClassName={(record, index) =>
           `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
         }
+        loading={loading}
       />
       {/* <ModalCreateUser
         visible={visible}

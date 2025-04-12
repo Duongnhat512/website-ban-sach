@@ -15,9 +15,9 @@ const AdminCategory = () => {
   const [visibleUpdateCategory, setVisibleUpdateCategory] = useState(false);
   const [category, setCategory] = useState({});
   const [sort, setSort] = useState({ field: "id", order: "desc" });
-
+  const [loading, setLoading] = useState(false);
   const getCategories = async () => {
-    console.log(limit, currentPage, sort.field, sort.order);
+    setLoading(true);
     let res = await callGetAllCate(limit, currentPage, sort.field, sort.order);
     console.log(res);
 
@@ -25,6 +25,7 @@ const AdminCategory = () => {
       setTotal(res.result.totalElements);
       setData(res.result.result);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -179,6 +180,7 @@ const AdminCategory = () => {
         rowClassName={(record, index) =>
           `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
         }
+        loading={loading}
       />
     </div>
   );
