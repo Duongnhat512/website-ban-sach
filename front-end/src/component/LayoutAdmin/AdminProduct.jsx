@@ -90,7 +90,9 @@ const AdminProduct = () => {
     try {
       const res = await callUpdateBookById(id, bookdata);
       if (res && res.code === 200) {
-        if (thumbnail) {
+        console.log(thumbnail);
+        
+        if (thumbnail && thumbnail.length > 0) {
           let resUpload = await callUploadThumbnail(id, thumbnail);
           if (resUpload && resUpload.code === 200) {
             message.success("Cập nhật sách thành công!");

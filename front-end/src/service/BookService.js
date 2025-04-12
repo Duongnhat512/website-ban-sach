@@ -74,23 +74,40 @@ export const callGetBookByCategory = async (
     throw error;
   }
 };
-export const callUploadThumbnail = async (bookId, file) => {
-  console.log("bookId:", bookId);
-  console.log("file:", file);
+export const callUploadThumbnail = async (bookId, files) => {
 
-  // Tạo FormData và thêm file với key là "image"
   const formData = new FormData();
-  formData.append("image", file); // Key là "image", value là file
+  files.forEach((file, index) => {
+    formData.append(`images`, file); 
+  });
 
   try {
     const response = await axios.post(`/api/v1/books/upload-image/${bookId}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // Đảm bảo header đúng
+        "Content-Type": "multipart/form-data", 
       },
     });
-    return response;
+    return response.data;
   } catch (error) {
-    console.error("Lỗi khi upload thumbnail:", error.response?.data || error.message);
+    console.error("Lỗi khi upload danh sách hình ảnh:", error.response?.data || error.message);
     throw error;
   }
 };
+export const getFullImageBook = async (id) => {
+  try {
+    const response = await axios.get(`/api/v1/books/get-book-images/${id}`);
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+}
+export const callDeleteImageBook = async (imageId) => {
+  try {
+    const response = await axios.delete(`/api/v1/books/delete-book-image/${imageId}`);
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+}
