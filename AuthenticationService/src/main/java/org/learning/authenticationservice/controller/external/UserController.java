@@ -65,7 +65,7 @@ public class UserController {
                 .code(HttpStatus.OK.value())
                 .build();
     }
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseData<UserResponse> deleteUser(@PathVariable Long id) {
         try {
             UserResponse response = userService.deleteUser(id);

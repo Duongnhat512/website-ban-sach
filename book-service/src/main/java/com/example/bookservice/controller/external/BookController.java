@@ -73,7 +73,7 @@ public class BookController {
     }
 
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseData<BookCreationResponse> deleteBookById(@PathVariable Long id){
         try {
             BookCreationResponse response = bookService.deleteBookById(id);
