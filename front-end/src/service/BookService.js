@@ -74,3 +74,23 @@ export const callGetBookByCategory = async (
     throw error;
   }
 };
+export const callUploadThumbnail = async (bookId, file) => {
+  console.log("bookId:", bookId);
+  console.log("file:", file);
+
+  // Tạo FormData và thêm file với key là "image"
+  const formData = new FormData();
+  formData.append("image", file); // Key là "image", value là file
+
+  try {
+    const response = await axios.post(`/api/v1/books/upload-image/${bookId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Đảm bảo header đúng
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Lỗi khi upload thumbnail:", error.response?.data || error.message);
+    throw error;
+  }
+};

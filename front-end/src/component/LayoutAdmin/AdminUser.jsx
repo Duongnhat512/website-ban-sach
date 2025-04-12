@@ -7,6 +7,7 @@ import { IoMdPersonAdd } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { utils, writeFile } from "xlsx";
 import { callGetAllUsers } from "../../service/UserService";
+import { callGetBookFilter } from "../../service/BookService";
 const { Search } = Input;
 function AdminUser() {
   const [limit, setLimit] = useState(4);
@@ -19,16 +20,13 @@ function AdminUser() {
   const [sort, setSort] = useState({ field: "id", order: "desc" });
   const [search, setSearch] = useState("");
   const getUser = async () => {
-    console.log(sort.field, sort.order);
-
     let res = await callGetAllUsers(limit, currentPage, sort.field);
-    console.log(res);
-
     if (res && res.code === 200) {
       setTotal(res.result.totalElements);
       setData(res.result.result);
     }
   };
+
   useEffect(() => {
     getUser();
   }, [limit, currentPage, sort]);
@@ -47,9 +45,11 @@ function AdminUser() {
     if (currentPage !== newCurrentPage) {
       setCurrentPage(newCurrentPage);
     }
-
-    if (limit === newLimit && currentPage === newCurrentPage) {
-      getUser(newCurrentPage, newLimit);
+    if(sort.field !== "id"){
+      setSort({ field: "id", order: "desc" });
+    }
+    if (limit === newLimit && currentPage === newCurrentPage && sort.field === "id" && sort.order === "desc") {
+      getUser();
     }
   };
   const columns = [
@@ -161,6 +161,15 @@ function AdminUser() {
             <span>Refresh</span>
           </button>
         </div>
+
+        <Search
+          placeholder="Tìm kiếm người dùng"
+          allowClear
+          enterButton="Tìm kiếm"
+          size="large"
+          onSearch={(value) => setSearch(value)} 
+          style={{ maxWidth: "300px" }}
+        />
       </div>
       <Table
         columns={columns}
@@ -179,7 +188,7 @@ function AdminUser() {
         scroll={{ x: "max-content" }}
         rowClassName={(record, index) =>
           `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
-        } 
+        }
       />
       {/* <ModalCreateUser
         visible={visible}

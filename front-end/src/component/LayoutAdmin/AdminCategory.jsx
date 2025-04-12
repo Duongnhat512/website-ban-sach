@@ -34,7 +34,27 @@ const AdminCategory = () => {
     setVisibleUpdateCategory(true);
     setCategory(record);
   };
-
+  const handleRefesh = () => {
+    const newLimit = 4;
+    const newCurrentPage = 1;
+    if (limit !== newLimit) {
+      setLimit(newLimit);
+    }
+    if (currentPage !== newCurrentPage) {
+      setCurrentPage(newCurrentPage);
+    }
+    if (sort.field !== "id") {
+      setSort({ field: "id", order: "desc" });
+    }
+    if (
+      limit === newLimit &&
+      currentPage === newCurrentPage &&
+      sort.field === "id" &&
+      sort.order === "desc"
+    ) {
+      getCategories();
+    }
+  };
   const handleDeleteCategory = async (id) => {
     let res = await callDeleteCategory(id);
     if (res && +res.EC === 0) {
@@ -109,7 +129,7 @@ const AdminCategory = () => {
           </button>
           <button
             className="btn flex items-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-            onClick={() => getCategories()}
+            onClick={() => handleRefesh()}
           >
             <FiRefreshCcw />
             <span>Refresh</span>

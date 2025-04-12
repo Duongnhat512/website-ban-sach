@@ -6,7 +6,17 @@ import { SiMicrosoftexcel } from "react-icons/si";
 import { IoMdPersonAdd } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { utils, writeFile } from "xlsx";
-import { callGetAllBooks } from "../../service/BookService";
+import {
+  callGetAllBooks,
+  callUploadThumbnail,
+} from "../../service/BookService";
+import {
+  callCreateBook,
+  callDeleteBookById,
+  callUpdateBookById,
+} from "../../service/AdminService";
+import DrawerCreateBook from "./DrawerCreate/DrawerCreateBook";
+import DrawerUpdateBook from "./DrawerUpdate/DrawerUpdateBook";
 
 const AdminProduct = () => {
   const [limit, setLimit] = useState(4);
@@ -31,22 +41,81 @@ const AdminProduct = () => {
   useEffect(() => {
     getProduct();
   }, [limit, currentPage, sort]);
+  const handleRefesh = () => {
+    const newLimit = 4;
+    const newCurrentPage = 1;
 
-  const handleEdit = (record) => {
-    setVisibleUpdateProduct(true);
-    setProduct(record);
-  };
+    if (limit !== newLimit) {
+      setLimit(newLimit);
+    }
 
-  const handleDeleteProduct = async (id) => {
-    let res = await callDeleteProduct(id);
-    if (res && +res.EC === 0) {
-      message.success(res.EM);
+    if (currentPage !== newCurrentPage) {
+      setCurrentPage(newCurrentPage);
+    }
+    if (sort.field !== "id") {
+      setSort({ field: "id", order: "desc" });
+    }
+    if (
+      limit === newLimit &&
+      currentPage === newCurrentPage &&
+      sort.field === "id" &&
+      sort.order === "desc"
+    ) {
       getProduct();
-    } else {
-      message.error(res.EM);
     }
   };
-
+  const handleEdit = (record) => {
+    console.log(record);
+    setProduct(record);
+    setVisibleUpdateProduct(true);
+  };
+  const handleCreateBook = async (bookData, thumbnail) => {
+    try {
+      const res = await callCreateBook(bookData);
+      if (res && res.code === 201) {
+        let resUpload = await callUploadThumbnail(res.result.id, thumbnail);
+        if (resUpload && resUpload.code === 200) {
+          message.success("Tạo sách thành công!");
+          handleRefesh();
+          setVisible(false);
+        }
+      } else {
+        message.error("Tạo sách thất bại!");
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi khi tạo sách!");
+    }
+  };
+  const handleUpdateBook = async (id, thumbnail, bookdata) => {
+    try {
+      const res = await callUpdateBookById(id, bookdata);
+      if (res && res.code === 200) {
+        if (thumbnail) {
+          let resUpload = await callUploadThumbnail(id, thumbnail);
+          if (resUpload && resUpload.code === 200) {
+            message.success("Cập nhật sách thành công!");
+            handleRefesh();
+            setVisibleUpdateProduct(false);
+          }
+        }else{
+          message.success("Cập nhật sách thành công!");
+          handleRefesh();
+          setVisibleUpdateProduct(false);
+        }
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi khi cập nhật sách!");
+    }
+  };
+  const handleDeleteProduct = async (id) => {
+    let res = await callDeleteBookById(id);
+    if (res && res.code === 200) {
+      message.success("Xóa sản phẩm thành công");
+      getProduct();
+    } else {
+      message.error("Xóa sản phẩm thất bại");
+    }
+  };
   const columns = [
     {
       title: "ID",
@@ -160,8 +229,6 @@ const AdminProduct = () => {
   const onChange = (pagination, filters, sorter) => {
     setCurrentPage(pagination.current);
     setLimit(pagination.pageSize);
-    console.log("Sorter", sorter, filters);
-
     if (sorter?.order === undefined) {
       setSort({ field: "id", order: "desc" });
     } else {
@@ -195,7 +262,7 @@ const AdminProduct = () => {
           </button>
           <button
             className="btn flex items-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-            onClick={() => getProduct()}
+            onClick={() => handleRefesh()}
           >
             <FiRefreshCcw />
             <span>Refresh</span>
@@ -219,7 +286,18 @@ const AdminProduct = () => {
         scroll={{ x: "max-content" }}
         rowClassName={(record, index) =>
           `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
-        } 
+        }
+      />
+      <DrawerCreateBook
+        visible={visible}
+        onClose={() => setVisible(false)}
+        onCreate={handleCreateBook}
+      />
+      <DrawerUpdateBook
+        visible={visibleUpdateProduct}
+        onClose={() => setVisibleUpdateProduct(false)}
+        onUpdate={handleUpdateBook}
+        product={product}
       />
     </div>
   );

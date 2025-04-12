@@ -6,6 +6,7 @@ import FlashIcon from "../../assets/images/label-flashsale.svg?url";
 import CateProductList from "./cateproductlist/cateproductlist";
 import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
 import { callGetBookFlashSale } from "../../service/BookService";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -15,6 +16,7 @@ const { Countdown } = Statistic;
 const deadline = Date.now() + 1000 * 60 * 60 * 24; // 24 hours from now
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [flashSaleData, setFlashSaleData] = useState([]);
   const handleGetFlashSale = async () => {
     try {
@@ -50,7 +52,7 @@ const HomePage = () => {
           </div>
           <Row gutter={16} style={{position:"relative",zIndex:10}}>
             {flashSaleData.map((product) => (
-              <Col span={6} key={product.id}>
+              <Col span={6} key={product.id} onClick={()=>navigate(`/product/${product.id}`)}>
                 <Card
                   hoverable
                   cover={
@@ -59,7 +61,7 @@ const HomePage = () => {
                     </div>
                   }
                 >
-                  <Title level={5} className="product-title">
+                  <Title level={5} className="product-title" >
                     {product.title}
                   </Title>
                   <div className="price">
