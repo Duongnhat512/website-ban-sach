@@ -7,4 +7,5 @@ import lombok.Setter;
 public class CategoryCreationRequest {
     private String name;
     private String description;
+    private String image;
 }
