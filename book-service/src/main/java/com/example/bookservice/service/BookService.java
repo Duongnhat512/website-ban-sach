@@ -42,5 +42,6 @@ public interface BookService {
     Long totalBook();
 
     List<BookImages> getBookImagesByBookId(Long bookId);
+    void deleteBookImageById(Long id);
 
 }

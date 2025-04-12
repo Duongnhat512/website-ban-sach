@@ -341,4 +341,12 @@ public class BookServiceImpl implements BookService {
                 .result(books.map(bookMapper::toBookCreationResponse).getContent())
                 .build();
     }
+
+    @Override
+    public void deleteBookImageById(Long id) {
+        BookImages bookImage = bookImagesRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book image not found"));
+        bookImagesRepository.delete(bookImage);
+    }
+
 }

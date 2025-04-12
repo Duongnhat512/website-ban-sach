@@ -257,4 +257,13 @@ public class BookController {
                 .result(bookImages)
                 .build();
     }
+    @DeleteMapping("/delete-book-image/{id}")
+    public ResponseData<String> deleteBookImageById(@PathVariable Long id) {
+        bookService.deleteBookImageById(id);
+        return ResponseData.<String>builder()
+                .message("Delete Book Image Successfully")
+                .code(HttpStatus.OK.value())
+                .result("Delete Book Image Successfully")
+                .build();
+    }
 }
