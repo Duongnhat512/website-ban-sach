@@ -17,12 +17,14 @@ import sanphammoi from "../../../assets/images/sanphammoi.png";
 import trogia from "../../../assets/images/trogia.png";
 import { useNavigate } from "react-router-dom";
 
+
 function ContainerHome1() {
   const navigate = useNavigate();
-
+  
   const handleImageClick = () => {
     navigate("/Banner1");
   };
+
   return (
     <>
       <div className="sub-container-1">

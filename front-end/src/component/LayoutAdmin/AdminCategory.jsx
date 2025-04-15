@@ -15,15 +15,17 @@ const AdminCategory = () => {
   const [visibleUpdateCategory, setVisibleUpdateCategory] = useState(false);
   const [category, setCategory] = useState({});
   const [sort, setSort] = useState({ field: "id", order: "desc" });
-
+  const [loading, setLoading] = useState(false);
   const getCategories = async () => {
-    console.log(limit, currentPage, sort.field, sort.order);
+    setLoading(true);
     let res = await callGetAllCate(limit, currentPage, sort.field, sort.order);
-    
+    console.log(res);
+
     if (res && res.code === 200) {
       setTotal(res.result.totalElements);
       setData(res.result.result);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -64,7 +66,6 @@ const AdminCategory = () => {
       message.error(res.EM);
     }
   };
-
   const columns = [
     {
       title: "ID",
@@ -77,6 +78,26 @@ const AdminCategory = () => {
       dataIndex: "name",
       sorter: true,
       width: 200,
+    },
+    {
+      title: "Hình Ảnh",
+      dataIndex: "image",
+      render: (image) =>
+        image ? (
+          <img
+            src={image}
+            alt="Category"
+            style={{
+              width: "50px",
+              height: "50px",
+              objectFit: "cover",
+              borderRadius: "8px",
+            }}
+          />
+        ) : (
+          <span>Không có ảnh</span>
+        ),
+      width: 100,
     },
     {
       title: "Hành Động",
@@ -117,7 +138,9 @@ const AdminCategory = () => {
 
   return (
     <div className="container_admin p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Quản lý danh mục</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        Quản lý danh mục
+      </h1>
       <div className="container_admin_header flex justify-between items-center mb-4">
         <div className="manage_button flex gap-4">
           <button
@@ -138,7 +161,10 @@ const AdminCategory = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={data.map((item) => ({ ...item, key: item.id }))}
+        dataSource={data.map((item) => ({
+          ...item,
+          key: item.id, // Đảm bảo mỗi hàng có key duy nhất
+        }))}
         onChange={onChange}
         pagination={{
           current: currentPage,
@@ -154,6 +180,7 @@ const AdminCategory = () => {
         rowClassName={(record, index) =>
           `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
         }
+        loading={loading}
       />
     </div>
   );

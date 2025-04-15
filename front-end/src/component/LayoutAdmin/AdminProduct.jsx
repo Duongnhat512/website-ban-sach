@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { utils, writeFile } from "xlsx";
 import {
   callGetAllBooks,
+  callGetBookSearch,
   callUploadThumbnail,
 } from "../../service/BookService";
 import {
@@ -17,7 +18,7 @@ import {
 } from "../../service/AdminService";
 import DrawerCreateBook from "./DrawerCreate/DrawerCreateBook";
 import DrawerUpdateBook from "./DrawerUpdate/DrawerUpdateBook";
-
+const { Search } = Input;
 const AdminProduct = () => {
   const [limit, setLimit] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,15 +28,16 @@ const AdminProduct = () => {
   const [visibleUpdateProduct, setVisibleUpdateProduct] = useState(false);
   const [product, setProduct] = useState({});
   const [sort, setSort] = useState({ field: "id", order: "desc" });
-
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
   const getProduct = async () => {
-    console.log(limit, currentPage, sort.field, sort.order);
-
+    setLoading(true);
     let res = await callGetAllBooks(limit, currentPage, sort.field, sort.order);
     if (res && res.code === 200) {
       setTotal(res.result.totalElements);
       setData(res.result.result);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -55,11 +57,16 @@ const AdminProduct = () => {
     if (sort.field !== "id") {
       setSort({ field: "id", order: "desc" });
     }
+    if(search !== "") {
+      setSearch("");
+      getProduct();
+    }
     if (
       limit === newLimit &&
       currentPage === newCurrentPage &&
       sort.field === "id" &&
-      sort.order === "desc"
+      sort.order === "desc" &&
+      search === ""
     ) {
       getProduct();
     }
@@ -90,14 +97,16 @@ const AdminProduct = () => {
     try {
       const res = await callUpdateBookById(id, bookdata);
       if (res && res.code === 200) {
-        if (thumbnail) {
+        console.log(thumbnail);
+
+        if (thumbnail && thumbnail.length > 0) {
           let resUpload = await callUploadThumbnail(id, thumbnail);
           if (resUpload && resUpload.code === 200) {
             message.success("Cập nhật sách thành công!");
             handleRefesh();
             setVisibleUpdateProduct(false);
           }
-        }else{
+        } else {
           message.success("Cập nhật sách thành công!");
           handleRefesh();
           setVisibleUpdateProduct(false);
@@ -126,13 +135,14 @@ const AdminProduct = () => {
     {
       title: "Hình Ảnh",
       dataIndex: "thumbnail",
-      render: (thumbnail) => (
-        <img
-          src={thumbnail}
-          alt="Thumbnail"
-          className="w-16 h-16 object-cover rounded-md"
-        />
-      ),
+      render: (thumbnail) =>
+        thumbnail ? (
+          <img
+            src={thumbnail}
+            alt="Thumbnail"
+            className="w-16 h-16 object-cover rounded-md"
+          />
+        ) : null, // Không hiển thị gì nếu thumbnail là null
       width: 120,
     },
     {
@@ -150,21 +160,23 @@ const AdminProduct = () => {
     {
       title: "Giá Gốc",
       dataIndex: "originalPrice",
-      render: (price) => `${parseFloat(price).toLocaleString("vi-VN")} VND`,
+      render: (price) =>
+        price ? `${parseFloat(price).toLocaleString("vi-VN")} VND` : null,
       sorter: true,
       width: 150,
     },
     {
       title: "Giá Hiện Tại",
       dataIndex: "currentPrice",
-      render: (price) => `${parseFloat(price).toLocaleString("vi-VN")} VND`,
+      render: (price) =>
+        price ? `${parseFloat(price).toLocaleString("vi-VN")} VND` : null,
       sorter: true,
       width: 150,
     },
     {
       title: "Giảm Giá",
       dataIndex: "discount",
-      render: (discount) => `${discount * 100}%`,
+      render: (discount) => (discount ? `${discount * 100}%` : null),
       sorter: true,
       width: 100,
     },
@@ -172,6 +184,7 @@ const AdminProduct = () => {
       title: "Ngày Phát Hành",
       dataIndex: "releasedDate",
       render: (date) => {
+        if (!date) return null; // Không hiển thị gì nếu date là null
         const d = new Date(date[0], date[1] - 1, date[2]);
         return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
       },
@@ -238,7 +251,26 @@ const AdminProduct = () => {
       });
     }
   };
-
+  const handleSearch = async () => {
+    try {
+      const res = await callGetBookSearch(
+        currentPage,
+        limit,
+        sort.field,
+        sort.order,
+        "title",
+        search
+      );
+      if (res && res.code === 200) {
+        setTotal(res.result.totalElements);
+        setData(res.result.result);
+      } else {
+        message.error("Không tìm thấy sản phẩm nào!");
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi khi tìm kiếm!");
+    }
+  };
   return (
     <div className="container_admin p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
@@ -268,6 +300,16 @@ const AdminProduct = () => {
             <span>Refresh</span>
           </button>
         </div>
+        <Search
+          placeholder="Tìm kiếm sách"
+          allowClear
+          enterButton="Tìm kiếm"
+          size="large"
+          onSearch={handleSearch} 
+          style={{ maxWidth: "300px" }}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
       <Table
         columns={columns}
@@ -287,6 +329,7 @@ const AdminProduct = () => {
         rowClassName={(record, index) =>
           `hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`
         }
+        loading={loading}
       />
       <DrawerCreateBook
         visible={visible}

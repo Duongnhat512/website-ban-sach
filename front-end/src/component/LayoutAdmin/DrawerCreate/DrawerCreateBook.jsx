@@ -37,7 +37,8 @@ const DrawerCreateBook = ({ visible, onClose, onCreate }) => {
     };
 
     setLoading(true);
-    await onCreate(bookData, values.thumbnail[0].originFileObj);
+    const images = values.thumbnail.map((file) => file.originFileObj);
+    await onCreate(bookData, images);
     form.resetFields();
     onClose();
     setLoading(false);
@@ -194,35 +195,19 @@ const DrawerCreateBook = ({ visible, onClose, onCreate }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="thumbnail"
-              label="Hình Ảnh"
-              valuePropName="fileList"
-              getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+              name="categoryId"
+              label="Danh Mục"
               rules={[
-                { required: true, message: "Hình ảnh không được để trống!" },
-                {
-                  validator: (_, value) => {
-                    if (!value || value.length === 0) {
-                      return Promise.reject("Vui lòng tải lên một file ảnh!");
-                    }
-                    const isImage = value[0]?.type.startsWith("image/");
-                    if (!isImage) {
-                      return Promise.reject(
-                        "File phải là hình ảnh (jpg, png, ...)"
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
+                { required: true, message: "Danh mục không được để trống!" },
               ]}
             >
-              <Upload
-                listType="picture"
-                maxCount={1}
-                beforeUpload={() => false} // Ngăn không cho upload tự động
-              >
-                <Button icon={<UploadOutlined />}>Tải lên hình ảnh</Button>
-              </Upload>
+              <Select placeholder="Chọn danh mục">
+                {categories.map((category) => (
+                  <Option key={category.id} value={category.id}>
+                    {category.name}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -287,19 +272,39 @@ const DrawerCreateBook = ({ visible, onClose, onCreate }) => {
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
-              name="categoryId"
-              label="Danh Mục"
+              name="thumbnail"
+              label="Hình Ảnh"
+              valuePropName="fileList"
+              getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
               rules={[
-                { required: true, message: "Danh mục không được để trống!" },
+                { required: true, message: "Hình ảnh không được để trống!" },
+                {
+                  validator: (_, value) => {
+                    if (!value || value.length === 0) {
+                      return Promise.reject(
+                        "Vui lòng tải lên ít nhất một hình ảnh!"
+                      );
+                    }
+                    const isAllImages = value.every((file) =>
+                      file.type.startsWith("image/")
+                    );
+                    if (!isAllImages) {
+                      return Promise.reject(
+                        "Tất cả file phải là hình ảnh (jpg, png, ...)!"
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
               ]}
             >
-              <Select placeholder="Chọn danh mục">
-                {categories.map((category) => (
-                  <Option key={category.id} value={category.id}>
-                    {category.name}
-                  </Option>
-                ))}
-              </Select>
+              <Upload
+                listType="picture"
+                multiple // Cho phép upload nhiều file
+                beforeUpload={() => false} // Ngăn không cho upload tự động
+              >
+                <Button icon={<UploadOutlined />}>Tải lên hình ảnh</Button>
+              </Upload>
             </Form.Item>
           </Col>
         </Row>

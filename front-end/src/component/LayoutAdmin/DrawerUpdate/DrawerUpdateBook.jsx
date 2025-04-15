@@ -15,6 +15,10 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
 import { callGetAllCate } from "../../../service/AdminService";
+import {
+  callDeleteImageBook,
+  getFullImageBook,
+} from "../../../service/BookService";
 
 const { Option } = Select;
 
@@ -22,29 +26,55 @@ const DrawerUpdateBook = ({ visible, onClose, onUpdate, product }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-
+  const fetchImages = async () => {
+    try {
+      if (product && product.id) {
+        const res = await getFullImageBook(product.id); // Gọi API lấy danh sách hình ảnh
+        if (res && res.code === 200) {
+          const images = res.result.map((image) => ({
+            uid: `${image.id}`, // ID duy nhất từ API
+            name: `image-${image.id}.jpg`, // Tên file (có thể tùy chỉnh)
+            status: "done", // Trạng thái file
+            url: image.imageUrl, // URL của file
+          }));
+          form.setFieldsValue({
+            ...product,
+            releasedDate: product.releasedDate
+              ? moment(product.releasedDate, "YYYY-MM-DD")
+              : null,
+            thumbnail: images, // Gán danh sách hình ảnh vào form
+          });
+        }
+      }
+    } catch (error) {
+      message.error("Lỗi khi lấy danh sách hình ảnh!");
+    }
+  };
   useEffect(() => {
     if (visible && product) {
-      form.setFieldsValue({
-        ...product,
-        releasedDate: product.releasedDate
-          ? moment(product.releasedDate, "YYYY-MM-DD")
-          : null,
-        thumbnail: product.thumbnail
-          ? [
-              {
-                uid: "-1", // ID duy nhất
-                name: "thumbnail.jpg", // Tên file (có thể tùy chỉnh)
-                status: "done", // Trạng thái file
-                url: product.thumbnail, // URL của file
-              },
-            ]
-          : [], // Nếu không có thumbnail, đặt giá trị mặc định là mảng rỗng
-      });
+      fetchImages();
       fetchCategories();
     }
   }, [visible, product]);
-
+  const handleRemove = async (file) => {
+    try {
+      if (file.url) {
+        // Ảnh được lấy từ API (có URL)
+        const imageId = file.uid; // Sử dụng `uid` làm ID ảnh
+        const res = await callDeleteImageBook(imageId); // Gọi API xóa ảnh
+        if (res && res.code === 200) {
+          message.success("Xóa ảnh thành công!");
+        } else {
+          message.error("Xóa ảnh thất bại!");
+        }
+      } else {
+        // Ảnh được thêm từ local (có `originFileObj`)
+        message.success("Xóa ảnh thành công!");
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi khi xóa ảnh!");
+    }
+  };
   const fetchCategories = async () => {
     try {
       const res = await callGetAllCate(); // Gọi API lấy danh mục
@@ -60,17 +90,20 @@ const DrawerUpdateBook = ({ visible, onClose, onUpdate, product }) => {
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
+
     const id = product.id; // Lấy id từ product
-    const thumbnail = values.thumbnail?.[0]?.originFileObj || null; 
+    const images = values.thumbnail.map((file) =>
+      file.originFileObj ? file.originFileObj : file.url
+    );
     const updatedBookData = {
       ...values,
-      releasedDate: values.releasedDate.format("YYYY-MM-DD"), 
+      releasedDate: values.releasedDate.format("YYYY-MM-DD"),
     };
+
     delete updatedBookData.thumbnail;
-    console.log("Updated Book Data:", updatedBookData);
+    const newImages = images.filter((image) => typeof image === "object");
     setLoading(true);
-    await onUpdate(id, thumbnail, updatedBookData);
-    message.success("Cập nhật sách thành công!");
+    await onUpdate(id, newImages, updatedBookData);
     form.resetFields();
     onClose();
     setLoading(false);
@@ -209,18 +242,19 @@ const DrawerUpdateBook = ({ visible, onClose, onUpdate, product }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="thumbnail"
-              label="Hình Ảnh"
-              valuePropName="fileList"
-              getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+              name="categoryId"
+              label="Danh Mục"
+              rules={[
+                { required: true, message: "Danh mục không được để trống!" },
+              ]}
             >
-              <Upload
-                listType="picture"
-                maxCount={1}
-                beforeUpload={() => false} // Ngăn không cho upload tự động
-              >
-                <Button icon={<UploadOutlined />}>Tải lên hình ảnh</Button>
-              </Upload>
+              <Select placeholder="Chọn danh mục">
+                {categories.map((category) => (
+                  <Option key={category.id} value={category.id}>
+                    {category.name}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -285,19 +319,19 @@ const DrawerUpdateBook = ({ visible, onClose, onUpdate, product }) => {
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
-              name="categoryId"
-              label="Danh Mục"
-              rules={[
-                { required: true, message: "Danh mục không được để trống!" },
-              ]}
+              name="thumbnail"
+              label="Hình Ảnh"
+              valuePropName="fileList"
+              getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
             >
-              <Select placeholder="Chọn danh mục">
-                {categories.map((category) => (
-                  <Option key={category.id} value={category.id}>
-                    {category.name}
-                  </Option>
-                ))}
-              </Select>
+              <Upload
+                listType="picture"
+                multiple
+                beforeUpload={() => false}
+                onRemove={handleRemove}
+              >
+                <Button icon={<UploadOutlined />}>Tải lên hình ảnh</Button>
+              </Upload>
             </Form.Item>
           </Col>
         </Row>
