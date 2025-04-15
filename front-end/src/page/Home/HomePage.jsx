@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   Row,
@@ -9,60 +9,21 @@ import {
   Statistic,
   Image,
 } from "antd";
-import { ClockCircleOutlined } from "@ant-design/icons";
-import product1 from "../../assets/images/product1.png";
 import "./HomePage.scss";
 import ContainerHome1 from "./contanerhome1/containerhome1";
 import FlashIcon from "../../assets/images/label-flashsale.svg?url";
 import CateProductList from "./cateproductlist/cateproductlist";
 import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
 import { callGetBookFlashSale } from "../../service/BookService";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
 
-const products = [
-  {
-    id: 1,
-    title: "Nozaki & Truyện Tranh Thiếu Nữ - Tập 13",
-    price: 24000,
-    originalPrice: 48000,
-    discount: 50,
-    sold: 2,
-    image: product1,
-  },
-  {
-    id: 2,
-    title: "Take Note - Ngữ Pháp Tiếng Anh",
-    price: 37500,
-    originalPrice: 75000,
-    discount: 50,
-    sold: 0,
-    image: product1,
-  },
-  {
-    id: 3,
-    title: "Thám Tử Lừng Danh Conan - Tập 102",
-    price: 20000,
-    originalPrice: 25000,
-    discount: 20,
-    sold: 2,
-    image: product1,
-  },
-  {
-    id: 4,
-    title: "48 Nguyên Tắc Chủ Chốt Của Quyền Lực",
-    price: 154000,
-    originalPrice: 200000,
-    discount: 23,
-    sold: 2,
-    image: product1,
-  },
-];
-
 const deadline = Date.now() + 1000 * 60 * 60 * 24; // 24 hours from now
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [flashSaleData, setFlashSaleData] = useState([]);
   const handleGetFlashSale = async () => {
     try {
@@ -97,7 +58,11 @@ const HomePage = () => {
           </div>
           <Row gutter={16} style={{ position: "relative", zIndex: 10 }}>
             {flashSaleData.map((product) => (
-              <Col span={6} key={product.id}>
+              <Col
+                span={6}
+                key={product.id}
+                onClick={() => navigate(`/product/${product.id}`)}
+              >
                 <Card
                   hoverable
                   cover={

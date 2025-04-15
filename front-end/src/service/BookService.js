@@ -1,10 +1,8 @@
 import axios from "../until/customize-axios";
 
-export const callGetBook = async (page, size) => {
+export const callGetBook = async (page, size, sort = "id", order = "asc") => {
   try {
-    const response = await axios.get("/api/v1/books/get-all-books", {
-      params: { page, size },
-    });
+    const response = await axios.get(`/api/v1/books/get-all-books?page=${page}&size=${size}&sort=${sort}:${order}`);
     return response;
   } catch (error) {
     console.error("Get books error:", error.response?.data || error.message);
@@ -45,7 +43,8 @@ export const callGetAllBooks = async (limit, page, sortBy, sortOrder) => {
 export const getBookById = async (id) => {
   try {
     const response = await axios.get(`/api/v1/books/${id}`);
-    return response.data;
+    console.log(response.result);
+    return response.result;
   } catch (error) {
     console.error("Error fetching book by ID:", error);
     throw error;
@@ -57,6 +56,41 @@ export const callGetBookFlashSale = async () => {
     return response;
   } catch (error) {
     console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+export const callGetBookByCategory = async (
+  categoryName,
+  page = 1,
+  size = 5
+) => {
+  try {
+    const response = await axios.get(
+      `/api/v1/books/search-by-category?category=${categoryName}&page=${page}&size=${size}`
+    );
+    return response;
+  } catch (error) {
+    console.error("Get books error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+export const callUploadThumbnail = async (bookId, file) => {
+  console.log("bookId:", bookId);
+  console.log("file:", file);
+
+  // Tạo FormData và thêm file với key là "image"
+  const formData = new FormData();
+  formData.append("image", file); // Key là "image", value là file
+
+  try {
+    const response = await axios.post(`/api/v1/books/upload-image/${bookId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Đảm bảo header đúng
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Lỗi khi upload thumbnail:", error.response?.data || error.message);
     throw error;
   }
 };

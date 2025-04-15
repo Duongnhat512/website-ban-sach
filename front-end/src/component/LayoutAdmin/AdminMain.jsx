@@ -12,7 +12,7 @@ function AdminMain() {
   const formatter = (value) => <CountUp end={value} separator="," />;
   const getValue = async () => {
     let resCate = await callGetTotalCategories();
-    let resOrder = await callGetTotalOrder();
+    // let resOrder = await callGetTotalOrder();
     let resProduct = await callGetTotalProduct();
     let resUser = await callGetTotalUser();
     if (resCate && resCate.code === 200) {
@@ -21,12 +21,12 @@ function AdminMain() {
         totalCategory: resCate.result,
       }));
     }
-    if (resOrder && resOrder.code === 200) {
-      setCountValue((prev) => ({
-        ...prev,
-        totalOrder: resOrder.result,
-      }));
-    }
+    // if (resOrder && resOrder.code === 200) {
+    //   setCountValue((prev) => ({
+    //     ...prev,
+    //     totalOrder: resOrder.result,
+    //   }));
+    // }
     if (resProduct && resProduct.code === 200) {
       setCountValue((prev) => ({
         ...prev,

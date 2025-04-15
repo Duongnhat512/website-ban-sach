@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Tabs, Card, Typography, Button, Row, Col } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
 import product1 from "../../../assets/images/product1.png";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Layout,
   Card,
@@ -12,6 +12,7 @@ import {
   Image,
   Rate,
   Progress,
+  Spin,
 } from "antd";
 import { ShoppingOutlined } from "@ant-design/icons";
 import "./cateproductlist.scss";
@@ -30,6 +31,8 @@ import Cate7 from "../../../assets/images/cate7.png";
 import Cate9 from "../../../assets/images/cate9.png";
 import product1 from "../../../assets/images/product1.png";
 import xuHuongIcon from "../../../assets/images/xuHuongIcon.png";
+import { callGetBookByCategory } from "../../../service/BookService";
+import { useNavigate } from "react-router-dom";
 const categories = [
   { name: "Card Game", image: Cate1 },
   { name: "Đồ Chơi Mô Hình", image: Cate2 },
@@ -249,112 +252,7 @@ const productsByTag = {
     },
   ],
 };
-const productBook = {
-  "Sách Tham Khảo": [
-    {
-      title: "Bảng Cửu Chương - Bảng Chia",
-      price: "8.000₫",
-      oldPrice: "10.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 20,
-      img: product1,
-    },
-    {
-      title:"Hướng Dẫn Ôn Thi Vào Lớp 10 - Môn Tiếng Anh (Theo Định Hướng Phát Triển Năng Lực)",
-      price: "42.500₫",
-      oldPrice: "50.000₫",
-      sold: 46,
-      stock: 100,
-      rating: 4.5,
-      discount: 15,
-      img: product1,
-    },
-    {
-      title: "Bồi Dưỡng Năng Lực Tự Học Toán 6",
-      price: "62.300₫",
-      oldPrice: "89.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 20,
-      img: product1,
-    },
-    {
-      title: "Vở Luyện Viết Lớp 1 - Tập 2 (Bộ Sách: Chân Trời Sáng Tạo)",
-      price: "21.000₫",
-      oldPrice: "30.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 30,
-      img: product1,
-    },
-    {
-      title: "Tổng Ôn Toán 9 - Tập 2",
-      price: "139.000₫",
-      oldPrice: "200.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 30,
-      img: product1,
-    },
-  ],
-  "Luyện Thi THPT QG": [
-    {
-      title: "Bảng Cửu Chương - Bảng Chia",
-      price: "8.000₫",
-      oldPrice: "10.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 20,
-      img: product1,
-    },
-    {
-      title: "Hướng Dẫn Ôn Thi Vào Lớp 10 - Môn Tiếng Anh (Theo Định Hướng Phát Triển Năng Lực)",
-      price: "42.500₫",
-      oldPrice: "50.000₫",
-      sold: 46,
-      stock: 100,
-      rating: 4.5,
-      discount: 15,
-      img: product1,
-    },
-    {
-      title: "Bồi Dưỡng Năng Lực Tự Học Toán 6",
-      price: "62.300₫",
-      oldPrice: "89.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 20,
-      img: product1,
-    },
-    {
-      title: "Vở Luyện Viết Lớp 1 - Tập 2 (Bộ Sách: Chân Trời Sáng Tạo)",
-      price: "21.000₫",
-      oldPrice: "30.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 30,
-      img: product1,
-    },
-    {
-      title: "Tổng Ôn Toán 9 - Tập 2",
-      price: "139.000₫",
-      oldPrice: "200.000₫",
-      sold: 500,
-      stock: 1280,
-      rating: 4.5,
-      discount: 30,
-      img: product1,
-    },
-  ],
-};
+
 const Categories = () => (
   <Layout className="cate-product-list">
     <Title level={3} className="category-title">
@@ -455,55 +353,101 @@ const ProductList = () => {
   );
 };
 const ProductBook = () => {
-    const [selectedBook, setSelectedBook] = useState("Sách Tham Khảo");
-    const products = productBook[selectedBook];
-  
-    return (
-      <Layout className="cate-product-list">
-        <Content>
-          <div className="tag-container" style={{ marginBottom: "16px" }}>
+  const categoriesBooks = [
+    "Thiếu nhi",
+    "Tâm lý - Kỹ năng sống",
+    "Lịch Sử - Địa Lý - Tôn Giáo",
+    "Sách học ngoại ngữ",
+  ];
+  const [selectedCategory, setSelectedCategory] = useState(categoriesBooks[0]); // Danh mục mặc định
+  const [products, setProducts] = useState([]); // State lưu danh sách sản phẩm
+  const [loading, setLoading] = useState(false); // State quản lý trạng thái loading
+  const navigate = useNavigate()
+  // Hàm gọi API để lấy sách theo danh mục
+  const handleGetBooksByCategory = async (categoryName) => {
+    setLoading(true); // Bắt đầu loading
+    try {
+      console.log("Fetching books by category:", categoryName);
+      
+      const response = await callGetBookByCategory(categoryName);
+      console.log("Books by category:", response);
+      
+      if (response && response.code === 200) {
+        setProducts(response.result.result); 
+      } else {
+        setProducts([]); 
+      }
+    } catch (error) {
+      console.error("Error fetching books by category:", error);
+      setProducts([]); 
+    } finally {
+      setLoading(false); 
+    }
+  };
+
+  useEffect(() => {
+    handleGetBooksByCategory(selectedCategory);
+  }, [selectedCategory]);
+  const handleNavigateToFilter = () => {
+    navigate("/filter", {
+      state: { categoryName: selectedCategory }, 
+    });
+  };
+  return (
+    <Layout className="cate-product-list">
+      <Content>
+        <div className="tag-container" style={{ marginBottom: "16px" }}>
+          {categoriesBooks.map((category) => (
             <Tag.CheckableTag
-              checked={selectedBook === "Sách Tham Khảo"}
-              onChange={() => setSelectedBook("Sách Tham Khảo")}
+              key={category}
+              checked={selectedCategory === category}
+              onChange={() => setSelectedCategory(category)}
             >
-              Xu hướng theo ngày
+              {category}
             </Tag.CheckableTag>
-            <Tag.CheckableTag
-              checked={selectedBook === "Luyện Thi THPT QG"}
-              onChange={() => setSelectedBook("Luyện Thi THPT QG")}
-            >
-              Luyện Thi THPT QG
-            </Tag.CheckableTag>
+          ))}
+        </div>
+        {loading ? (
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <Spin size="large" tip="Loading..." />
           </div>
+        ) : (
           <List
             grid={{ gutter: 16, column: 5 }}
             dataSource={products}
             renderItem={(item) => (
               <List.Item>
-                <Badge.Ribbon text={`-${item.discount}%`} color="red">
+                <Badge.Ribbon
+                  text={`-${Math.round(item.discount * 100)}%`}
+                  color="red"
+                >
                   <Card
                     hoverable
-                    cover={<Image src={item.img} alt={item.title} />}
+                    cover={<Image src={item.thumbnail} alt={item.title} />}
                   >
                     <Meta
                       title={item.title}
                       description={
                         <>
-                          <strong>{item.price}</strong>
-                          <del style={{ color: "#888" }}>{item.oldPrice}</del>
+                          <strong>
+                            {item.currentPrice.toLocaleString("vi-VN")}₫
+                          </strong>
+                          <del style={{ color: "#888" }}>
+                            {item.originalPrice.toLocaleString("vi-VN")}₫
+                          </del>
                           <div>
-                            <Rate allowHalf defaultValue={item.rating} />
+                            <Rate allowHalf defaultValue={item.rating || 3} />
                           </div>
                           <div className="custom-progress">
                             <Progress
-                              percent={(item.sold / item.stock) * 100}
+                              percent={(item.sold || 100 / item.quantity) * 100}
                               showInfo={false}
                               strokeColor="#c2185b"
-                              trailColor="#f1b1b0" // Màu nền (mờ)
+                              trailColor="#f1b1b0"
                               size={["100%", 15]}
                             />
                             <div className="progress-text">
-                              {`Đã bán ${item.sold}`}
+                              {`Đã bán ${item.sold || 100}`}
                             </div>
                           </div>
                         </>
@@ -514,13 +458,14 @@ const ProductBook = () => {
               </List.Item>
             )}
           />
-          <Row justify="center" style={{ marginTop: "20px" }}>
-            <Button type="primary">Xem Thêm</Button>
-          </Row>
-        </Content>
-      </Layout>
-    );
-  };
+        )}
+        <Row justify="center" style={{ marginTop: "20px" }} onClick={handleNavigateToFilter}>
+          <Button type="primary">Xem Thêm</Button>
+        </Row>
+      </Content>
+    </Layout>
+  );
+};
 const CateProductList = () => {
   return (
     <>

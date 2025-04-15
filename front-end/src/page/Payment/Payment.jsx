@@ -18,6 +18,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { doRemoveOrder } from "../../redux/OrderSlice";
 import "./Payment.scss";
 import { Typography } from "antd";
+import { callCreateOrder } from "../../service/OrderService";
 
 const { Text } = Typography;
 
@@ -90,16 +91,12 @@ function Payment() {
     setShippingMethod(e.target.value);
   };
 
-  const handleDeposit = () => {
+  const handleDeposit = (orderId) => {
     setLoading(true);
     const amount = totalPayment;
-    if (!amount || amount < 1000) {
-      toast.error("Please enter a valid amount to deposit (>= 1000 VND)");
-      return;
-    }
     try {
       fetch(
-        `http://localhost:8888/api/v1/payment/vn-pay?amount=${amount}&bankCode=NCB&orderId=10000`,
+        `http://localhost:8888/api/v1/payment/vn-pay?amount=${amount}&orderId=${orderId}`,
         {
           method: "GET",
           headers: {
@@ -110,11 +107,12 @@ function Payment() {
       )
         .then((response) => response.json())
         .then((data) => {
+          toast.success("Đặt hàng thành công!");
           window.location.href = data.paymentUrl;
         })
         .catch((error) => console.log(error));
     } catch (error) {
-      toast.error("An error occurred. Please try again later.");
+      toast.error("An error occurred. Please try again later.", error);
       setLoading(false);
     } finally {
       setLoading(false);
@@ -176,7 +174,38 @@ function Payment() {
     setTotalPayment(totalPrice - totalDiscount + totalShippingFee);
   };
 
-  const createPayment = async () => {};
+  const createPayment = async () => {
+    setLoading(true);
+    const orderData = {
+      userId: user.id,
+      total: totalPayment,
+      address: address,
+      orderItems: orderItems.map((item) => ({
+        bookId: item.id,
+        quantity: item.amount,
+      })),
+    };
+    try {
+      const res = await callCreateOrder(orderData);
+      if (res && res.code === 200) {
+        toast.success("Đặt hàng thành công!");
+        dispatch(doRemoveOrder([]));
+        if (paymentMethod === "Thanh toán VN Pay") {
+          console.log("====================================");
+          console.log(res.result.id);
+          console.log("====================================");
+          handleDeposit(res.result.id);
+        } else {
+          alert("Đặt hàng thành công!");
+        }
+      }
+    } catch (error) {
+      console.error("Error creating payment:", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderItem = (item) => {
     return (
@@ -569,7 +598,7 @@ function Payment() {
                 style={{ color: "#ffff", backgroundColor: "#C92127" }}
                 onClick={() => {
                   if (paymentMethod === "Thanh toán VN Pay") {
-                    handleDeposit();
+                    createPayment();
                   }
                 }}
               >

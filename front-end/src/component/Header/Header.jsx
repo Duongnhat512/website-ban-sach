@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import Login from "../../page/Login/Login";
 import Register from "../../page/Register/Register";
 import "./Header.scss"; // Import Tailwind CSS
+import { setAuthToken } from "../../until/customize-axios";
 
 const { Header } = Layout;
 
@@ -248,6 +249,8 @@ const AppHeader = () => {
       dispatch(logout());
       localStorage.removeItem("token");
       message.success("Đăng xuất thành công!");
+      setAuthToken(null);
+      navigate("/");
     } else {
       message.error("Đăng xuất thất bại!");
     }

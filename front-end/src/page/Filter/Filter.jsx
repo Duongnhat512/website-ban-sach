@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   Select,
@@ -8,14 +8,23 @@ import {
   Button,
   Checkbox,
 } from "antd";
-import { ShoppingCartOutlined, ReloadOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import {
+  ShoppingCartOutlined,
+  ReloadOutlined,
+  UpOutlined,
+  DownOutlined,
+} from "@ant-design/icons";
+import { useLocation, useNavigate } from "react-router-dom";
 import { callGetBookFilter } from "../../service/BookService";
 import product1 from "../../assets/images/product1.png";
 import Suggest from "../../component/Suggest/Suggest";
 import { useDispatch, useSelector } from "react-redux";
 import { doAddOrder, doRemoveOrder } from "../../redux/OrderSlice";
+import { callGetAllCate } from "../../service/AdminService";
 const Filter = () => {
+  const location = useLocation();
+  const { categoryName } = location.state || "Thiếu nhi";
+  const [category, setCategory] = useState(categoryName);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(9);
   const [bookList, setBookList] = useState([]);
@@ -24,18 +33,31 @@ const Filter = () => {
   const [priceFilter, setPriceFilter] = useState([]);
   const [releaseDateFilter, setReleaseDateFilter] = useState(null);
   const [sort, setSort] = useState("id:desc");
-
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.order.orders);
+  const [showAllCategories, setShowAllCategories] = useState(false); // State để kiểm soát hiển thị danh mục
 
   const handleAddItem = (item) => {
-    console.log(item);
 
-    dispatch(doAddOrder({...item,amount:1}));
-
-
+    dispatch(doAddOrder({ ...item, amount: 1 }));
   };
+  const handleGetAllCategory = async () => {
+    try {
+      const response = await callGetAllCate(100, 1, "id", "asc");
+      console.log("response", response);
+      if (response && response.code === 200) {
+        setCategories(response.result.result);
+      }
+    } catch (error) {
+      console.error("Failed to fetch book list:", error);
+    }
+  };
+  useEffect(() => {
+    handleGetAllCategory();
+  }, []);
+
   const handleGetFilteredBooks = async () => {
     try {
       let minPrice = null;
@@ -44,38 +66,22 @@ const Filter = () => {
       priceFilter.forEach((range) => {
         switch (range) {
           case "0-150.000 đ":
-            console.log("range", range);
-            console.log("minPrice", minPrice);
-            console.log("maxPrice", maxPrice);
-
             minPrice = minPrice === null ? 0 : Math.min(minPrice, 0);
             maxPrice = maxPrice === null ? 100000 : Math.max(maxPrice, 150000);
             break;
           case "150.000-300.000 đ":
-            console.log("range", range);
-            console.log("minPrice", minPrice);
-            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 150000 : Math.min(minPrice, 150000);
             maxPrice = maxPrice === null ? 300000 : Math.max(maxPrice, 300000);
             break;
           case "300.000-500.000 đ":
-            console.log("range", range);
-            console.log("minPrice", minPrice);
-            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 300000 : Math.min(minPrice, 300000);
             maxPrice = maxPrice === null ? 500000 : Math.max(maxPrice, 500000);
             break;
           case "500.000-700.000 đ":
-            console.log("range", range);
-            console.log("minPrice", minPrice);
-            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 500000 : Math.min(minPrice, 500000);
             maxPrice = maxPrice === null ? 700000 : Math.max(maxPrice, 700000);
             break;
           case "700.000 - Trở Lên":
-            console.log("range", range);
-            console.log("minPrice", minPrice);
-            console.log("maxPrice", maxPrice);
             minPrice = minPrice === null ? 700000 : Math.min(minPrice, 700000);
             break;
           default:
@@ -95,17 +101,21 @@ const Filter = () => {
         if (releaseDateFilter === "Trước Năm 2020") {
           search += `${search ? "," : ""}releasedDate<2020`;
         } else {
-          search += `${search ? "," : ""}releasedDate.${releaseDateFilter.split(" ")[1]
-            }`;
+          search += `${search ? "," : ""}releasedDate.${
+            releaseDateFilter.split(" ")[1]
+          }`;
         }
       }
-      console.log(search);
+      console.log(pageSize);
+      
       const response = await callGetBookFilter(
         currentPage,
         pageSize,
         sort,
         search
       );
+      console.log("response", response);
+      
       if (response && response.code === 200) {
         setBookList(response.result.result);
         setTotalElements(response.result.totalElements);
@@ -132,7 +142,8 @@ const Filter = () => {
     setReleaseDateFilter(null);
     setSort("id:desc");
     setCurrentPage(1);
-    setPageSize(8);
+    setPageSize(9);
+    setCategory(categoryName);
   };
 
   const handlePriceFilterChange = (checkedValues) => {
@@ -146,7 +157,12 @@ const Filter = () => {
   const handleSortChange = (value) => {
     setSort(value);
   };
-
+  const handleToggleCategories = () => {
+    setShowAllCategories(!showAllCategories); // Đổi trạng thái hiển thị
+  };
+  const handleCategoryChange = (value) => {
+    setCategory(value);
+  };
   return (
     <div className="p-6 max-w-6xl mx-auto flex flex-col gap-6">
       {/* Breadcrumb */}
@@ -181,6 +197,38 @@ const Filter = () => {
               onChange={handlePriceFilterChange}
               value={priceFilter}
             />
+          </div>
+
+          <div className="mb-4">
+            <h4 className="font-semibold mb-2">Danh Sách Loại Sách</h4>
+            <Radio.Group
+              className="flex flex-col space-y-2"
+              options={(showAllCategories
+                ? categories
+                : categories.slice(0, 6)
+              ).map((category) => ({
+                label: category.name, // Hiển thị tên danh mục
+                value: category.name, // Giá trị là tên danh mục (phải khớp với categoryName)
+              }))}
+              value={category} // Đặt giá trị mặc định là categoryName
+              onChange={(e) => handleCategoryChange(e.target.value)}
+            />
+            {categories.length > 6 && (
+              <div className="flex justify-center mt-4">
+                <Button
+                  type="link"
+                  className="flex items-center text-blue-500"
+                  onClick={handleToggleCategories}
+                >
+                  {showAllCategories ? "Ẩn bớt" : "Hiển thị chi tiết"}
+                  {showAllCategories ? (
+                    <UpOutlined className="ml-2" />
+                  ) : (
+                    <DownOutlined className="ml-2" />
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
           <div className="mb-4">
             <h4 className="font-semibold mb-2">Nhà Cung Cấp</h4>
@@ -261,11 +309,12 @@ const Filter = () => {
                     className="p-2"
                   />
                 }
-                actions={[<ShoppingCartOutlined key="cart" onClick={() => handleAddItem(book)
-
-
-                } />]}
-
+                actions={[
+                  <ShoppingCartOutlined
+                    key="cart"
+                    onClick={() => handleAddItem(book)}
+                  />,
+                ]}
               >
                 <Card.Meta
                   onClick={() => navigate(`/product/${book.id}`)}
@@ -274,7 +323,7 @@ const Filter = () => {
                   }
                   description={
                     <>
-                      <div className="text-sm text-gray-500" >
+                      <div className="text-sm text-gray-500">
                         {book.originalPrice && (
                           <span className="line-through mr-2">
                             {formatCurrency(book.originalPrice)}
