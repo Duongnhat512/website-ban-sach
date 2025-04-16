@@ -1,0 +1,155 @@
+/* Khung tổng */
+.trend-section {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fff;
+  margin: 16px auto;
+  width: 70%;
+  max-height:10%;
+  max-width: 80%; /* tuỳ */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.trend-header {
+  background-color: #ffffff; /* Hồng nhạt */
+  padding: 12px 16px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.trend-title {
+  margin: 0;
+  font-size: 24px;
+  color: #C92127;
+   border-bottom: #C92127;
+}
+
+/* Tabs */
+.trend-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+.trend-tab-btn {
+  background-color: #f2f2f2;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #333;
+}
+.trend-tab-btn:hover {
+  background-color: #dedede;
+}
+.trend-tab-btn.active {
+  background-color: #d23;
+  color: #fff;
+}
+
+/* Danh sách sản phẩm */
+.trend-products {
+  display: grid;
+  /* Sắp xếp các item theo cột: mỗi cột chứa 2 item */
+  grid-auto-flow: column;
+  /* Giới hạn 2 hàng */
+  grid-template-rows: repeat(2, auto);
+  gap: 16px; /* Khoảng cách giữa các cột và hàng */
+  padding: 16px;
+  
+  /* Chiều rộng của container hiển thị 2 cột, cho phép cuộn ngang nếu có thêm cột */
+  width: 100%;
+  overflow-x: auto;
+  
+  /* Ẩn thanh cuộn nếu muốn */
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE 10+ */
+}
+
+/* Card sản phẩm */
+.trend-product-card {
+  width: 200px; /* tuỳ chỉnh chiều rộng */
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+  padding: 8px;
+}
+.trend-product-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Ảnh + badge giảm giá */
+.product-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 220px; /* tuỳ */
+  margin-bottom: 8px;
+}
+.product-discount-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background-color: #ff424e; /* đỏ sale */
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tên sách, giá */
+.product-title {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  color: #333;
+  height: 40px; /* cố định, tránh layout giật nếu tên dài */
+  overflow: hidden; /* cắt bớt nếu quá dài */
+}
+
+.product-price {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.price-current {
+  color: #d23;
+  font-weight: 600;
+}
+.price-old {
+  color: #888;
+  text-decoration: line-through;
+  font-size: 13px;
+}
+
+/* Rating */
+.product-rating {
+  color: #ffd700; /* vàng */
+  font-size: 14px;
+}
+
+/* Nút "Xem Thêm" */
+.trend-more-btn-wrap {
+  text-align: center;
+  padding: 8px 0;
+}
+.trend-more-btn {
+  padding: 8px 16px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.trend-more-btn:hover {
+  opacity: 0.85;
+}

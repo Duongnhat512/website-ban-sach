@@ -3,8 +3,13 @@ import TopMenu from "./SupportComponent/TopMenu";
 import PromoSection from "./SupportComponent/PromoSection";
 import "./MCPage.css";
 import Banner from './SupportComponent/Banner';
+import TrendSection from './SupportComponent/TrendSection';
+import TitleBanner from "./SupportComponent/TitleBanner";
+import { useNavigate } from "react-router-dom";
 function MCPage() {
     //const bannerImage = "src/page/Home/maGiamGia/asset/bannerMC.jpg";
+    const bannerImage = "src/page/Home/MCPage/asset/bannerGiamGia.jpg";
+    const navigate = useNavigate();
   // Dữ liệu mẫu cho các section khuyến mãi
   const promoData = [
     {
@@ -110,6 +115,14 @@ function MCPage() {
           bannerImage={"src/page/Home/maGiamGia/ađásset/cc.jpg"}
         />
       ))}
+       <section className="promo-section">
+       <TitleBanner text={"Tủ sách MCBook" } backgroundImage={bannerImage}/>
+       </section>
+      <TrendSection tilte = {"Tủ sách MCBook"} navigate={navigate}/>
+      <section className="promo-section">
+       <TitleBanner text={"THAM KHẢO" } backgroundImage={bannerImage}/>
+       </section>
+      <TrendSection tilte = {"Sách tham khảo"}  navigate={navigate}/>
     </div>
   );
 }

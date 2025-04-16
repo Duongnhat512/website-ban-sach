@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getBookById } from "../../service/BookService";
+import { getBookById, getFullImageBook } from "../../service/BookService";
 import {
   getCommentsByBookId,
   createComment,
@@ -130,11 +130,8 @@ const ProductDetail = () => {
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [thumbnails, setThumbnails] = useState([
-    "http://localhost:3000/src/assets/images/product1.png",
-    "http://localhost:3000/src/assets/images/product1.png",
-    "http://localhost:3000/src/assets/images/product1.png",
-    "http://localhost:3000/src/assets/images/product1.png",
   ]);
+  
   const formatVND = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -145,11 +142,14 @@ const ProductDetail = () => {
     const fetchProductDetails = async () => {
       try {
         const response = await getBookById(id);
+        const imageList =await getFullImageBook(id);
+        console.log(imageList);
+        setThumbnails(imageList.result);
         console.log(response);
         setProduct(response);
         setThumbnails((prev) => {
           const updated = [...prev];
-          updated[0] = response.thumbnail;
+          updated[0] = {imageUrl:response.thumbnail};
           return updated;
         });
       } catch (error) {
@@ -172,18 +172,20 @@ const ProductDetail = () => {
             alt="Main Product"
             className="w-full h-80 object-cover"
           />
+          <div className="w-full max-w-[300px] overflow-x-auto">
           <div className="flex gap-2 mt-2">
             {thumbnails.map((thumb, index) => (
               <img
                 key={index}
-                src={thumb}
+                src={thumb.imageUrl}
                 alt={`Thumbnail ${index + 1}`}
                 className={`w-16 h-12 object-cover cursor-pointer border ${
-                  selectedImage === thumb ? "border-red-500" : "border-gray-300"
+                  selectedImage === thumb.imageUrl ? "border-red-500" : "border-gray-300"
                 }`}
-                onClick={() => setSelectedImage(thumb)}
+                onClick={() => setSelectedImage(thumb.imageUrl)}
               />
             ))}
+          </div>
           </div>
           {/* Buttons below thumbnails */}
           <div className="mt-4 flex gap-2">
