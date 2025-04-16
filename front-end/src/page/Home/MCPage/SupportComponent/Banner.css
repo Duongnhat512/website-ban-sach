@@ -1,0 +1,14 @@
+/* src/components/Banner.css */
+.banner-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #fff; /* hoặc màu phù hợp */
+  }
+  
+  .banner-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  

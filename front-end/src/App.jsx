@@ -15,12 +15,13 @@ import Cart from "./page/Cart/Cart";
 import UserInfo from "./page/InfoUser";
 import LayoutAdmin from "./page/Admin/LayoutAdmin";
 import { setAuthToken } from "./until/customize-axios";
-
+import MaGiamGia from "./page/Home/maGiamGia/maGiamGia.jsx";
 import Oauth2 from "./page/Login/Oauth2";
 import PaymentSuccess from "./page/Payment/PaymentSuccess.jsx";
 import PaymentFailure from "./page/Payment/PaymentFailure.jsx";
 import Payment from "./page/Payment/Payment.jsx";
 import ChatBox from "./page/ChatPage/ChatBox/ChatBox.jsx";
+import MCPage from "./page/Home/MCPage/MCPage.jsx";
 function App() {
   const dispatch = useDispatch();
 
@@ -47,6 +48,8 @@ function App() {
           <Route path="/filter" element={<Filter />} />
           <Route path="/Banner1" element={<Banner1 />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/maGiamGia" element={<MaGiamGia/>} />
+          <Route path="/MCPage" element={<MCPage/>} />
           <Route path="/info" element={<UserInfo />} />
           <Route path="/payment-failed" element={<PaymentFailure/>} />
           <Route path="/payment-success" element={<PaymentSuccess/>} />

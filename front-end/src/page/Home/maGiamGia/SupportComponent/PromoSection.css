@@ -1,0 +1,22 @@
+.promo-section1 {
+    background-color: #A10302;
+    margin: 20px auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 1200px;
+    border-radius: 8px;
+  }
+  
+  .promo-section h2 {
+    margin: 0 0 16px;
+    text-align: center;
+    font-size: 24px;
+  }
+  
+  .coupon-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+  

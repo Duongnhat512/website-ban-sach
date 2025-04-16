@@ -24,3 +24,4 @@ export const callGetDetaiOrder = async (id) => {
     throw error;
   }
 };
+

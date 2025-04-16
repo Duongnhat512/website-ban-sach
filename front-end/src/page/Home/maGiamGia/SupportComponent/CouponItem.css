@@ -1,0 +1,123 @@
+/* 
+  Đặt box-sizing để padding không ảnh hưởng đến tổng kích thước 
+*/
+.coupon-container,
+.coupon-left,
+.coupon-right,
+.coupon-right-top,
+.coupon-right-bottom {
+  box-sizing: border-box;
+}
+
+/* Khung coupon: 340 x 125, viền nét đứt, bo góc */
+.coupon-container {
+  display: flex;
+  gap: 5px;
+  width: 340px;
+  height: 125px;
+  margin: 16px auto;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  font-family: sans-serif;
+  font-size: 14px; /* Tăng cỡ chữ toàn khung */
+  overflow: hidden;
+}
+
+/* Bên trái: icon + nhãn */
+.coupon-left {
+  background-color: #eaf6e6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;  /* Cố định độ rộng */
+  padding: 8px;
+}
+
+.coupon-icon {
+  width: 35px;
+  height: 35px;
+  margin-bottom: 4px;
+}
+
+.coupon-label {
+  font-size: 14px;  /* Đồng bộ với font-size tổng */
+  font-weight: 500;
+  color: #2f5f2d;
+  text-align: center;
+}
+
+/* Bên phải: chia thành khối top (text) và bottom (progress + nút) */
+.coupon-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  justify-content: space-between; 
+  /* space-between giúp khối top ở trên, khối bottom ở dưới */
+}
+
+/* Khối text trên */
+.coupon-right-top {
+  /* Thêm margin-bottom nếu muốn cách xa khối bottom hơn */
+  margin-bottom: -12px;
+}
+
+.coupon-title {
+  font-size: 15px; /* Tăng cỡ chữ tiêu đề to hơn một chút */
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.coupon-condition {
+  margin: 2px 0;
+  font-size: 14px; 
+  color: #666;
+}
+
+.coupon-expiry {
+  font-size: 13px; 
+  color: #999;
+  margin-top: 2px;
+}
+
+/* Khối bottom: hàng ngang, gồm progress bar + nút */
+.coupon-right-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Thanh tiến trình trái, nút phải */
+}
+
+/* Thanh tiến trình: dài hơn xíu (150px) */
+.coupon-progress-bar {
+  width: 150px;   /* Tăng chiều rộng so với 100px */
+  height: 6px;
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.coupon-progress-fill {
+  background-color: #2cbf6d;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* Nút “Lưu mã” ở góc dưới bên phải */
+.coupon-save-button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px; /* Chữ nút to xíu */
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.coupon-save-button:hover {
+  opacity: 0.9;
+}

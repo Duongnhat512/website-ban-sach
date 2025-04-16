@@ -1,0 +1,32 @@
+.title-banner {
+   /* Kích thước mặc định: 1000px x 160px */
+   width: 100%;
+   height: 160px;
+   
+   /* Canh giữa nội dung */
+   margin: 0 auto;
+   margin-top: 16px;
+ 
+   /* Các thuộc tính background để đảm bảo ảnh hiển thị đúng */
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+   
+   /* Nếu không có ảnh nền nào được truyền vào, bạn có thể đặt màu nền mặc định */
+   background-color: #ddd;
+ 
+   /* Bo góc và căn giữa nội dung */
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+ }
+ 
+ .title-text {
+   font-size: 40px;
+   font-weight: 700;
+   color: #fff;
+   text-transform: uppercase;
+   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+ }
+ 
