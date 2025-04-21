@@ -22,5 +22,5 @@ public interface OrderService {
 
     Long totalOrder(Long userId);
     Long totalOrder();
-
+    PageResponse<OrderCreateResponse> getOrdersByUserId(Long userId, int page, int size, String sortBy);
 }

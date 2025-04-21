@@ -68,6 +68,21 @@ public class OrderController {
                 .result(response)
                 .build();
     }
+
+    @GetMapping("/get-orders-by-user/{userId}")
+    public ResponseData<PageResponse<OrderCreateResponse>> getOrdersByUserId(@PathVariable Long userId,
+                                                                             @RequestParam(defaultValue = "1") int page,
+                                                                             @RequestParam(defaultValue = "10") int size,
+                                                                             @RequestParam(value = "sort") String sort) {
+        log.info("Getting orders for user: {}", userId);
+        PageResponse<OrderCreateResponse> response = orderService.getOrdersByUserId(userId, page, size, sort);
+        return ResponseData.<PageResponse<OrderCreateResponse>>builder()
+                .code(200)
+                .message("Orders retrieved successfully")
+                .result(response)
+                .build();
+    }
+
     @GetMapping("/get-total-order/{userId}")
     public ResponseData<Long> getTotalOrder(@PathVariable Long userId) {
         log.info("Getting total orders for user: {}", userId);

@@ -188,8 +188,6 @@ public class OrderServiceImpl implements OrderService {
                 direction = sortParams[1];
             }
         }
-
-
         Pageable pageable;
         if (direction.equalsIgnoreCase("asc")) {
             pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
@@ -220,12 +218,6 @@ public class OrderServiceImpl implements OrderService {
                 .totalPages(orderPage.getTotalPages())
                 .build();
     }
-
-
-
-
-
-
     @Override
     public Long totalOrder(Long userId) {
         return orderRepository.countByUserId(userId);
@@ -235,5 +227,37 @@ public class OrderServiceImpl implements OrderService {
     public Long totalOrder() {
         return orderRepository.count();
     }
+
+    @Override
+    public PageResponse<OrderCreateResponse> getOrdersByUserId(Long userId, int page, int size, String sortBy) {
+
+        String field = sortBy.split(":")[0];
+        String direction = sortBy.split(":")[1];
+        Pageable pageable;
+        if (direction.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).ascending());
+        } else {
+            pageable = PageRequest.of(page - 1, size).withSort(Sort.by(field).descending());
+        }
+        Page<Order> orderPage = orderRepository.findByUserId(userId,pageable);
+        List<OrderCreateResponse> orderCreateResponses = orderPage.get().map(order -> OrderCreateResponse.builder()
+                .id(order.getId())
+                .total(order.getTotal())
+                .address(order.getAddress())
+                .status(order.getOrderStatus())
+                .userId(order.getUserId())
+                .orderDate(order.getOrderDate())
+                .paymentStatus(order.getPaymentStatus())
+                .build()).toList();
+
+        return PageResponse.<OrderCreateResponse>builder()
+                .currentPage(page)
+                .pageSize(size)
+                .result(orderCreateResponses)
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .build();
+    }
+
 
 }
