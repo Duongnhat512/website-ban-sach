@@ -18,4 +18,6 @@ public class PromotionCreateRequest {
     private LocalDate endDate;
     private Double discount;
     private String condition;
+    private String code;
+    private Double minAmount;
 }

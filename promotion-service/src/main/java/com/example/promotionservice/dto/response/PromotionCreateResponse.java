@@ -2,6 +2,7 @@ package com.example.promotionservice.dto.response;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Setter
@@ -17,4 +18,6 @@ public class PromotionCreateResponse {
     private LocalDate endDate;
     private Double discount;
     private String condition;
+    private String code;
+    private Double minAmount;
 }

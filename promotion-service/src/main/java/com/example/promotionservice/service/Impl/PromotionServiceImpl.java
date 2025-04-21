@@ -29,6 +29,8 @@ public class PromotionServiceImpl implements PromotionService {
                 .endDate(request.getEndDate())
                 .discount(request.getDiscount())
                 .condition(request.getCondition())
+                .code(request.getCode())
+                .minAmount(request.getMinAmount())
                 .build();
 
         promotionRepository.save(promotion);
@@ -41,6 +43,8 @@ public class PromotionServiceImpl implements PromotionService {
                 .endDate(promotion.getEndDate())
                 .discount(promotion.getDiscount())
                 .condition(promotion.getCondition())
+                .code(promotion.getCode())
+                .minAmount(promotion.getMinAmount())
                 .build();
     }
 
@@ -55,6 +59,8 @@ public class PromotionServiceImpl implements PromotionService {
                         .endDate(promotion.getEndDate())
                         .discount(promotion.getDiscount())
                         .condition(promotion.getCondition())
+                        .code(promotion.getCode())
+                        .minAmount(promotion.getMinAmount())
                         .build())
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
     }
@@ -73,6 +79,8 @@ public class PromotionServiceImpl implements PromotionService {
                 .endDate(promotion.getEndDate())
                 .discount(promotion.getDiscount())
                 .condition(promotion.getCondition())
+                .code(promotion.getCode())
+                .minAmount(promotion.getMinAmount())
                 .build();
     }
 
@@ -87,6 +95,8 @@ public class PromotionServiceImpl implements PromotionService {
                         .endDate(promotion.getEndDate())
                         .discount(promotion.getDiscount())
                         .condition(promotion.getCondition())
+                        .code(promotion.getCode())
+                        .minAmount(promotion.getMinAmount())
                         .build())
                 .collect(Collectors.toList());
     }

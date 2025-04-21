@@ -27,4 +27,6 @@ public class Promotion {
     LocalDate endDate;
     Double discount;
     String condition;
+    String code;
+    Double minAmount;
 }
