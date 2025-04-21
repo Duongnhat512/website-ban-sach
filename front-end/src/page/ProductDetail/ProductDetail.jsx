@@ -7,7 +7,7 @@ import {
 } from "../../service/CommentService";
 import { useDispatch } from "react-redux";
 import { doAddToOrder } from "../../redux/OrderSlice"; // Đảm bảo bạn có action này trong slice
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams  } from "react-router-dom";
 import {
   GiftOutlined,
   CreditCardOutlined,
@@ -126,7 +126,7 @@ const ProductDetail = () => {
     }
   };
 
-  const id = 1;
+  const { id } = useParams();;
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [thumbnails, setThumbnails] = useState([
