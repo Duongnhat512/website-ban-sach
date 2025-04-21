@@ -25,3 +25,13 @@ export const callGetDetaiOrder = async (id) => {
   }
 };
 
+export const callCreateOrder = async (data) => {
+  try {
+    const response = await axios.post("/api/v1/orders/create-order", data);
+    return response;
+  } catch (error) {
+    console.error("Create order error:", error.response?.data || error.message);
+    throw error;
+  }
+}
+

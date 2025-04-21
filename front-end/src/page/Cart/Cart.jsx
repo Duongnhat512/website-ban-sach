@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, Divider, Image, InputNumber, List, Row, Typography } from "antd";
+import { Button, Card, Checkbox, Col, Divider, Image, InputNumber, List, Row, Typography, message } from "antd";
 import { DeleteOutlined, ShoppingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import "./Cart.scss";
@@ -91,7 +91,8 @@ function Cart() {
     const selectedItems = orderItems.filter(item => item.selected);
     
     if (selectedItems.length === 0) {
-      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+      message.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+      
       return;
     }
     // Chuyển hướng đến trang thanh toán

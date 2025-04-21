@@ -19,6 +19,9 @@ import { doRemoveOrder } from "../../redux/OrderSlice";
 import "./Payment.scss";
 import { Typography } from "antd";
 import { callCreateOrder } from "../../service/OrderService";
+import { callGetAllPromotions } from "../../service/PromotionService";
+import { setAuthToken } from "../../until/customize-axios";
+import { message } from "antd";
 
 const { Text } = Typography;
 
@@ -29,16 +32,19 @@ function Payment() {
   const orders = useSelector((state) => state.order.orders);
   const user = useSelector((state) => state.user.user);
   const token = localStorage.getItem("token");
+  setAuthToken(token);
   const [form] = Form.useForm();
 
   const [name, setName] = useState(user.fullName || "admin");
   const [phone, setPhone] = useState(user.phoneNumber || "");
   const [address, setAddress] = useState(user.address || "");
+  const [promoMessage, setPromoMessage] = useState("");
   const [email, setEmail] = useState(user.email || "");
   const [shippingMethod, setShippingMethod] = useState();
   const [paymentMethod, setPaymentMethod] = useState(
     "Thanh toán khi nhận hàng"
   );
+  const [promotions, setPromotions] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [orderItems, setOrderItems] = useState([]);
@@ -48,6 +54,7 @@ function Payment() {
   const [totalPayment, setTotalPayment] = useState(0);
   const [userInfo, setUserInfo] = useState({});
   const [loading, setLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -70,8 +77,22 @@ function Payment() {
   };
 
   const applyPromoCode = () => {
-    // Handle promo code application logic here
-    console.log("Promo code applied:", promoCode);
+    const selectedPromotion = promotions.find((promo) => promo.code === promoCode);
+    if (!selectedPromotion) {
+      setPromoMessage("❌ Mã khuyến mãi không hợp lệ!");
+      setTotalDiscount(0);
+      return;
+    }
+    if (totalPrice < (selectedPromotion.minAmount || 0)) {
+      setPromoMessage(
+        `❌ Đơn hàng phải đạt tối thiểu ${selectedPromotion.minAmount?.toLocaleString()}đ để áp dụng mã này!`
+      );
+      setTotalDiscount(0);
+      return;
+    }
+    const discountAmount = Math.floor((totalPrice * (selectedPromotion.discount || 0)) / 100);
+    setTotalDiscount(discountAmount);
+    setPromoMessage("✅ Áp dụng mã khuyến mãi thành công!");
   };
 
   const onSelectPromotion = () => {
@@ -89,6 +110,20 @@ function Payment() {
   const handleShippingMethodChange = (e) => {
     setTotalShippingFee(e.target.value);
     setShippingMethod(e.target.value);
+  };
+
+  const handleConfirmPayment = () => {
+    if (!agreed) {
+      message.error("Vui lòng đồng ý với Điều khoản & Điều kiện.");
+      return;
+    }
+    if (!shippingMethod) {
+      message.error("Vui lòng chọn phương thức vận chuyển.");
+      return;
+    }
+    if (paymentMethod === "Thanh toán VN Pay") {
+      createPayment();
+    }
   };
 
   const handleDeposit = (orderId) => {
@@ -126,38 +161,17 @@ function Payment() {
     }).format(price);
   };
 
-  const promotions = [
-    {
-      title: "Mã Giảm 10K",
-      description: "Đơn hàng mua Manga/ Light Novel/ Dam Mỹ từ 120k",
-      details: "HSD: 31/03/2025, Mua thêm 39.000đ",
-      value: 10000,
-      code: "10KOFF",
-    },
-    {
-      title: "Mã Giảm 10K - Toàn Sàn",
-      description:
-        "Đơn hàng từ 130k - Không bao gồm giá trị của các sản phẩm sau Manga, Ngoại Văn...",
-      details: "HSD: 31/03/2025, Mua thêm 130.000đ",
-      value: 10000,
-      code: "10KOFFALL",
-    },
-    {
-      title: "Mã Giảm 10K",
-      description: "Đơn hàng mua Manga/ Light Novel/ Dam Mỹ từ 200k",
-      details: "Freeship, HSD: 31/03/2025, Mua thêm 119.000đ",
-      value: 10000,
-      code: "FREESHIP10K",
-    },
-    {
-      title: "Freeship",
-      description: "HSD: 31/03/2025, Mua thêm 169.000đ",
-      details: "Áp dụng tối đa: 1",
-      code: "FREESHIP",
-    },
-  ];
-
-  const fetchPromotions = () => {};
+  const fetchPromotions = async () => {
+    try {
+      const res = await callGetAllPromotions();
+      console.log("res", res);
+      if (res && res.result) {
+        setPromotions(res.result);
+      }
+    } catch (error) {
+      toast.error("Không thể lấy danh sách khuyến mãi");
+    }
+  };
 
   const getOrderItems = () => {
     if (orders.length > 0) {
@@ -454,14 +468,20 @@ function Payment() {
               >
                 Chọn mã khuyến mãi
               </a>
+              {promoMessage && (
+                <div style={{ marginTop: 8, color: promoMessage.startsWith("✅") ? "green" : "red" }}>
+                  {promoMessage}
+                </div>
+              )}
               <Modal
                 title="CHỌN MÃ KHUYẾN MÃI"
                 visible={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 footer={null}
+                bodyStyle={{ maxHeight: 400, overflowY: "auto" }}
               >
-                <Input
+                {/* <Input
                   type="Text"
                   placeholder="Nhập mã khuyến mãi"
                   value={promoCode}
@@ -474,18 +494,33 @@ function Payment() {
                       Áp dụng
                     </Button>
                   }
-                />
+                /> */}
                 <List
                   itemLayout="horizontal"
                   dataSource={promotions}
                   renderItem={(item) => (
-                    <List.Item>
+                    <List.Item
+                      actions={[
+                        <Button
+                          key="select"
+                          type="primary"
+                          size="small"
+                          onClick={() => {
+                            setPromoCode(item.code);
+                            setIsModalVisible(false);
+                          }}
+                        >
+                          Chọn
+                        </Button>,
+                      ]}
+                    >
                       <List.Item.Meta
                         title={item.title}
                         description={
                           <>
-                            <div>{item.description}</div>
-                            {item.details && <div>{item.details}</div>}
+                            <div>Giảm: {item.discount}%</div>
+                            <div>Điều kiện: {item.condition}</div>
+                            <div>Thời gian: {item.startDate} - {item.endDate}</div>
                           </>
                         }
                       />
@@ -582,7 +617,7 @@ function Payment() {
             style={{ marginTop: "10px", width: "80%" }}
           >
             <Col>
-              <Checkbox defaultChecked={false}>
+              <Checkbox defaultChecked={false} onChange={(e) => setAgreed(e.target.checked)}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <Text>Bằng việc tiến hành Mua hàng. Bạn đã đồng ý với </Text>
                   <a href="/terms-and-conditions" style={{ color: "#2f80ed" }}>
@@ -596,11 +631,7 @@ function Payment() {
                 type="Text"
                 size="large"
                 style={{ color: "#ffff", backgroundColor: "#C92127" }}
-                onClick={() => {
-                  if (paymentMethod === "Thanh toán VN Pay") {
-                    createPayment();
-                  }
-                }}
+                onClick={handleConfirmPayment}
               >
                 Xác nhận thanh toán
               </Button>
