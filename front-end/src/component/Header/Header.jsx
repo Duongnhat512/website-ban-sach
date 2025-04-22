@@ -298,13 +298,13 @@ const AppHeader = () => {
 
   return (
     <Layout className="bg-white shadow-md">
-      <div className="bg-red-700 flex items-center justify-center h-20 w-full">
+      <div className="bg-red-700 flex items-center justify-center h-20 w-full" >
         <Image width={1280} src={Banner} />
       </div>
       <div className="max-w-[1280px] w-full mx-auto h-16 px-4">
         <Header className="flex justify-between items-center bg-white p-0 h-full">
           <Row className="w-full h-full">
-            <Col span={5} className="flex items-center h-full gap-5 px-5">
+            <Col span={5} className="flex items-center h-full gap-5 px-5 cursor-pointer" onClick={() => navigate("/")}>
               <img src={Logo} alt="Logo" className="h-10 mr-5" />
             </Col>
             <Col span={13} className="flex items-center gap-2">

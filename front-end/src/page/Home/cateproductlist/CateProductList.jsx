@@ -356,6 +356,7 @@ const ProductBook1 = () => {
                     hoverable
                     cover={<Image src={item.thumbnail} alt={item.title} />}
                     className="cursor-pointer"
+                    onClick={() => navigate(`/product/${item.id}`)}
                   >
                     <Meta
                       title={item.title}
@@ -486,6 +487,8 @@ const ProductBook = () => {
                     hoverable
                     cover={<Image src={item.thumbnail} alt={item.title} />}
                     className="cursor-pointer"
+                    onClick={() => navigate(`/product/${item.id}`)}
+
                   >
                     <Meta
                       title={item.title}

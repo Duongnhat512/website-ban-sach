@@ -7,7 +7,7 @@ import {
 } from "../../service/CommentService";
 import { useDispatch } from "react-redux";
 import { doAddToOrder } from "../../redux/OrderSlice"; // Đảm bảo bạn có action này trong slice
-import { useNavigate,useParams  } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   GiftOutlined,
   CreditCardOutlined,
@@ -17,6 +17,8 @@ import {
 import { useSelector } from "react-redux";
 
 import "./ProductDetail.css";
+import { Breadcrumb, Image, message } from "antd";
+import Suggest from "../../component/Suggest/Suggest";
 const ProductDetail = () => {
   const [comments, setComments] = useState([]);
   const [token, setToken] = useState("");
@@ -73,7 +75,7 @@ const ProductDetail = () => {
     };
 
     dispatch(doAddToOrder(item));
-    alert("Đã thêm vào giỏ hàng!");
+    message.success("Thêm vào giỏ hàng thành công!");
   };
   const handleDeleteComment = async (commentId) => {
     try {
@@ -131,7 +133,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [thumbnails, setThumbnails] = useState([
   ]);
-  
+
   const formatVND = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -142,14 +144,14 @@ const ProductDetail = () => {
     const fetchProductDetails = async () => {
       try {
         const response = await getBookById(id);
-        const imageList =await getFullImageBook(id);
+        const imageList = await getFullImageBook(id);
         console.log(imageList);
         setThumbnails(imageList.result);
         console.log(response);
         setProduct(response);
         setThumbnails((prev) => {
           const updated = [...prev];
-          updated[0] = {imageUrl:response.thumbnail};
+          updated[0] = { imageUrl: response.thumbnail };
           return updated;
         });
       } catch (error) {
@@ -161,49 +163,53 @@ const ProductDetail = () => {
 
   const increaseQuantity = () => setQuantity(quantity + 1);
   const decreaseQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
-    <div className="max-w-5xl mx-auto bg-white p-6 shadow-lg rounded-lg border flex flex-col">
-      <div className="max-w-5xl mx-auto p-4 bg-white rounded-lg flex gap-6">
-        {/* Left Section - product Image & Thumbnails */}
+    <div className="max-w-[1280px] mx-auto  p-6  flex flex-col">
+      <Breadcrumb className="mb-4 mt-4">
+
+        <Breadcrumb.Item href="/">Trang chủ</Breadcrumb.Item>
+        <Breadcrumb.Item href="/products">Product Detail</Breadcrumb.Item>
+        <Breadcrumb.Item>{product.title}</Breadcrumb.Item>
+      </Breadcrumb>
+      <div className=" mx-auto p-4 bg-white rounded-lg flex gap-6 shadow-lg rounded-lg border mt-4">
         <div className="w-1/3">
-          <img
+          <Image
             src={selectedImage || product.thumbnail}
             alt="Main Product"
             className="w-full h-80 object-cover"
           />
           <div className="w-full max-w-[300px] overflow-x-auto">
-          <div className="flex gap-2 mt-2">
-            {thumbnails.map((thumb, index) => (
-              <img
-                key={index}
-                src={thumb.imageUrl}
-                alt={`Thumbnail ${index + 1}`}
-                className={`w-16 h-12 object-cover cursor-pointer border ${
-                  selectedImage === thumb.imageUrl ? "border-red-500" : "border-gray-300"
-                }`}
-                onClick={() => setSelectedImage(thumb.imageUrl)}
-              />
-            ))}
-          </div>
+            <div className="flex gap-2 mt-2">
+              {thumbnails.map((thumb, index) => (
+                <img
+                  key={index}
+                  src={thumb.imgUrl}
+                  alt={`Thumbnail ${index + 1}`}
+                  className={`w-16 h-12 object-cover cursor-pointer border ${selectedImage === thumb.imageUrl ? "border-red-500" : "border-gray-300"
+                    }`}
+                  onClick={() => setSelectedImage(thumb.imageUrl)}
+                />
+              ))}
+            </div>
           </div>
           {/* Buttons below thumbnails */}
           <div className="mt-4 flex gap-2">
             <button
-              className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded w-full bg-white h-10 text-xs"
+              className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded w-full bg-white h-10 text-xxl hover:bg-red-700 hover:text-white transition-all duration-300 ease-in-out hover:shadow-md"
               onClick={() => handleAddToCart()}
             >
               Thêm vào giỏ hàng
             </button>
             <button
-              className="bg-red-700 text-white px-4 py-1 text-sm rounded w-full h-10 text-xs"
+              className="border bg-red-700 text-white px-4 py-1 text-sm rounded w-full h-10 text-xxl hover:bg-white hover:text-red-700 hover:border-red-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02] ease-in-out"
               onClick={() => handleBuyNow()}
             >
               Mua ngay
             </button>
           </div>
-
-          {/* Policy Section */}
           <div className="mt-6 border-t pt-4">
             <h3 className="font-bold">Chính sách ưu đãi của Fahasa</h3>
             <ul className="mt-2 space-y-2 text-gray-600">
@@ -230,8 +236,6 @@ const ProductDetail = () => {
             </ul>
           </div>
         </div>
-
-        {/* Right Section - product Details */}
         <div className="w-2/3">
           <h2 className="text-xl font-bold">{product.title}</h2>
           <p className="text-gray-600">Tác giả: {product.author}</p>
@@ -252,7 +256,7 @@ const ProductDetail = () => {
 
           {/* Shipping Info */}
           <div className="mt-4 p-4 border rounded-lg">
-            <h3 className="font-bold">Thông tin vận chuyển</h3>
+            <h3 className="font-bold pt-2">Thông tin vận chuyển</h3>
             <p className="text-gray-600">
               Giao hàng đến: Phường Bến Nghé, Quận 1, Hồ Chí Minh
             </p>
@@ -265,7 +269,7 @@ const ProductDetail = () => {
           <div className="mt-4 p-4 border rounded-lg">
             <h3 className="font-bold">
               Ưu đãi liên quan{" "}
-              <a href="#" className="text-blue-500">
+              <a href="#" className="text-blue-500 px-2">
                 Xem thêm &rarr;
               </a>
             </h3>
@@ -289,7 +293,7 @@ const ProductDetail = () => {
           </div>
 
           {/* Additional Details */}
-          <h2 className="text-xl font-semibold mb-4">Thông tin chi tiết</h2>
+          <h2 className="text-xl font-semibold my-4">Thông tin chi tiết</h2>
           <div className="space-y-2 text-gray-700">
             <p>
               <strong>Mã hàng:</strong> {product.id}
@@ -403,6 +407,7 @@ const ProductDetail = () => {
             ))}
         </div>
       </div>
+      <Suggest />
     </div>
   );
 };
