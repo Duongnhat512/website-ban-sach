@@ -64,7 +64,7 @@ export const callGetBookFlashSale = async () => {
 export const callGetBookByCategory = async (
   categoryName,
   page = 1,
-  size = 5
+  size = 10
 ) => {
   try {
     const response = await axios.get(

@@ -122,7 +122,7 @@ function Payment() {
       return;
     }
     if (paymentMethod === "Thanh toán VN Pay") {
-      createPayment();
+      handleDeposit(0);
     }
   };
 

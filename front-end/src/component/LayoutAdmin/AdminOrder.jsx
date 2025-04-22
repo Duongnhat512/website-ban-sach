@@ -18,6 +18,7 @@ const AdminOrder = () => {
   const [sort, setSort] = useState({ field: "id", order: "desc" });
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const getOrders = async () => {
     setLoading(true);
     try {
@@ -51,11 +52,11 @@ const AdminOrder = () => {
       key: "id",
       sorter: true,
       width: 100,
-      render: (id) => (
+      render: (id, record) => ( // Thêm tham số record để lấy toàn bộ thông tin đơn hàng
         <a
           className="text-blue-500 hover:underline cursor-pointer"
           onClick={() => {
-            setSelectedOrderId(id);
+            setSelectedOrder(record); // Lưu toàn bộ thông tin đơn hàng
             setDrawerVisible(true);
           }}
         >
@@ -240,7 +241,12 @@ const AdminOrder = () => {
       <OrderDetailDrawer
         visible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
-        orderId={selectedOrderId}
+        orderId={selectedOrder?.id} address={selectedOrder?.address}
+        status={selectedOrder?.status}
+        orderDate={selectedOrder?.orderDate}
+        userId={selectedOrder?.userId}
+        total={selectedOrder?.total}
+        paymentStatus={selectedOrder?.paymentStatus}
       />
     </div>
   );

@@ -35,3 +35,12 @@ export const callCreateOrder = async (data) => {
   }
 }
 
+export const callGetOrderByUserId = async (id) => {
+  try {
+    const response = await axios.get(`/api/v1/orders/get-orders-by-user/${id}?page=1&size=30&sort=id:asc`);
+    return response;
+  } catch (error) {
+    console.error("Get orders error:", error.response?.data || error.message);
+    throw error;
+  }
+}

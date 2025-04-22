@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Input, Button, Radio, Card, Menu } from "antd";
-import { Row, Col } from "antd"; // Import thêm Row và Col từ Ant Design
+import { Row, Col } from "antd"; 
 import { useDispatch, useSelector } from "react-redux";
-import emtyCart from "../../assets/images/ico_emptycart (1).svg";
 import Suggest from "../../component/Suggest/Suggest";
+import HistoryOrder from "./HistoryOrder";
 const UserInfo = () => {
   const isLoggedIn = useSelector((state) => state.user.authenticated);
   const user = useSelector((state) => state.user.user);
@@ -182,18 +182,7 @@ const UserInfo = () => {
         );
       case "order":
         return (
-          <div className="flex flex-col items-center justify-center h-full space-y-4">
-            {/* SVG Icon */}
-            <img
-              src={emtyCart} // Thay bằng đường dẫn SVG của bạn
-              alt="Empty Orders"
-              className="w-32 h-32"
-            />
-            {/* Text */}
-            <p className="text-gray-500 text-lg font-medium">
-              Bạn chưa có đơn hàng nào
-            </p>
-          </div>
+          <HistoryOrder /> // Gọi component HistoryOrder ở đây
         );
       default:
         return null;

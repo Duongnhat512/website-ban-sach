@@ -275,95 +275,12 @@ const Categories = () => {
     </Layout>
   );
 };
-
-const ProductList = () => {
-  const [selectedTag, setSelectedTag] = useState("Xu hướng theo ngày");
-  const products = productsByTag[selectedTag];
-
-  return (
-    <Layout className="cate-product-list">
-      <Content>
-        <div className="header-product-list">
-          <img
-            src={xuHuongIcon}
-            alt="Xu Hướng Icon"
-            className="xu-huong-icon "
-          />
-          <h2>Xu Hướng Mua Sắm</h2>
-        </div>
-        <div className="tag-container" style={{ marginBottom: "16px" }}>
-          <Tag.CheckableTag
-            checked={selectedTag === "Xu hướng theo ngày"}
-            onChange={() => setSelectedTag("Xu hướng theo ngày")}
-          >
-            Xu hướng theo ngày
-          </Tag.CheckableTag>
-          <Tag.CheckableTag
-            checked={selectedTag === "Sách hot - Giảm Sốc"}
-            onChange={() => setSelectedTag("Sách hot - Giảm Sốc")}
-          >
-            Sách hot - Giảm Sốc
-          </Tag.CheckableTag>
-          <Tag.CheckableTag
-            checked={selectedTag === "BestSeller Ngoại Văn"}
-            onChange={() => setSelectedTag("BestSeller Ngoại Văn")}
-          >
-            BestSeller Ngoại Văn
-          </Tag.CheckableTag>
-        </div>
-        <List
-          grid={{ gutter: 16, column: 5 }}
-          dataSource={products}
-          renderItem={(item) => (
-            <List.Item>
-              <Badge.Ribbon text={`-${item.discount}%`} color="red">
-                <Card
-                  hoverable
-                  cover={<Image src={item.img} alt={item.title} />}
-                  className="cursor-pointer"
-                >
-                  <Meta
-                    title={item.title}
-                    description={
-                      <>
-                        <strong>{item.price}</strong>
-                        <del style={{ color: "#888" }}>{item.oldPrice}</del>
-                        <div>
-                          <Rate allowHalf defaultValue={item.rating} />
-                        </div>
-                        <div className="custom-progress">
-                          <Progress
-                            percent={(item.sold / item.stock) * 100}
-                            showInfo={false}
-                            strokeColor="#c2185b"
-                            trailColor="#f1b1b0" // Màu nền (mờ)
-                            size={["100%", 15]}
-                          />
-                          <div className="progress-text">
-                            {`Đã bán ${item.sold}`}
-                          </div>
-                        </div>
-                      </>
-                    }
-                  />
-                </Card>
-              </Badge.Ribbon>
-            </List.Item>
-          )}
-        />
-        <Row justify="center" style={{ marginTop: "20px" }}>
-          <Button type="primary">Xem Thêm</Button>
-        </Row>
-      </Content>
-    </Layout>
-  );
-};
-const ProductBook = () => {
+const ProductBook1 = () => {
   const categoriesBooks = [
     "Thiếu nhi",
-    "Tâm lý - Kỹ năng sống",
-    "Lịch Sử - Địa Lý - Tôn Giáo",
-    "Sách học ngoại ngữ",
+    "Manga - Comic",
+    "Văn học",
+    "Báo - Tạp Chí",
   ];
   const [selectedCategory, setSelectedCategory] = useState(categoriesBooks[0]); // Danh mục mặc định
   const [products, setProducts] = useState([]); // State lưu danh sách sản phẩm
@@ -402,6 +319,144 @@ const ProductBook = () => {
   return (
     <Layout className="cate-product-list">
       <Content>
+      <div className="header-product-list">
+          <img
+            src={xuHuongIcon}
+            alt="Xu Hướng Icon"
+            className="xu-huong-icon "
+          />
+          <h2>Sách Giải Trí & Văn Học</h2>
+        </div>
+        <div className="tag-container" style={{ marginBottom: "16px" }}>
+          {categoriesBooks.map((category) => (
+            <Tag.CheckableTag
+              key={category}
+              checked={selectedCategory === category}
+              onChange={() => setSelectedCategory(category)}
+            >
+              {category}
+            </Tag.CheckableTag>
+          ))}
+        </div>
+        {loading ? (
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <Spin size="large" tip="Loading..." />
+          </div>
+        ) : (
+          <List
+            grid={{ gutter: 16, column: 5 }}
+            dataSource={products}
+            renderItem={(item) => (
+              <List.Item>
+                <Badge.Ribbon
+                  text={`-${Math.round(item.discount * 100)}%`}
+                  color="red"
+                >
+                  <Card
+                    hoverable
+                    cover={<Image src={item.thumbnail} alt={item.title} />}
+                    className="cursor-pointer"
+                  >
+                    <Meta
+                      title={item.title}
+                      description={
+                        <>
+                          <strong>
+                            {item.currentPrice.toLocaleString("vi-VN")}₫
+                          </strong>
+                          <del style={{ color: "#888" }}>
+                            {item.originalPrice.toLocaleString("vi-VN")}₫
+                          </del>
+                          <div>
+                            <Rate allowHalf defaultValue={item.rating || 3} />
+                          </div>
+                          <div className="custom-progress">
+                            <Progress
+                              percent={(item.sold || 100 / item.quantity) * 100}
+                              showInfo={false}
+                              strokeColor="#c2185b"
+                              trailColor="#f1b1b0"
+                              size={["100%", 15]}
+                            />
+                            <div className="progress-text">
+                              {`Đã bán ${item.sold || 100}`}
+                            </div>
+                          </div>
+                        </>
+                      }
+                    />
+                  </Card>
+                </Badge.Ribbon>
+              </List.Item>
+            )}
+          />
+        )}
+        <Row
+          justify="center"
+          style={{ marginTop: "20px" }}
+          onClick={handleNavigateToFilter}
+        >
+          <Button type="primary">Xem Thêm</Button>
+        </Row>
+      </Content>
+    </Layout>
+  );
+};
+const ProductBook = () => {
+  const categoriesBooks = [
+    "Khoa học kỹ thuật",
+    "Tâm lý - Kỹ năng sống",
+    "Lịch Sử - Địa Lý - Tôn Giáo",
+    "Sách học ngoại ngữ",
+    "Giáo khoa - Tham khảo",
+    "Nuôi Dạy Con",
+    "Kinh Tế",
+  ];
+  const [selectedCategory, setSelectedCategory] = useState(categoriesBooks[0]); // Danh mục mặc định
+  const [products, setProducts] = useState([]); // State lưu danh sách sản phẩm
+  const [loading, setLoading] = useState(false); // State quản lý trạng thái loading
+  const navigate = useNavigate();
+  // Hàm gọi API để lấy sách theo danh mục
+  const handleGetBooksByCategory = async (categoryName) => {
+    setLoading(true); // Bắt đầu loading
+    try {
+      console.log("Fetching books by category:", categoryName);
+
+      const response = await callGetBookByCategory(categoryName);
+      console.log("Books by category:", response);
+
+      if (response && response.code === 200) {
+        setProducts(response.result.result);
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error("Error fetching books by category:", error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleGetBooksByCategory(selectedCategory);
+  }, [selectedCategory]);
+  const handleNavigateToFilter = () => {
+    navigate("/filter", {
+      state: { categoryName: selectedCategory },
+    });
+  };
+  return (
+    <Layout className="cate-product-list">
+      <Content>
+      <div className="header-product-list">
+          <img
+            src={xuHuongIcon}
+            alt="Xu Hướng Icon"
+            className="xu-huong-icon "
+          />
+          <h2>Sách Kiến Thức & Kỹ Năng</h2>
+        </div>
         <div className="tag-container" style={{ marginBottom: "16px" }}>
           {categoriesBooks.map((category) => (
             <Tag.CheckableTag
@@ -481,7 +536,7 @@ const CateProductList = () => {
   return (
     <>
       <Categories />
-      <ProductList />
+      <ProductBook1 />
       <ProductBook />
     </>
   );

@@ -16,6 +16,7 @@ import CateProductList from "./cateproductlist/cateproductlist";
 import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
 import { callGetBookFlashSale } from "../../service/BookService";
 import { useNavigate } from "react-router-dom";
+import Suggest from "../../component/Suggest/Suggest";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -94,7 +95,8 @@ const HomePage = () => {
           <div className="background"></div>
         </div>
         <CateProductList />
-        <BestSellerRanking />
+        <Suggest />
+        {/* <BestSellerRanking /> */}
       </div>
     </div>
   );
