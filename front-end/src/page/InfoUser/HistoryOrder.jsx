@@ -221,7 +221,7 @@ const HistoryOrder = () => {
   }
 
   return (
-    <div style={{ padding: '1px' }}>
+    <div className='max-w-[1280px] mx-auto mt-4' style={{ padding: '1px' }}>
       <Tabs defaultActiveKey="CREATED" activeKey={activeTab} onChange={(key) => setActiveTab(key)} type="card">
         <TabPane tab={`Mới tạo (${filterOrdersByStatus('CREATED').length})`} key="CREATED">
           {renderOrderList('CREATED')}
