@@ -26,7 +26,7 @@ const PaymentSuccess = () => {
           </Button>,
           <Button
             key="order"
-            // onClick={() => navigate('/orders')}
+            onClick={() => navigate('/history')}
           >
             Xem đơn hàng
           </Button>,

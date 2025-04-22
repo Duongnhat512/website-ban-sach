@@ -22,6 +22,7 @@ import PaymentFailure from "./page/Payment/PaymentFailure.jsx";
 import Payment from "./page/Payment/Payment.jsx";
 import ChatBox from "./page/ChatPage/ChatBox/ChatBox.jsx";
 import MCPage from "./page/Home/MCPage/MCPage.jsx";
+import HistoryOrder from "./page/InfoUser/HistoryOrder.jsx";
 function App() {
   const dispatch = useDispatch();
 
@@ -54,6 +55,8 @@ function App() {
           <Route path="/payment-failed" element={<PaymentFailure/>} />
           <Route path="/payment-success" element={<PaymentSuccess/>} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/history" element={<HistoryOrder />} />
+
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
