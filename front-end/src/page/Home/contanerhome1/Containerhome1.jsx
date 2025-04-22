@@ -97,7 +97,8 @@ function ContainerHome1() {
               alignItems: "center",
             }}
           >
-            <Col span={2} className="scroll-col cursor-pointer">
+            <Col span={2} className="scroll-col cursor-pointer"
+            onClick={()=>navigate("/maGiamGia")}>
               <Image
                 preview={false}
                 src={flashsale}

@@ -6,6 +6,7 @@ import Banner from './SupportComponent/Banner';
 import TrendSection from './SupportComponent/TrendSection';
 import TitleBanner from "./SupportComponent/TitleBanner";
 import { useNavigate } from "react-router-dom";
+import Suggest from "../../../component/Suggest/Suggest";
 function MCPage() {
     //const bannerImage = "src/page/Home/maGiamGia/asset/bannerMC.jpg";
     const bannerImage = "src/page/Home/MCPage/asset/bannerGiamGia.jpg";
@@ -123,6 +124,7 @@ function MCPage() {
        <TitleBanner text={"THAM KHẢO" } backgroundImage={bannerImage}/>
        </section>
       <TrendSection tilte = {"Sách tham khảo"}  navigate={navigate}/>
+      <Suggest />
     </div>
   );
 }

@@ -378,7 +378,7 @@ const ProductDetail = () => {
               <div key={comment.id} className="comment">
                 <div className="comment-item">
                   <p className="comment-text">
-                    {comment.userName}: {comment.content}
+                    {comment.userName || "Người dùng"}: {comment.content}
                   </p>
                   <div className="comment-meta">
                     <span className="comment-date">

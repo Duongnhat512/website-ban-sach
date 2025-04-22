@@ -75,11 +75,7 @@ function Suggest() {
             </Col>
           ))}
         </Row>
-        <div className="flex justify-center mt-4">
-          <Button type="primary" onClick={handleViewAll}>
-            Xem tất cả
-          </Button>
-        </div>
+    
       </div>
     </div>
   );

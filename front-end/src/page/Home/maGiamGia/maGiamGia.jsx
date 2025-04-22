@@ -3,6 +3,7 @@ import TopMenu from "./SupportComponent/TopMenu";
 import PromoSection from "./SupportComponent/PromoSection";
 import "./maGiamGia.css";
 import Banner from './SupportComponent/Banner';
+import Suggest from "../../../component/Suggest/Suggest";
 function MaGiamGia() {
   const promoData = [
     {
@@ -108,6 +109,7 @@ function MaGiamGia() {
           bannerImage={"src/page/Home/maGiamGia/ađásset/cc.jpg"}
         />
       ))}
+      <Suggest />
     </div>
   );
 }
