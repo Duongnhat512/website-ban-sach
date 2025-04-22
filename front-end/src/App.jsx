@@ -29,6 +29,9 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        // if(!localStorage.getItem("token")) {
+        //   return;
+        // }
         const response = await callGetUserToken();
         setAuthToken(localStorage.getItem("token"));
         dispatch(setUser(response.result));
@@ -52,7 +55,7 @@ function App() {
           <Route path="/maGiamGia" element={<MaGiamGia/>} />
           <Route path="/MCPage" element={<MCPage/>} />
           <Route path="/info" element={<UserInfo />} />
-          <Route path="/payment-failed" element={<PaymentFailure/>} />
+          <Route path="/  " element={<PaymentFailure/>} />
           <Route path="/payment-success" element={<PaymentSuccess/>} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/history" element={<HistoryOrder />} />

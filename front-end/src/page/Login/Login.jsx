@@ -30,11 +30,9 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
   };
 
   const handleLogin = async () => {
-    setLoading(true);
     try {
       const response = await callLoginApi(email, password);
       console.log("Login response:", response);
-      
       if(response && response.code ==200) {
         localStorage.setItem("token", response.result.token);
         setAuthToken(response.result.token);
@@ -49,7 +47,6 @@ const Login = ({ isOpen, onClose, onSwitch }) => {
     } catch (error) {
       message.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
     } finally {
-      setLoading(false);
     }
   };
   const handleGithubLogin = () => {

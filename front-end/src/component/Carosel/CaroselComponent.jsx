@@ -23,7 +23,7 @@ const CarouselComponent = () => {
       <Carousel
         ref={carouselRef}
         autoplay
-        autoplaySpeed={5000}
+        autoplaySpeed={2000}
         arrows={false}
       >
         <div>

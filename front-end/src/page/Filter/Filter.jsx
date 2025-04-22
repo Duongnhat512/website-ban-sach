@@ -38,7 +38,9 @@ const Filter = () => {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.order.orders);
   const [showAllCategories, setShowAllCategories] = useState(false); // State để kiểm soát hiển thị danh mục
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const handleAddItem = (item) => {
 
     dispatch(doAddOrder({ ...item, amount: 1 }));

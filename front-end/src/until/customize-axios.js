@@ -35,65 +35,38 @@ instance.interceptors.request.use(
 // Add a response interceptor
 instance.interceptors.response.use(
   function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
     return response && response.data ? response.data : response;
   },
   async function (error) {
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          console.error("Unauthorized! Token có thể đã hết hạn.");
-          let originalRequest = error.config;
-
-          // Nếu request chưa được retry
-          if (!originalRequest._retry) {
-            originalRequest._retry = true;
-
-            // Thử làm mới token
-            try {
-              const refreshToken = localStorage.getItem("refreshToken");
-              if (refreshToken) {
-                const response = await axios.post(`${baseURL}/auth/refresh`, {
-                  refreshToken,
-                });
-                const newToken = response.data.token;
-
-                // Cập nhật token mới
-                setAuthToken(newToken);
-                localStorage.setItem("token", newToken);
-
-                // Gửi lại request ban đầu
-                originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
-                return instance(originalRequest);
-              } else {
-                console.warn(
-                  "Không có refresh token. Điều hướng đến trang login."
-                );
-                window.location.href = "/login";
-              }
-            } catch (refreshError) {
-              console.error("Làm mới token thất bại:", refreshError);
-              window.location.href = "/login";
-            }
-          }
-          break;
-
-        case 404:
-          console.error("Không tìm thấy tài nguyên.");
-          break;
-
-        case 500:
-          console.error("Lỗi server. Vui lòng thử lại sau.");
-          break;
-
-        default:
-          console.error("Đã xảy ra lỗi:", error.response.status);
-      }
-    } else if (!error.config.headers[NO_RETRY_HEADER]) {
-      console.error("Không thể kết nối đến server:", error.message);
-    } else {
-      console.error("Lỗi không xác định:", error.message);
+    if (
+      error.config &&
+      error.response &&
+      error.response.status === 401 &&
+      !error.config.headers[NO_RETRY_HEADER]
+    ) {
+      // let access_token = await handleRefeshToken();
+      // error.config.headers["Authorization"] = `Bearer ${access_token}`;
+      // localStorage.setItem("access_token", access_token);
+      // error.config.headers[NO_RETRY_HEADER] = "true";
+      // return instance.request(error.config);
+      // return updateToken().then((token) => {
+      //   error.config.headers.xxxx <= set the token
+      //   return axios.request(config);
+      // });
     }
-    return Promise.reject(error);
+    // if (
+    //   error.config &&
+    //   error.response &&
+    //   error.response.status === 400 &&
+    //   error.config.url === "/api/v1/auth/refresh"
+    // ) {
+    //   window.location.href = "/login";
+    // }
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    return error?.response?.data ?? Promise.reject(error);
   }
 );
 

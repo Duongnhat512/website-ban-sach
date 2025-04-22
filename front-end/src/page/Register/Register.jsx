@@ -61,7 +61,8 @@ const Register = ({ isOpen, onClose, onSwitch }) => {
       const otp = form.getFieldValue("otp");
       const formattedValues = {
         ...values,
-        dob: values.dob.format("YYYY-MM-DD"), // Định dạng ngày sinh
+        dob: values.dob.format("YYYY-MM-DD"),
+        roleId:2
       };
       const response = await callRegisterApi(formattedValues, otp);
       console.log(response);

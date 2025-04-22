@@ -278,7 +278,7 @@ const AppHeader = () => {
           Thông tin cá nhân
         </Button>
       </Menu.Item>
-      <Menu.Item key="2">
+      <Menu.Item key="2" onClick={() => navigate("/history")}>
         <Button type="link">Lịch sử mua hàng</Button>
       </Menu.Item>
       <Menu.Item key="3">

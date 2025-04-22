@@ -171,10 +171,10 @@ const ProductDetail = () => {
       <Breadcrumb className="mb-4 mt-4">
 
         <Breadcrumb.Item href="/">Trang chủ</Breadcrumb.Item>
-        <Breadcrumb.Item href="/products">Product Detail</Breadcrumb.Item>
+        <Breadcrumb.Item >Product Detail</Breadcrumb.Item>
         <Breadcrumb.Item>{product.title}</Breadcrumb.Item>
       </Breadcrumb>
-      <div className=" mx-auto p-4 bg-white rounded-lg flex gap-6 shadow-lg rounded-lg border mt-4">
+      <div className=" mx-auto p-4 bg-white rounded-lg flex gap-6 shadow-lg border mt-4">
         <div className="w-1/3">
           <Image
             src={selectedImage || product.thumbnail}
