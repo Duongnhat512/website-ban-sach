@@ -112,7 +112,7 @@ function Payment() {
     setShippingMethod(e.target.value);
   };
 
-  const handleConfirmPayment = () => {
+  const handleConfirmPayment = async () => {
     if (!agreed) {
       message.error("Vui lòng đồng ý với Điều khoản & Điều kiện.");
       return;
@@ -122,7 +122,10 @@ function Payment() {
       return;
     }
     if (paymentMethod === "Thanh toán VN Pay") {
-      handleDeposit(0);
+       const response = await createPayment();
+      if (response && response.code === 200) {
+        handleDeposit(response.result.id);
+      }
     }
   };
 
