@@ -18,13 +18,13 @@ const PaymentFailure = () => {
         }
         subTitle="Rất tiếc, đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại hoặc liên hệ với bộ phận hỗ trợ."
         extra={[
-          <Button
-            type="primary"
-            key="retry"
-            // onClick={() => navigate('/payment')}
-          >
-            Thử lại
-          </Button>,
+          // <Button
+          //   type="primary"
+          //   key="retry"
+          //   // onClick={() => navigate('/payment')}
+          // >
+          //   Thử lại
+          // </Button>,
           <Button
             key="home"
             onClick={() => navigate('/')}
