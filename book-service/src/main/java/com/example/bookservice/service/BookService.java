@@ -35,7 +35,7 @@ public interface BookService {
 
     void uploadImage(Long id, List<MultipartFile> images) ;
 
-    PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size,String sortBy,List<String> categoryNames, String... search);
+    PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size,String sortBy,List<String> categoryNames, List<String> publisher, String... search);
 
     PageResponse<BookElasticSearch> searchCourse(String keyword, int page, int size);
 

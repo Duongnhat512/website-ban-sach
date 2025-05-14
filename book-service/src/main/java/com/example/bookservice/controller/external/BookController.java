@@ -185,12 +185,13 @@ public class BookController {
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sort" , required = false) String sort,
             @RequestParam(value = "categoryNames" , required = false) List<String> categoryNames,
+            @RequestParam(value = "publisher", required = false) List<String> publisher,
             @RequestParam(value = "search" ,required = false) String... search
             ) {
         return ResponseData.<PageResponse<BookCreationResponse>>builder()
                 .message("Search Books by Keyword Successfully")
                 .code(HttpStatus.OK.value())
-                .result(bookService.getBooksBySearchSpecification(page,size,sort,categoryNames,search))
+                .result(bookService.getBooksBySearchSpecification(page,size,sort,categoryNames,publisher,search))
                 .build();
     }
     @GetMapping("/search-course")

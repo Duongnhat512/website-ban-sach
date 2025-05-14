@@ -2,19 +2,30 @@ package com.example.bookservice.Repository.specification;
 
 import com.example.bookservice.common.SearchOperation;
 import com.example.bookservice.entity.Book;
+import com.example.bookservice.entity.Category;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class SpecificationBuildQuery {
     private final List<SpecSearchCriteria> criteria;
     private List<String> categoryNames; // ✅ Mảng tên danh mục
+    private List<String> publisherNames;
 
     // ✅ Gọi khi truyền mảng category name vào
     public void withCategoryNames(List<String> categoryNames) {
         this.categoryNames = categoryNames;
     }
+
+    public void withPublisherNames(List<String> publisherNames) {
+        this.publisherNames = publisherNames;
+    }
+
     public SpecificationBuildQuery() {
         this.criteria = new ArrayList<>();
     }
@@ -58,26 +69,40 @@ public class SpecificationBuildQuery {
         return this;
     }
     public Specification<Book> buildQuery(){
-        if(criteria.isEmpty()) return null;
-        Specification<Book> specification = new SpecificationBook(criteria.get(0));
-        if(criteria.size() > 1){
-            for(int i = 1; i < criteria.size();i++){
+        Specification<Book> specification = null;
+
+        if (!criteria.isEmpty()) {
+            specification = new SpecificationBook(criteria.get(0));
+            for (int i = 1; i < criteria.size(); i++) {
                 specification = criteria.get(i).getOrPredicate()
                         ? specification.or(new SpecificationBook(criteria.get(i)))
                         : specification.and(new SpecificationBook(criteria.get(i)));
             }
         }
 
+        // ✅ Filter theo category name
         if (categoryNames != null && !categoryNames.isEmpty()) {
-            Specification<Book> categorySpec = (root, query, cb) ->
-                    root.get("category").get("name").in(categoryNames);
+            Specification<Book> categorySpec = (root, query, cb) -> {
+                Join<Book, Category> join = root.join("category");
+                List<Predicate> predicates = new ArrayList<>();
+                for (String name : categoryNames) {
+                    predicates.add(cb.like(cb.lower(join.get("name")), "%" + name.toLowerCase() + "%"));
+                }
+                return cb.or(predicates.toArray(new Predicate[0]));
+            };
 
             specification = (specification == null)
                     ? categorySpec
                     : specification.and(categorySpec);
         }
+        if (publisherNames != null && !publisherNames.isEmpty()) {
+            Specification<Book> publisherSpec = (root, query, cb) ->
+                    root.get("publisher").in(publisherNames);
 
+            specification = (specification == null)
+                    ? publisherSpec
+                    : specification.and(publisherSpec);
+        }
         return specification;
     }
-
 }

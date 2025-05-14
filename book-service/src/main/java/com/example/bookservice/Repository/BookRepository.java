@@ -40,5 +40,7 @@ public interface BookRepository extends JpaRepository<Book, Long> , JpaSpecifica
             "GROUP BY b.id " +
             "ORDER BY SUM(od.quantity) DESC")
     Page<Book> findTopTrendingBooks(Pageable pageable);
+
+
 }
 

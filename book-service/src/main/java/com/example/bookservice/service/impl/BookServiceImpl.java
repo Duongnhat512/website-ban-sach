@@ -249,8 +249,8 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size, String sortBy,List<String> categoryNames ,String... search) {
-        return searchRepository.getBookWithSortAndSearchSpecification(page, size, sortBy, categoryNames, search);
+    public PageResponse<BookCreationResponse> getBooksBySearchSpecification(int page, int size, String sortBy,List<String> categoryNames,List<String> publisher ,String... search) {
+        return searchRepository.getBookWithSortAndSearchSpecification(page, size, sortBy, categoryNames,publisher, search);
     }
     @Override
     public PageResponse<BookElasticSearch> searchCourse(String keyword, int page, int size) {

@@ -32,7 +32,7 @@ public class SearchRepository {
     @Autowired
     private BookMapper bookMapper;
 
-    public PageResponse<BookCreationResponse> getBookWithSortAndSearchSpecification(int page, int size, String sortBy, List<String> categoryNames , String... search){
+    public PageResponse<BookCreationResponse> getBookWithSortAndSearchSpecification(int page, int size, String sortBy, List<String> categoryNames ,List<String> publisher, String... search){
         String sortByy = sortBy.split(":")[0];
         String order = sortBy.split(":")[1];
         Sort sort = null;
@@ -44,21 +44,24 @@ public class SearchRepository {
         }
         Pageable pageable = PageRequest.of(page-1,size,sort);
 
-
         SpecificationBuildQuery specificationBuildQuery = new SpecificationBuildQuery();
-        if(search != null){
-            for (String s : search){
-                Pattern pattern = Pattern.compile("(\\w+?)([:><!~^$.])(.*)(\\p{Punct}?)(.*)(\\p{Punct}?)");
-                Matcher matcher = pattern.matcher(s);
-                if(matcher.find()) {
-                    specificationBuildQuery.with(matcher.group(1), matcher.group(2), matcher.group(3),
-                            matcher.group(4), matcher.group(5));
+        if (search != null) {
+            for (String s : search) {
+                Pattern pattern = Pattern.compile("^(\\w+)([:><!~])(.*)$");
+                Matcher matcher = pattern.matcher(s.trim());
+                if (matcher.find()) {
+                    String key = matcher.group(1);
+                    String operator = matcher.group(2);
+                    String value = matcher.group(3).trim();
+
+                    specificationBuildQuery.with(key, operator, value, null, null);
                 }
             }
         }
         specificationBuildQuery.withCategoryNames(categoryNames);
+        specificationBuildQuery.withPublisherNames(publisher);
 
-        Page<Book> pageBooks = bookRepository.findAll(specificationBuildQuery.buildQuery(), pageable);
+        Page<Book> pageBooks = bookRepository.findAll(specificationBuildQuery.buildQuery(),pageable);
         return PageResponse.<BookCreationResponse>builder()
                 .currentPage(page)
                 .pageSize(pageable.getPageSize())
