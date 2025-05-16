@@ -47,8 +47,6 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final BookElasticSearchRepository elasticsearchRepository;
-
-    private final CloudinaryService cloudinaryService;
     @Autowired
     private EntityManager entityManager;
 
@@ -149,6 +147,12 @@ public class BookServiceImpl implements BookService {
     public BookCreationResponse deleteBookById(Long id) {
         Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
         repository.delete(book);
+        elasticsearchRepository.deleteById(book.getId())
+                .doOnSuccess(aVoid -> log.info("Book {} deleted from Elasticsearch", book.getId()))
+                .subscribe();
+        // Xóa tất cả ảnh liên quan đến book
+        List<BookImages> bookImages = bookImagesRepository.findByBookId(id);
+        bookImagesRepository.deleteAll(bookImages);
         return bookMapper.toBookCreationResponse(book);
     }
 
