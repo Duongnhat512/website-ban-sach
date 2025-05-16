@@ -31,7 +31,8 @@ import Login from "../../page/Login/Login";
 import Register from "../../page/Register/Register";
 import "./Header.scss"; // Import Tailwind CSS
 import { setAuthToken } from "../../until/customize-axios";
-
+import { callGetBookFilter } from "../../service/BookService";
+import { useRef } from "react";
 const { Header } = Layout;
 
 const categories = [
@@ -227,7 +228,11 @@ const AppHeader = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.authenticated);
   const role = useSelector((state) => state.user.role);
-  
+  const [searchValue, setSearchValue] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+
+  const inputRef = useRef(null);
   const username = useSelector(
     (state) => state.user?.user?.fullName?.split(" ")[0] || ""
   );
@@ -295,7 +300,40 @@ const AppHeader = () => {
       )}
     </Menu>
   );
+  const handleSearchBook = async () => {
 
+    let search = ""
+    if (searchValue) {
+      search = "title:" + searchValue
+    }
+    let res = await callGetBookFilter(1, 10, "id:desc", search);
+    console.log(res);
+
+    if (res && res.code === 200) {
+      setSearchResults(res.result.result);
+      setShowResults(true);
+    }
+  }
+  const handleInputChange = (e) => {
+    setSearchValue(e.target.value);
+    if (!e.target.value) {
+      setShowResults(false);
+      setSearchResults([]);
+    }
+  };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearchBook();
+    }
+  };
+
+  const handleResultClick = (id) => {
+    setShowResults(false);
+    setSearchValue("");
+    setSearchResults([]);
+    navigate(`/product/${id}`);
+  };
   return (
     <Layout className="bg-white shadow-md">
       <div className="bg-red-700 flex items-center justify-center h-20 w-full" >
@@ -305,9 +343,9 @@ const AppHeader = () => {
         <Header className="flex justify-between items-center bg-white p-0 h-full">
           <Row className="w-full h-full">
             <Col span={5} className="cursor-pointer flex items-center h-full gap-5 px-5">
-              <img  onClick={()=> navigate("/")} src={Logo} alt="Logo" className="h-10 mr-5" />
+              <img onClick={() => navigate("/")} src={Logo} alt="Logo" className="h-10 mr-5" />
             </Col>
-            <Col span={13} className="flex items-center gap-2">
+            <Col span={13} className="flex items-center gap-2 relative">
               <Popover
                 content={
                   <div className="flex p-4 w-200">
@@ -319,11 +357,10 @@ const AppHeader = () => {
                         {categories.map((category) => (
                           <li
                             key={category.name}
-                            className={`p-2 cursor-pointer text-base transition-colors duration-200 ${
-                              selectedCategory.name === category.name
-                                ? "bg-gray-300 font-bold"
-                                : ""
-                            }`}
+                            className={`p-2 cursor-pointer text-base transition-colors duration-200 ${selectedCategory.name === category.name
+                              ? "bg-gray-300 font-bold"
+                              : ""
+                              }`}
                             onMouseEnter={() => setSelectedCategory(category)}
                           >
                             {category.name}
@@ -368,17 +405,52 @@ const AppHeader = () => {
                 </a>
               </Popover>
 
-              <Input
-                placeholder="Search"
-                className="w-full bg-white"
-                suffix={
-                  <Button
-                    style={{ backgroundColor: "#c12530" }}
-                    icon={<SearchOutlined style={{ color: "#fff" }} />}
-                    className="bg-red-700 border-none"
-                  />
-                }
-              />
+              <div className="w-full relative">
+                <Input
+                  ref={inputRef}
+                  placeholder="Search"
+                  className="w-full bg-white"
+                  value={searchValue}
+                  onChange={handleInputChange}
+                  onKeyDown={handleInputKeyDown}
+                  onFocus={() => { if (searchResults.length > 0) setShowResults(true); }}
+                  suffix={
+                    <Button
+                      style={{ backgroundColor: "#c12530" }}
+                      icon={<SearchOutlined style={{ color: "#fff" }} />}
+                      className="bg-red-700 border-none"
+                      onClick={handleSearchBook}
+                    />
+                  }
+                />
+                {showResults && (
+                  <div
+                    className="absolute left-0 right-0 z-50 bg-white border border-gray-300 rounded shadow-md w-full max-h-80 overflow-y-auto"
+                    style={{
+                      top: "100%",
+                      marginTop: 4,
+                    }}
+                  >
+                    {searchResults.length > 0 ? (
+                      searchResults.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => handleResultClick(item.id)}
+                        >
+                          <img src={item.thumbnail} alt={item.title} className="w-10 h-10 object-cover rounded" />
+                          <div>
+                            <div className="font-medium">{item.title}</div>
+                            <div className="text-xs text-gray-500">{item.author}</div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-gray-500">Không tìm thấy sản phẩm</div>
+                    )}
+                  </div>
+                )}
+              </div>
             </Col>
             <Col
               span={6}
@@ -428,7 +500,9 @@ const AppHeader = () => {
           setIsLoginOpen(true);
         }}
       />
+
     </Layout>
+
   );
 };
 

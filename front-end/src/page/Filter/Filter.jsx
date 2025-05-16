@@ -23,8 +23,7 @@ import { doAddOrder, doRemoveOrder } from "../../redux/OrderSlice";
 import { callGetAllCate } from "../../service/AdminService";
 const Filter = () => {
   const location = useLocation();
-  const { categoryName } = location.state || "Thiếu nhi";
-  const [category, setCategory] = useState(categoryName);
+  const [category, setCategory] = useState(location.state);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(9);
   const [bookList, setBookList] = useState([]);
@@ -37,7 +36,16 @@ const Filter = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.order.orders);
-  const [showAllCategories, setShowAllCategories] = useState(false); // State để kiểm soát hiển thị danh mục
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedPublishers, setSelectedPublishers] = useState([]);
+  const handleCategoryCheckboxChange = (checkedValues) => {
+    setSelectedCategories(checkedValues);
+  };
+
+  const handlePublisherChange = (checkedValues) => {
+    setSelectedPublishers(checkedValues);
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -48,7 +56,6 @@ const Filter = () => {
   const handleGetAllCategory = async () => {
     try {
       const response = await callGetAllCate(100, 1, "id", "asc");
-      console.log("response", response);
       if (response && response.code === 200) {
         setCategories(response.result.result);
       }
@@ -103,21 +110,23 @@ const Filter = () => {
         if (releaseDateFilter === "Trước Năm 2020") {
           search += `${search ? "," : ""}releasedDate<2020`;
         } else {
-          search += `${search ? "," : ""}releasedDate.${
-            releaseDateFilter.split(" ")[1]
-          }`;
+          search += `${search ? "," : ""}releasedDate.${releaseDateFilter.split(" ")[1]
+            }`;
         }
       }
-      console.log(pageSize);
-      
+      let categoryNames = selectedCategories.length > 0 ? selectedCategories.join(",") : undefined;
+      let publisher = selectedPublishers.length > 0 ? selectedPublishers.join(",") : undefined;
+
       const response = await callGetBookFilter(
         currentPage,
         pageSize,
         sort,
-        search
+        search,
+        categoryNames,
+        publisher
       );
       console.log("response", response);
-      
+
       if (response && response.code === 200) {
         setBookList(response.result.result);
         setTotalElements(response.result.totalElements);
@@ -130,7 +139,7 @@ const Filter = () => {
 
   useEffect(() => {
     handleGetFilteredBooks();
-  }, [currentPage, pageSize, priceFilter, releaseDateFilter, sort]);
+  }, [currentPage, pageSize, priceFilter, releaseDateFilter, sort, selectedCategories, selectedPublishers]);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -145,7 +154,9 @@ const Filter = () => {
     setSort("id:desc");
     setCurrentPage(1);
     setPageSize(9);
-    setCategory(categoryName);
+    setCategory("");
+    setSelectedCategories([]);
+    setSelectedPublishers([]);
   };
 
   const handlePriceFilterChange = (checkedValues) => {
@@ -201,17 +212,17 @@ const Filter = () => {
 
           <div className="mb-4">
             <h4 className="font-semibold mb-2">Danh Sách Loại Sách</h4>
-            <Radio.Group
+            <Checkbox.Group
               className="flex flex-col space-y-2"
               options={(showAllCategories
                 ? categories
                 : categories.slice(0, 6)
               ).map((category) => ({
-                label: category.name, 
-                value: category.name, 
+                label: category.name,
+                value: category.name,
               }))}
-              value={category} 
-              onChange={(e) => handleCategoryChange(e.target.value)}
+              value={selectedCategories}
+              onChange={handleCategoryCheckboxChange}
             />
             {categories.length > 6 && (
               <div className="flex justify-center mt-4">
@@ -235,15 +246,17 @@ const Filter = () => {
             <Checkbox.Group
               className="flex flex-col space-y-2"
               options={[
-                "Cty Văn Hóa Sách Việt",
-                "Megabook",
-                "Nhà Sách Minh Thắng",
-                "Cty Văn Hóa Khang Việt",
-                "Zenbooks",
-                "Cty Phương Nam",
-                "Minh Long",
-                "MC Books",
+                "Dân Trí",
+                "Kim Đồng",
+                "Hồng Đức",
+                "Đồng Nai",
+                "NXB Hà Nội",
+                "NXB Tổng Hợp TPHCM",
+                "NXB Thanh Niên",
+                "Thế Giới",
               ]}
+              value={selectedPublishers}
+              onChange={handlePublisherChange}
             />
           </div>
           <div className="mb-4">

@@ -21,9 +21,12 @@ export const callGetABook = async (id) => {
   }
 };
 
-export const callGetBookFilter = async (page, size, sort, search) => {
+export const callGetBookFilter = async (page, size, sort, search, categoryNames = "", publisher = "") => {
   try {
-    const url = `/api/v1/books/search-by-keyword?page=${page}&size=${size}&sort=${sort}&search=${search}`;
+    if (!search) {
+
+    }
+    const url = `/api/v1/books/search-by-keyword?page=${page}&size=${size}&sort=${sort}&search=${search}&categoryNames=${categoryNames}&publisher=${publisher}`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
