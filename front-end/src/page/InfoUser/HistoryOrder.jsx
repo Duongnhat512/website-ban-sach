@@ -5,6 +5,7 @@ import { callGetOrderByUserId, callGetDetaiOrder } from '../../service/OrderServ
 import moment from 'moment';
 import emtyCart from "../../assets/images/ico_emptycart (1).svg";
 import { useNavigate } from 'react-router-dom';
+import { callGetBookById } from '../../service/AdminService';
 
 const { TabPane } = Tabs;
 const { Text, Title } = Typography;
@@ -16,12 +17,13 @@ const HistoryOrder = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('CREATED');
   const navigate = useNavigate();
-  
+
   // Thêm state cho modal chi tiết đơn hàng
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [orderDetails, setOrderDetails] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [bookInfoMap, setBookInfoMap] = useState({}); // Thêm state này
 
   const fetchOrders = async () => {
     if (!userId) return;
@@ -57,13 +59,33 @@ const HistoryOrder = () => {
       const res = await callGetDetaiOrder(order.id);
       if (res && res.code === 200) {
         setOrderDetails(res.result);
+
+        // Lấy thông tin sách cho từng bookId
+        const bookIds = [...new Set(res.result.map(item => item.bookId))];
+        const bookInfoArr = await Promise.all(
+          bookIds.map(async (id) => {
+            try {
+              const bookRes = await callGetBookById(id);
+              if (bookRes && bookRes.code === 200) {
+                return { id, ...bookRes.result };
+              }
+            } catch {
+              return { id };
+            }
+          })
+        );
+        const infoMap = {};
+        bookInfoArr.forEach(book => {
+          infoMap[book.id] = book;
+        });
+        setBookInfoMap(infoMap);
       } else {
-        console.error("Failed to fetch order details:", res?.message);
         setOrderDetails([]);
+        setBookInfoMap({});
       }
     } catch (error) {
-      console.error("Error fetching order details:", error);
       setOrderDetails([]);
+      setBookInfoMap({});
     } finally {
       setDetailLoading(false);
     }
@@ -162,35 +184,58 @@ const HistoryOrder = () => {
   };
 
   // Thêm cột cho bảng chi tiết đơn hàng
-  const detailColumns = [
+  const columns = [
     {
-      title: 'Mã sách',
-      dataIndex: 'bookId',
-      key: 'bookId',
-      width: '20%',
+      title: "ID Sách",
+      dataIndex: "bookId",
+      key: "bookId",
+      width: 80,
     },
     {
-      title: 'Số lượng',
-      dataIndex: 'quantity',
-      key: 'quantity',
-      width: '20%',
-      align: 'center',
+      title: "Ảnh",
+      dataIndex: "bookId",
+      key: "thumbnail",
+      width: 80,
+      render: (bookId) =>
+        bookInfoMap[bookId]?.thumbnail ? (
+          <img
+            src={bookInfoMap[bookId].thumbnail}
+            alt={bookInfoMap[bookId].title}
+            style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 4 }}
+          />
+        ) : (
+          <span>--</span>
+        ),
     },
     {
-      title: 'Đơn giá',
-      dataIndex: 'price',
-      key: 'price',
-      width: '30%',
-      align: 'right',
-      render: (price) => formatPrice(price),
+      title: "Tên Sách",
+      dataIndex: "bookId",
+      key: "title",
+      width: 200,
+      render: (bookId) => bookInfoMap[bookId]?.title || "--",
     },
     {
-      title: 'Thành tiền',
-      dataIndex: 'total',
-      key: 'total',
-      width: '30%',
-      align: 'right',
-      render: (total) => formatPrice(total),
+      title: "Số Lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 80,
+      align: "center",
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (price) => `${price.toLocaleString("vi-VN")} VND`,
+      width: 120,
+      align: "right",
+    },
+    {
+      title: "Tổng",
+      dataIndex: "total",
+      key: "total",
+      render: (total) => `${total.toLocaleString("vi-VN")} VND`,
+      width: 120,
+      align: "right",
     },
   ];
 
@@ -276,18 +321,18 @@ const HistoryOrder = () => {
                 </Row>
               </div>
             )}
-            
+
             <Divider orientation="left">Danh sách sản phẩm</Divider>
-            
-            <Table 
-              columns={detailColumns}
+
+            <Table
+              columns={columns} // Sửa lại ở đây
               dataSource={orderDetails}
               rowKey={(record) => `${record.orderId}-${record.bookId}`}
               pagination={false}
               summary={() => (
                 <Table.Summary fixed>
                   <Table.Summary.Row>
-                    <Table.Summary.Cell index={0} colSpan={3} align="right">
+                    <Table.Summary.Cell index={0} colSpan={5} align="right">
                       <Text strong>Tổng cộng:</Text>
                     </Table.Summary.Cell>
                     <Table.Summary.Cell index={1} align="right">

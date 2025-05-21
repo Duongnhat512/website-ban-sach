@@ -44,3 +44,12 @@ export const callGetOrderByUserId = async (id) => {
     throw error;
   }
 }
+export const callUpdateOrder = async (id, status) => {
+  try {
+    const response = await axios.put(`/api/v1/orders/update-status/${id}?status=${status}`);
+    return response;
+  } catch (error) {
+    console.error("Update order error:", error.response?.data || error.message);
+    throw error;
+  }
+}

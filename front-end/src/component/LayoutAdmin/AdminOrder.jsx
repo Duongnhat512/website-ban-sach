@@ -5,6 +5,8 @@ import { IoMdPersonAdd } from "react-icons/io";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { FiRefreshCcw } from "react-icons/fi";
 import OrderDetailDrawer from "./DrawerDetail/DrawerDetailOrder";
+import { BsPencilSquare } from "react-icons/bs";
+import { MdDelete } from "react-icons/md";
 
 const AdminOrder = () => {
   const [loading, setLoading] = useState(false);
@@ -52,17 +54,7 @@ const AdminOrder = () => {
       key: "id",
       sorter: true,
       width: 100,
-      render: (id, record) => ( // Thêm tham số record để lấy toàn bộ thông tin đơn hàng
-        <a
-          className="text-blue-500 hover:underline cursor-pointer"
-          onClick={() => {
-            setSelectedOrder(record); // Lưu toàn bộ thông tin đơn hàng
-            setDrawerVisible(true);
-          }}
-        >
-          {id}
-        </a>
-      ),
+
     },
     {
       title: "Người Dùng",
@@ -141,6 +133,25 @@ const AdminOrder = () => {
       sorter: true, // Thêm sắp xếp
       width: 200,
     },
+    ,
+    {
+      title: "Hành Động",
+      dataIndex: "action",
+      render: (_, record) => (
+        <div className="flex gap-2">
+          <button
+            className="flex items-center justify-center bg-yellow-500 text-white px-3 py-2 rounded-md hover:bg-yellow-600 transition duration-200"
+            onClick={() => {
+              setSelectedOrder(record); // Lưu toàn bộ thông tin đơn hàng
+              setDrawerVisible(true);
+            }}
+          >
+            <BsPencilSquare />
+          </button>
+        </div>
+      ),
+      width: 150,
+    },
   ];
   const handleRefesh = () => {
     const newLimit = 4;
@@ -179,7 +190,7 @@ const AdminOrder = () => {
   };
 
   return (
-    <div className="container_admin p-6 bg-gray-100 min-h-screen">
+    <div className="container_admin  bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         Quản lý đơn hàng
       </h1>
@@ -247,6 +258,9 @@ const AdminOrder = () => {
         userId={selectedOrder?.userId}
         total={selectedOrder?.total}
         paymentStatus={selectedOrder?.paymentStatus}
+        drawerVisible={drawerVisible}
+        setDrawerVisible={setDrawerVisible}
+        handleRefesh={handleRefesh}
       />
     </div>
   );
