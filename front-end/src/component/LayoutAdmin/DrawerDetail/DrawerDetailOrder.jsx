@@ -170,7 +170,7 @@ const OrderDetailDrawer = ({
     try {
       const res = await callUpdateOrder(orderId, orderStatus);
       console.log("Update order response:", res);
-      
+
       if (res && res.code === 200) {
         message.success("Cập nhật trạng thái thành công!");
         setShowUpdateBtn(false);
@@ -259,17 +259,16 @@ const OrderDetailDrawer = ({
             )}
           />
 
-          {showUpdateBtn && (
-            <div className="flex justify-end mt-6">
-              <Button
-                type="primary"
-                loading={updating}
-                onClick={handleUpdateStatus}
-              >
-                Cập nhật trạng thái
-              </Button>
-            </div>
-          )}
+          <div className="flex justify-end mt-6">
+            <Button
+              type="primary"
+              loading={updating}
+              onClick={handleUpdateStatus}
+              disabled={!showUpdateBtn}
+            >
+              Cập nhật
+            </Button>
+          </div>
         </>
       )}
     </Drawer>
