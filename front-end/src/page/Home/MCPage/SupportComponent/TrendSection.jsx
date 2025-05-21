@@ -1,7 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
 import './TrendSection.css';
 import { useNavigate } from "react-router-dom";
+import { callGetBookByCategory } from "../../../../service/BookService";
+
 function TrendSection({tilte}) {
+  useEffect(() => {
+  const fetchBooks = async () => {
+    try {
+      const data = await callGetBookByCategory(tilte, 1, 10); // categoryName, page, size
+      const books = data?.result.result || [];
+      console.log(data);
+      const mappedBooks = books.map(book => ({
+        id: book.id,
+        title: book.title,
+        thumbnail: book.thumbnail,
+        discount: book.discount,
+        price: book.currentPrice,
+        oldPrice: book.originalPrice,
+        rating: book.rating || 4, // fallback nếu không có rating
+      }));
+
+      setProducts(mappedBooks);
+    } catch (error) {
+      console.error("Lỗi khi tải sách theo danh mục:", error);
+    }
+  };
+
+  fetchBooks();
+}, []);
   const navigate = useNavigate();
   // Danh sách tab demo
   const tabs = [
@@ -11,96 +37,6 @@ function TrendSection({tilte}) {
   ];
   const [activeTab, setActiveTab] = useState(1);
   const [products,setProducts] = useState([
-    {
-      id: 1,
-      title: 'Hoa học trò - Số 1451',
-      image: 'src/assets/images/product1.png',
-      discount: 15,     // 15%
-      price: 19000,     // 19.000đ
-      oldPrice: 22000,  // 22.000đ
-      rating: 4.5,
-    },
-    {
-      id: 2,
-      title: 'Storytelling - Lấy lòng người đọc',
-      image: 'src/assets/images/product1.png',
-      discount: 25,
-      price: 148500,
-      oldPrice: 198000,
-      rating: 5,
-    },
-    {
-      id: 3,
-      title: 'A Little Life',
-      image: 'src/assets/images/product1.png',
-      discount: 30,
-      price: 306000,
-      oldPrice: 438000,
-      rating: 4,
-    },
-    {
-      id: 4,
-      title: 'Combo Manga - Attack on Titan',
-      image: 'src/assets/images/product1.png',
-      discount: 13,
-      price: 413524,
-      oldPrice: 475000,
-      rating: 4.5,
-    },
-    {
-      id: 5,
-      title: 'Hoa Hồng Sớm Thắm',
-      image: 'src/assets/images/product1.png',
-      discount: 20,
-      price: 22700,
-      oldPrice: 28000,
-      rating: 3.5,
-    },
-    {
-      id: 1,
-      title: 'Hoa học trò - Số 1451',
-      image: 'src/assets/images/product1.png',
-      discount: 15,     // 15%
-      price: 19000,     // 19.000đ
-      oldPrice: 22000,  // 22.000đ
-      rating: 4.5,
-    },
-    {
-      id: 2,
-      title: 'Storytelling - Lấy lòng người đọc',
-      image: 'src/assets/images/product1.png',
-      discount: 25,
-      price: 148500,
-      oldPrice: 198000,
-      rating: 5,
-    },
-    {
-      id: 3,
-      title: 'A Little Life',
-      image: 'src/assets/images/product1.png',
-      discount: 30,
-      price: 306000,
-      oldPrice: 438000,
-      rating: 4,
-    },
-    {
-      id: 4,
-      title: 'Combo Manga - Attack on Titan',
-      image: 'src/assets/images/product1.png',
-      discount: 13,
-      price: 413524,
-      oldPrice: 475000,
-      rating: 4.5,
-    },
-    {
-      id: 5,
-      title: 'Hoa Hồng Sớm Thắm',
-      image: 'src/assets/images/product1.png',
-      discount: 20,
-      price: 22700,
-      oldPrice: 28000,
-      rating: 3.5,
-    },
   ]);
   // Dữ liệu sản phẩm demo (tuỳ ý thay đổi)
 
@@ -134,14 +70,18 @@ function TrendSection({tilte}) {
       {/* Danh sách sản phẩm */}
       <div className="trend-products">
         {products.map((product) => (
-          <div key={product.id} className="trend-product-card">
+          <div
+            key={product.id}
+            className="trend-product-card cursor-pointer hover:shadow-lg transition"
+            onClick={() => navigate(`/product/${product.id}`)}
+          >
             <div className="product-image-wrap">
               {/* Dấu giảm % nếu có */}
               {product.discount > 0 && (
                 <span className="product-discount-badge">-{product.discount}%</span>
               )}
               <img
-                src={product.image}
+                src={product.thumbnail}
                 alt={product.title}
                 className="product-image"
               />
