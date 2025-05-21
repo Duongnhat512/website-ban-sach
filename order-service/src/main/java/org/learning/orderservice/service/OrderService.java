@@ -4,10 +4,6 @@ import org.learning.orderservice.dto.request.OrderCreateRequest;
 import org.learning.orderservice.dto.response.OrderCreateResponse;
 import org.learning.orderservice.dto.response.PageResponse;
 import org.learning.orderservice.model.Order;
-import org.springframework.data.domain.Page;
-
-import java.util.List;
-
 public interface OrderService {
     OrderCreateResponse createOrder(OrderCreateRequest request);
     OrderCreateResponse getOrder(Long orderId);

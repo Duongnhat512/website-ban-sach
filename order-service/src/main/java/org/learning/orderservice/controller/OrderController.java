@@ -45,7 +45,7 @@ public class OrderController {
                 .build();
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update-status/{id}")
     public ResponseData<OrderCreateResponse> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
         log.info("Updating order status for order: {}", id);
         OrderCreateResponse response = orderService.updateStatus(id, status);
@@ -153,8 +153,4 @@ public class OrderController {
                     .build();
         }
     }
-
-
-
-
 }
