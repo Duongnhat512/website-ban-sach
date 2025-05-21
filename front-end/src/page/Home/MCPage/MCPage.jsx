@@ -117,13 +117,13 @@ function MCPage() {
         />
       ))}
        <section className="promo-section">
-       <TitleBanner text={"Tủ sách MCBook" } backgroundImage={bannerImage}/>
+       <TitleBanner text={"Manga - Comic" } backgroundImage={bannerImage}/>
        </section>
-      <TrendSection tilte = {"Tủ sách MCBook"} navigate={navigate}/>
+      <TrendSection tilte = {"Manga - Comic"} navigate={navigate}/>
       <section className="promo-section">
-       <TitleBanner text={"THAM KHẢO" } backgroundImage={bannerImage}/>
+       <TitleBanner text={"Kinh Tế" } backgroundImage={bannerImage}/>
        </section>
-      <TrendSection tilte = {"Sách tham khảo"}  navigate={navigate}/>
+      <TrendSection tilte = {"Kinh Tế"}  navigate={navigate}/>
       <Suggest />
     </div>
   );
