@@ -141,23 +141,23 @@ const ProductDetail = () => {
     }).format(price);
   };
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await getBookById(id);
-        const imageList = await getFullImageBook(id);
-        console.log(imageList);
-        setThumbnails(imageList.result);
-        console.log(response);
-        setProduct(response);
-        setThumbnails((prev) => {
-          const updated = [...prev];
-          updated[0] = { imageUrl: response.thumbnail };
-          return updated;
-        });
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-      }
-    };
+const fetchProductDetails = async () => {
+  try {
+    const response = await getBookById(id);
+    const imageList = await getFullImageBook(id); // lấy danh sách ảnh
+
+    const combinedImages = [
+      { imageUrl: response.thumbnail },
+      ...imageList.result.map((img) => ({ imageUrl: img })),
+    ];
+
+    setProduct(response);
+    setThumbnails(combinedImages);
+    setSelectedImage(response.thumbnail); // mặc định ảnh bìa là ảnh đầu tiên
+  } catch (error) {
+    console.error("Error fetching product details:", error);
+  }
+};
     fetchProductDetails();
   }, []);
 
@@ -183,16 +183,19 @@ const ProductDetail = () => {
           />
           <div className="w-full max-w-[300px] overflow-x-auto">
             <div className="flex gap-2 mt-2">
-              {thumbnails.map((thumb, index) => (
-                <img
-                  key={index}
-                  src={thumb.imgUrl}
-                  alt={`Thumbnail ${index + 1}`}
-                  className={`w-16 h-12 object-cover cursor-pointer border ${selectedImage === thumb.imageUrl ? "border-red-500" : "border-gray-300"
-                    }`}
-                  onClick={() => setSelectedImage(thumb.imageUrl)}
-                />
-              ))}
+              <Image.PreviewGroup>
+                {thumbnails.map((thumb, index) => (
+                  <Image
+                    key={index}
+                    width={64}
+                    height={48}
+                    src={thumb.imageUrl}
+                    alt={`Thumbnail ${index + 1}`}
+                    className={`object-cover cursor-pointer border ${selectedImage === thumb.imageUrl ? "border-red-500" : "border-gray-300"}`}
+                    onClick={() => setSelectedImage(thumb.imageUrl)}
+                  />
+                ))}
+              </Image.PreviewGroup>
             </div>
           </div>
           {/* Buttons below thumbnails */}
