@@ -145,14 +145,21 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookCreationResponse deleteBookById(Long id) {
+        log.info("Deleting book with id: {}", id);
         Book book = repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        // Xóa tất cả ảnh liên quan đến book
+        List<BookImages> bookImages = bookImagesRepository.findByBookId(id);
+        log.info("Deleting book images for book id: {}", bookImages);
+        try {
+            bookImagesRepository.deleteAll(bookImages);
+        }catch (Exception e){
+            log.error("Error deleting book images: {}", e.getMessage());
+        }
         repository.delete(book);
         elasticsearchRepository.deleteById(book.getId())
                 .doOnSuccess(aVoid -> log.info("Book {} deleted from Elasticsearch", book.getId()))
                 .subscribe();
-        // Xóa tất cả ảnh liên quan đến book
-        List<BookImages> bookImages = bookImagesRepository.findByBookId(id);
-        bookImagesRepository.deleteAll(bookImages);
+
         return bookMapper.toBookCreationResponse(book);
     }
 
@@ -352,5 +359,11 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new RuntimeException("Book image not found"));
         bookImagesRepository.delete(bookImage);
     }
+
+    @Override
+    public List<BookImages> getBookImages() {
+        return bookImagesRepository.findAll();
+    }
+
 
 }
