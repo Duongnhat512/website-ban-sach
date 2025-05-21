@@ -25,6 +25,8 @@ function AdminUser() {
     let res = await callGetAllUsers(limit, currentPage, sort.field);
     if (res && res.code === 200) {
       setTotal(res.result.totalElements);
+      console.log(res.result.result);
+
       setData(res.result.result);
     }
     setLoading(false);
@@ -48,7 +50,7 @@ function AdminUser() {
     if (currentPage !== newCurrentPage) {
       setCurrentPage(newCurrentPage);
     }
-    if(sort.field !== "id"){
+    if (sort.field !== "id") {
       setSort({ field: "id", order: "desc" });
     }
     if (limit === newLimit && currentPage === newCurrentPage && sort.field === "id" && sort.order === "desc") {
@@ -69,14 +71,8 @@ function AdminUser() {
       width: 200,
     },
     {
-      title: "First Name",
-      dataIndex: "firstName",
-      sorter: true,
-      width: 150,
-    },
-    {
-      title: "Last Name",
-      dataIndex: "lastName",
+      title: "Full Name",
+      dataIndex: "fullName",
       sorter: true,
       width: 150,
     },
@@ -170,7 +166,7 @@ function AdminUser() {
           allowClear
           enterButton="Tìm kiếm"
           size="large"
-          onSearch={(value) => setSearch(value)} 
+          onSearch={(value) => setSearch(value)}
           style={{ maxWidth: "300px" }}
         />
       </div>

@@ -1,8 +1,10 @@
 import { Drawer, Descriptions, Spin, Table, message, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { callGetDetaiOrder } from "../../../service/OrderService";
+import { callGetBookById } from "../../../service/AdminService";
+import { getBookById } from "../../../service/BookService";
 
-const OrderDetailDrawer = ({ 
+const OrderDetailDrawer = ({
   visible,
   onClose,
   orderId,
@@ -11,10 +13,11 @@ const OrderDetailDrawer = ({
   orderDate,
   userId,
   total,
-  paymentStatus 
+  paymentStatus
 }) => {
   const [loading, setLoading] = useState(false);
   const [orderDetail, setOrderDetail] = useState([]);
+  const [bookInfoMap, setBookInfoMap] = useState({});
 
   useEffect(() => {
     if (visible && orderId) {
@@ -30,6 +33,26 @@ const OrderDetailDrawer = ({
       const res = await callGetDetaiOrder(orderId);
       if (res && res.code === 200) {
         setOrderDetail(res.result);
+
+        // Lấy thông tin sách cho từng bookId
+        const bookIds = [...new Set(res.result.map(item => item.bookId))];
+        const bookInfoArr = await Promise.all(
+          bookIds.map(async (id) => {
+            try {
+              const bookRes = await callGetBookById(id);
+              if (bookRes && bookRes.code === 200) {
+                return { id, ...bookRes.result };
+              }
+            } catch {
+              return { id };
+            }
+          })
+        );
+        const infoMap = {};
+        bookInfoArr.forEach(book => {
+          infoMap[book.id] = book;
+        });
+        setBookInfoMap(infoMap);
       } else {
         message.error("Không thể tải chi tiết đơn hàng!");
       }
@@ -47,7 +70,7 @@ const OrderDetailDrawer = ({
       CANCELLED: { color: "red", text: "Đã hủy" },
       CREATED: { color: "blue", text: "Mới tạo" }
     };
-    
+
     const { color, text } = statusMap[status] || { color: "default", text: status || "Không xác định" };
     return <Tag color={color}>{text}</Tag>;
   };
@@ -71,13 +94,37 @@ const OrderDetailDrawer = ({
       title: "ID Sách",
       dataIndex: "bookId",
       key: "bookId",
-      width: 100,
+      width: 80,
     },
+    {
+      title: "Ảnh",
+      dataIndex: "bookId",
+      key: "thumbnail",
+      width: 80,
+      render: (bookId) =>
+        bookInfoMap[bookId]?.thumbnail ? (
+          <img
+            src={bookInfoMap[bookId].thumbnail}
+            alt={bookInfoMap[bookId].title}
+            style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 4 }}
+          />
+        ) : (
+          <span>--</span>
+        ),
+    },
+    {
+      title: "Tên Sách",
+      dataIndex: "bookId",
+      key: "title",
+      width: 200,
+      render: (bookId) => bookInfoMap[bookId]?.title || "--",
+    },
+
     {
       title: "Số Lượng",
       dataIndex: "quantity",
       key: "quantity",
-      width: 100,
+      width: 80,
       align: "center",
     },
     {
@@ -85,7 +132,7 @@ const OrderDetailDrawer = ({
       dataIndex: "price",
       key: "price",
       render: (price) => `${price.toLocaleString("vi-VN")} VND`,
-      width: 150,
+      width: 120,
       align: "right",
     },
     {
@@ -93,7 +140,7 @@ const OrderDetailDrawer = ({
       dataIndex: "total",
       key: "total",
       render: (total) => `${total.toLocaleString("vi-VN")} VND`,
-      width: 150,
+      width: 120,
       align: "right",
     },
   ];
@@ -133,9 +180,9 @@ const OrderDetailDrawer = ({
               {formatDate(orderDate)}
             </Descriptions.Item>
           </Descriptions>
-          
+
           <h3 className="text-lg font-medium mb-4">Chi tiết sản phẩm</h3>
-          
+
           <Table
             columns={columns}
             dataSource={orderDetail.map((item, index) => ({ ...item, key: index }))}
@@ -144,7 +191,7 @@ const OrderDetailDrawer = ({
             summary={() => (
               <Table.Summary fixed>
                 <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} colSpan={3} className="text-right font-bold">
+                  <Table.Summary.Cell index={0} colSpan={5} className="text-right font-bold">
                     Tổng cộng:
                   </Table.Summary.Cell>
                   <Table.Summary.Cell index={3} className="text-right font-bold">

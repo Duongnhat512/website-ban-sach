@@ -15,7 +15,7 @@ const AdminOrder = () => {
   const [visible, setVisible] = useState(false);
   const [visibleUpdateProduct, setVisibleUpdateProduct] = useState(false);
   const [product, setProduct] = useState({});
-  const [sort, setSort] = useState({ field: "id", order: "desc" });
+  const [sort, setSort] = useState({ field: "id", order: "asc" });
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -154,13 +154,13 @@ const AdminOrder = () => {
       setCurrentPage(newCurrentPage);
     }
     if (sort.field !== "id") {
-      setSort({ field: "id", order: "desc" });
+      setSort({ field: "id", order: "asc" });
     }
     if (
       limit === newLimit &&
       currentPage === newCurrentPage &&
       sort.field === "id" &&
-      sort.order === "desc"
+      sort.order === "asc"
     ) {
       getOrders();
     }
@@ -169,7 +169,7 @@ const AdminOrder = () => {
     setCurrentPage(pagination.current);
     setLimit(pagination.pageSize);
     if (sorter?.order === undefined) {
-      setSort({ field: "id", order: "desc" });
+      setSort({ field: "id", order: "asc" });
     } else {
       setSort({
         field: sorter.field,

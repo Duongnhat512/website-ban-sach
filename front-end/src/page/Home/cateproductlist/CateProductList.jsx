@@ -261,7 +261,7 @@ const Categories = () => {
             key={category.id}
             onClick={() =>
               navigate("/filter", {
-                state: { categoryName: category.name },
+                state: { categoryId: category.id, categoryName: category.name },
               })
             }
           >
@@ -319,7 +319,7 @@ const ProductBook1 = () => {
   return (
     <Layout className="cate-product-list">
       <Content>
-      <div className="header-product-list">
+        <div className="header-product-list">
           <img
             src={xuHuongIcon}
             alt="Xu Hướng Icon"
@@ -450,7 +450,7 @@ const ProductBook = () => {
   return (
     <Layout className="cate-product-list">
       <Content>
-      <div className="header-product-list">
+        <div className="header-product-list">
           <img
             src={xuHuongIcon}
             alt="Xu Hướng Icon"

@@ -72,6 +72,8 @@ const DrawerUpdateBook = ({ visible, onClose, onUpdate, product }) => {
         message.success("Xóa ảnh thành công!");
       }
     } catch (error) {
+      console.log(error);
+      
       message.error("Đã xảy ra lỗi khi xóa ảnh!");
     }
   };
@@ -141,7 +143,7 @@ const DrawerUpdateBook = ({ visible, onClose, onUpdate, product }) => {
               rules={[
                 { required: true, message: "Tác giả không được để trống!" },
                 {
-                  pattern: /^[a-zA-Z\s]+$/,
+                  pattern: /^[\p{L}\s'.-]+$/u,
                   message: "Tác giả chỉ được chứa chữ cái và khoảng trắng!",
                 },
               ]}

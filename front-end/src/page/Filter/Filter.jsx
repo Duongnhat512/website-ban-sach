@@ -23,7 +23,9 @@ import { doAddOrder, doRemoveOrder } from "../../redux/OrderSlice";
 import { callGetAllCate } from "../../service/AdminService";
 const Filter = () => {
   const location = useLocation();
-  const [category, setCategory] = useState(location.state);
+  const [category, setCategory] = useState(location.state || {});
+  console.log(location.state);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(9);
   const [bookList, setBookList] = useState([]);
@@ -57,6 +59,8 @@ const Filter = () => {
     try {
       const response = await callGetAllCate(100, 1, "id", "asc");
       if (response && response.code === 200) {
+        console.log("responsee", response.result.result);
+
         setCategories(response.result.result);
       }
     } catch (error) {
@@ -66,7 +70,13 @@ const Filter = () => {
   useEffect(() => {
     handleGetAllCategory();
   }, []);
-
+  useEffect(() => {
+    // Nếu có category truyền sang và chưa chọn checkbox nào thì set luôn
+    if (location.state && location.state.categoryName && selectedCategories.length === 0) {
+      setSelectedCategories([location.state.categoryName]);
+    }
+    // eslint-disable-next-line
+  }, [location.state]);
   const handleGetFilteredBooks = async () => {
     try {
       let minPrice = null;
@@ -114,7 +124,10 @@ const Filter = () => {
             }`;
         }
       }
-      let categoryNames = selectedCategories.length > 0 ? selectedCategories.join(",") : undefined;
+      let categoryNames =
+        selectedCategories.length > 0
+          ? selectedCategories.join(",")
+          : (category && category.categoryName ? category.categoryName : undefined);
       let publisher = selectedPublishers.length > 0 ? selectedPublishers.join(",") : undefined;
 
       const response = await callGetBookFilter(
@@ -154,7 +167,7 @@ const Filter = () => {
     setSort("id:desc");
     setCurrentPage(1);
     setPageSize(9);
-    setCategory("");
+    setCategory({});
     setSelectedCategories([]);
     setSelectedPublishers([]);
   };
@@ -217,10 +230,12 @@ const Filter = () => {
               options={(showAllCategories
                 ? categories
                 : categories.slice(0, 6)
-              ).map((category) => ({
-                label: category.name,
-                value: category.name,
-              }))}
+              )
+                .filter(category => category && category.name) // Bỏ category null hoặc không có name
+                .map((category) => ({
+                  label: category.name,
+                  value: category.name,
+                }))}
               value={selectedCategories}
               onChange={handleCategoryCheckboxChange}
             />

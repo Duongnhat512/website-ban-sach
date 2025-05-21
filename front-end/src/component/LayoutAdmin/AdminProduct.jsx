@@ -118,6 +118,8 @@ const AdminProduct = () => {
   };
   const handleDeleteProduct = async (id) => {
     let res = await callDeleteBookById(id);
+    console.log(res);
+    
     if (res && res.code === 200) {
       message.success("Xóa sản phẩm thành công");
       getProduct();
@@ -176,7 +178,7 @@ const AdminProduct = () => {
     {
       title: "Giảm Giá",
       dataIndex: "discount",
-      render: (discount) => (discount ? `${discount * 100}%` : null),
+      render: (discount) => (discount ? `${discount * 100}%` : '0%'),
       sorter: true,
       width: 100,
     },

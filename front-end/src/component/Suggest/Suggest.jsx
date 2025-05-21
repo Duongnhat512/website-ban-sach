@@ -49,6 +49,7 @@ function Suggest() {
                     className="w-full h-48 object-cover"
                   />
                 }
+                onClick={() => navigate(`/product/${book.id}`)}
               >
                 <Card.Meta
                   title={<div className="text-lg font-semibold">{book.title}</div>}

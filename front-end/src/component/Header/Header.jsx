@@ -346,7 +346,7 @@ const AppHeader = () => {
               <img onClick={() => navigate("/")} src={Logo} alt="Logo" className="h-10 mr-5" />
             </Col>
             <Col span={13} className="flex items-center gap-2 relative">
-              <Popover
+              {/* <Popover
                 content={
                   <div className="flex p-4 w-200">
                     <div className="w-1/3 p-3 border-r border-gray-300">
@@ -403,7 +403,7 @@ const AppHeader = () => {
                     <DownOutlined className="text-lg" />
                   </Space>
                 </a>
-              </Popover>
+              </Popover> */}
 
               <div className="w-full relative">
                 <Input
