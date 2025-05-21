@@ -247,6 +247,9 @@ const AdminOrder = () => {
         userId={selectedOrder?.userId}
         total={selectedOrder?.total}
         paymentStatus={selectedOrder?.paymentStatus}
+        drawerVisible={drawerVisible}
+        setDrawerVisible={setDrawerVisible}
+        handleRefesh={handleRefesh}
       />
     </div>
   );

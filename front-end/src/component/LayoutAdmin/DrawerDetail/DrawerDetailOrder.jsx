@@ -1,8 +1,15 @@
-import { Drawer, Descriptions, Spin, Table, message, Tag } from "antd";
+import { Drawer, Descriptions, Spin, Table, message, Tag, Select, Button } from "antd";
 import { useEffect, useState } from "react";
-import { callGetDetaiOrder } from "../../../service/OrderService";
+import { callGetDetaiOrder, callUpdateOrder } from "../../../service/OrderService";
 import { callGetBookById } from "../../../service/AdminService";
-import { getBookById } from "../../../service/BookService";
+import axios from "axios";
+
+const ORDER_STATUS_OPTIONS = [
+  { value: "CREATED", label: "Mới tạo" },
+  { value: "PENDING", label: "Đang xử lý" },
+  { value: "DELIVERED", label: "Đã giao hàng" },
+  { value: "CANCELLED", label: "Đã hủy" },
+];
 
 const OrderDetailDrawer = ({
   visible,
@@ -13,19 +20,27 @@ const OrderDetailDrawer = ({
   orderDate,
   userId,
   total,
-  paymentStatus
+  paymentStatus,
+  drawerVisible,
+  setDrawerVisible,
+  handleRefesh
 }) => {
   const [loading, setLoading] = useState(false);
   const [orderDetail, setOrderDetail] = useState([]);
   const [bookInfoMap, setBookInfoMap] = useState({});
+  const [orderStatus, setOrderStatus] = useState(status);
+  const [showUpdateBtn, setShowUpdateBtn] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     if (visible && orderId) {
       fetchOrderDetail();
+      setOrderStatus(status);
+      setShowUpdateBtn(false);
     } else {
       setOrderDetail([]);
     }
-  }, [visible, orderId]);
+  }, [visible, orderId, status]);
 
   const fetchOrderDetail = async () => {
     setLoading(true);
@@ -33,8 +48,6 @@ const OrderDetailDrawer = ({
       const res = await callGetDetaiOrder(orderId);
       if (res && res.code === 200) {
         setOrderDetail(res.result);
-
-        // Lấy thông tin sách cho từng bookId
         const bookIds = [...new Set(res.result.map(item => item.bookId))];
         const bookInfoArr = await Promise.all(
           bookIds.map(async (id) => {
@@ -63,14 +76,13 @@ const OrderDetailDrawer = ({
     }
   };
 
-  const renderOrderStatus = (status) => {
+  const renderOrderStatusTag = (status) => {
     const statusMap = {
       PENDING: { color: "orange", text: "Đang xử lý" },
       DELIVERED: { color: "green", text: "Đã giao hàng" },
       CANCELLED: { color: "red", text: "Đã hủy" },
       CREATED: { color: "blue", text: "Mới tạo" }
     };
-
     const { color, text } = statusMap[status] || { color: "default", text: status || "Không xác định" };
     return <Tag color={color}>{text}</Tag>;
   };
@@ -119,7 +131,6 @@ const OrderDetailDrawer = ({
       width: 200,
       render: (bookId) => bookInfoMap[bookId]?.title || "--",
     },
-
     {
       title: "Số Lượng",
       dataIndex: "quantity",
@@ -149,6 +160,32 @@ const OrderDetailDrawer = ({
     return orderDetail.reduce((sum, item) => sum + item.total, 0);
   };
 
+  const handleStatusChange = (value) => {
+    setOrderStatus(value);
+    setShowUpdateBtn(value !== status);
+  };
+
+  const handleUpdateStatus = async () => {
+    setUpdating(true);
+    try {
+      const res = await callUpdateOrder(orderId, orderStatus);
+      console.log("Update order response:", res);
+      
+      if (res && res.code === 200) {
+        message.success("Cập nhật trạng thái thành công!");
+        setShowUpdateBtn(false);
+        setDrawerVisible(false);
+        handleRefesh()
+      } else {
+        message.error("Cập nhật trạng thái thất bại!");
+      }
+    } catch (error) {
+      message.error("Có lỗi khi cập nhật trạng thái!");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   return (
     <Drawer
       title={`Chi tiết đơn hàng #${orderId}`}
@@ -171,7 +208,27 @@ const OrderDetailDrawer = ({
             </Descriptions.Item>
             <Descriptions.Item label="Địa Chỉ Giao Hàng">{address || "Không có địa chỉ"}</Descriptions.Item>
             <Descriptions.Item label="Trạng Thái Đơn Hàng">
-              {renderOrderStatus(status)}
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <Select
+                  value={orderStatus}
+                  // style={{ width: 200 }}
+                  onChange={handleStatusChange}
+                  disabled={updating}
+                >
+                  <Select.Option value="CREATED">
+                    <Tag color="blue">Mới tạo</Tag>
+                  </Select.Option>
+                  <Select.Option value="PENDING">
+                    <Tag color="orange">Đang xử lý</Tag>
+                  </Select.Option>
+                  <Select.Option value="DELIVERED">
+                    <Tag color="green">Đã giao hàng</Tag>
+                  </Select.Option>
+                  <Select.Option value="CANCELLED">
+                    <Tag color="red">Đã hủy</Tag>
+                  </Select.Option>
+                </Select>
+              </div>
             </Descriptions.Item>
             <Descriptions.Item label="Trạng Thái Thanh Toán">
               {renderPaymentStatus(paymentStatus)}
@@ -201,6 +258,18 @@ const OrderDetailDrawer = ({
               </Table.Summary>
             )}
           />
+
+          {showUpdateBtn && (
+            <div className="flex justify-end mt-6">
+              <Button
+                type="primary"
+                loading={updating}
+                onClick={handleUpdateStatus}
+              >
+                Cập nhật trạng thái
+              </Button>
+            </div>
+          )}
         </>
       )}
     </Drawer>
