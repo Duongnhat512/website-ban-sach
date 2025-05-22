@@ -2,9 +2,9 @@ spring:
   application:
     name: comment-service
   datasource:
-    url: jdbc:postgresql://shortline.proxy.rlwy.net:54578/railway
+    url: jdbc:postgresql://ballast.proxy.rlwy.net:13271/railway
     username: postgres
-    password: fUOEYQwFdWztnsQnnbwaiihbTDxdOilm
+    password: HlKiKkDWAQlHnfrqoXyfdhnjkVoiJaCz
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
