@@ -98,6 +98,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setEmail(request.getEmail());
         existingUser.setDob(request.getDob());
         existingUser.setPhoneNumber(request.getPhoneNumber());
+        existingUser.setFullName(request.getFirstName() + " " + request.getLastName());
         // Thêm các trường khác cần cập nhật
 
         // Lưu người dùng đã cập nhật

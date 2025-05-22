@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: notification-service
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: vovannghiahiep1562003@gmail.com
+    password: zuvzquhzgbnmvqqi
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    consumer:
+      group-id: my-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    bootstrap-servers: kafka_microservice:9092
+server:
+  port: 8084
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://server-registry:8761/eureka
+  instance:
+    prefer-ip-address: true
+

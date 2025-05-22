@@ -1,0 +1,94 @@
+#spring:
+#  application:
+#    name: api-gateway
+#  config:
+#    import: "optional:configserver:http://localhost:8088"
+server:
+  port: 8888
+
+authentication-client:
+  base-url: http://authentication-service:8080/auth
+app:
+  api-prefix: /api/v1
+spring:
+  application:
+    name: api-gateway
+  data:
+    redis:
+      port: 6379
+      host: redis-container-microservice
+  cloud:
+    gateway:
+      routes:
+        - id: book-service
+          uri: http://book-service:8081
+          predicates:
+            - Path=${app.api-prefix}/books/**
+          filters:
+            - StripPrefix=2
+        - id: order-service
+          uri: http://order-service:8082
+          predicates:
+            - Path=${app.api-prefix}/orders/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 3
+                key-resolver: "#{@ipKeyResolver}"
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_REQUEST, UNAUTHORIZED, TOO_MANY_REQUESTS, INTERNAL_SERVER_ERROR, BAD_GATEWAY, SERVICE_UNAVAILABLE
+                backoff:
+                  firstBackoff: 3000ms
+                  maxBackoff: 5000ms
+                  factor: 2
+                  basedOnPreviousValue: true
+        - id: authentication-service
+          uri: http://authentication-service:8080
+          predicates:
+            - Path=${app.api-prefix}/auth/**
+          filters:
+            - StripPrefix=2
+        - id: promotion-service
+          uri: http://promotion-service:8083
+          predicates:
+            - Path=${app.api-prefix}/promotions/**
+          filters:
+            - StripPrefix=2
+        - id: comment-service
+          uri: http://comment-service:8085
+          predicates:
+            - Path=${app.api-prefix}/comments/**
+          filters:
+            - StripPrefix=2
+        - id: order-detail-service
+          uri: http://order-detail-service:8086
+          predicates:
+            - Path=${app.api-prefix}/order-detail/**
+          filters:
+            - StripPrefix=2
+        - id: payment-service
+          uri: http://payment-service:8087
+          predicates:
+            - Path=${app.api-prefix}/payment/**
+          filters:
+            - StripPrefix=2
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://server-registry:8761/eureka
+  instance:
+    prefer-ip-address: true

@@ -1,44 +1,22 @@
 version: "3.7"
 services:
-  posgres-container:
-    container_name: postgres-microservices
-    image: postgres:13.3
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345678
-      POSTGRES_DB: authentication-service
-    ports:
-      - "5432:5432"
-    networks:
-      - BookStoreMicroservices
-  pgadmin-container:
-    container_name: pgadmin-microservices
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    ports:
-      - "5050:80"
-    networks:
-      - BookStoreMicroservices
-
-  kafka: 
+  kafka:
     image: 'bitnami/kafka:3.7'
     container_name: kafka_microservice
-    hostname: kafka_micro
+    hostname: kafka_microservice
     ports:
-      - '9094:9094'
+      - '9094:9094'  # Cổng để kết nối từ máy host
     environment:
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka_microservice:9093
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_microservice:9092,EXTERNAL://localhost:9094
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    networks:
+      - BookStoreMicroservices
+
   redis-container-microservice:
     container_name: redis-container-microservice
     image: docker.io/redis:7.2.3
@@ -81,7 +59,7 @@ services:
     image: docker.elastic.co/kibana/kibana:8.15.3
     container_name: kibana-microservice
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch-microservice:9200
       - 'NODE_OPTIONS=--max-old-space-size=2048'
     ports:
       - "5601:5601"
@@ -90,6 +68,169 @@ services:
     depends_on:
       - elasticsearch-microservice
     restart: unless-stopped
+  server-registry:
+    container_name: server-registry
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: server-registry:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - kafka
+      - redis-container-microservice
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    image: api-gateway:latest
+    ports:
+      - "8888:8888"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - redis-container-microservice
+      - kafka
+      
+  authentication-service:
+    container_name: authentication-service
+    build:
+      context: ./authentication-service
+      dockerfile: Dockerfile
+    image: authentication-service:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - BookStoreMicroservices
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://server-registry:8761/eureka/
+      SPRING_REDIS_HOST: redis-container-microservice
+      SPRING_REDIS_PORT: 6379
+
+    depends_on:
+      - server-registry
+      - redis-container-microservice
+      - kafka
+  file-service:
+    container_name: file-service
+    build:
+      context: ./file-service
+      dockerfile: Dockerfile
+    image: file-service:latest
+    ports:
+      - "9000:9000"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - kafka
+  notification-service:
+    container_name: notification-service
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    image: notification-service:latest
+    ports:
+      - "8084:8084"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - kafka
+      - redis-container-microservice
+  book-service:
+    container_name: book-service
+    build:
+      context: ./book-service
+      dockerfile: Dockerfile
+    image: book-service:latest
+    ports:
+      - "8081:8081"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - kafka
+  comment-service:
+    container_name: comment-service
+    build:
+      context: ./comment-service
+      dockerfile: Dockerfile
+    image: comment-service:latest
+    ports:
+      - "8085:8085"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - kafka
+      - redis-container-microservice
+  order-service:
+    container_name: order-service
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    image: order-service:latest
+    ports:
+      - "8082:8082"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - api-gateway
+      - kafka
+      - redis-container-microservice
+  order-detail-service:
+    container_name: order-detail-service
+    build:
+      context: ./order-detail-service
+      dockerfile: Dockerfile
+    image: order-detail-service:latest
+    ports:
+      - "8086:8086"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - api-gateway
+      - kafka
+      - redis-container-microservice
+  payment-service:
+    container_name: payment-service
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    image: payment-service:latest
+    ports:
+      - "8087:8087"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - api-gateway
+      - kafka
+      - redis-container-microservice
+
+  promotion-service:
+    container_name: promotion-service
+    build:
+      context: ./promotion-service
+      dockerfile: Dockerfile
+    image: promotion-service:latest
+    ports:
+      - "8083:8083"
+    networks:
+      - BookStoreMicroservices
+    depends_on:
+      - server-registry
+      - api-gateway
+      - kafka
+      - redis-container-microservice
+
 networks:
   BookStoreMicroservices:
     driver: bridge

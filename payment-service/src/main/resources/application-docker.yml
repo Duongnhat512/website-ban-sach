@@ -1,0 +1,47 @@
+
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: jdbc:postgresql://ballast.proxy.rlwy.net:13271/railway
+    username: postgres
+    password: HlKiKkDWAQlHnfrqoXyfdhnjkVoiJaCz
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    consumer:
+      group-id: my-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    bootstrap-servers: kafka_microservice:9092
+server:
+  port: 8087
+
+
+payment:
+  vnPay:
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmnCode: 58X4B4HP
+    hashSecret: VRLDWNVWDNPCOEPBZUTWSEDQAGXJCNGZ
+    returnUrl: http://localhost:8888/api/v1/payment/vnpay-callback
+    version: 2.1.0
+    command: pay
+    order_type: others
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://server-registry:8761/eureka
+  instance:
+    prefer-ip-address: true
