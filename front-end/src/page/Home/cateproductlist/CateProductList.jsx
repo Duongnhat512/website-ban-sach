@@ -14,7 +14,7 @@ import {
   Progress,
   Spin,
 } from "antd";
-import "./Cateproductlist.scss";
+import "./CateProductList.scss";
 
 const { Content } = Layout;
 const { Meta } = Card;
