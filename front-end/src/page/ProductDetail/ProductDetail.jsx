@@ -69,6 +69,7 @@ const ProductDetail = () => {
       title: product.title,
       thumbnail: product.thumbnail,
       currentPrice: product.currentPrice,
+      originalPrice: product.originalPrice,
       amount: quantity,
       releaseDate: product.releaseDate,
       selected: true,

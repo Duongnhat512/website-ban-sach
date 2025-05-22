@@ -421,14 +421,14 @@ function Payment() {
               />
               <span>Thanh toán VN Pay</span>
             </Radio>
-            <Radio value="Thanh toán Momo">
+            {/* <Radio value="Thanh toán Momo">
               <img
                 src="https://cdn0.fahasa.com/skin/frontend/base/default/images/payment_icon/ico_momopay.svg?q=10911"
                 alt="Momo"
                 style={{ float: "left", marginRight: "10px" }}
               />
               <span>Thanh toán ví Momo</span>
-            </Radio>
+            </Radio> */}
           </Radio.Group>
         </div>
         <div className="content">
