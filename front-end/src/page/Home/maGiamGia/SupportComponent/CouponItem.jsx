@@ -1,5 +1,6 @@
 import React from 'react';
 import './CouponItem.css';
+import { Breadcrumb, Image, message } from "antd";
 
 function CouponItem({ 
   image = "https://via.placeholder.com/40/78C257/FFFFFF?text=Truck", 
@@ -11,15 +12,15 @@ function CouponItem({
   progressPercentage = 50 
 }) {
   const handleSave = () => {
-    alert('Đã lưu mã thành công!');
+   message.success("Thêm vào giỏ hàng thành công!");
   };
 
   return (
     <div className="coupon-container">
       {/* Phần bên trái: icon + nhãn */}
       <div className="coupon-left">
-        <img src={image} alt="Coupon Icon" className="coupon-icon" />
-        <span className="coupon-label">{label}</span>
+        {/* <img src={image} alt="Coupon Icon" className="coupon-icon" /> */}
+        {/* <span className="coupon-label">{label}</span> */}
       </div>
 
       {/* Phần bên phải: text trên + hàng dưới (progress bar + nút) */}
