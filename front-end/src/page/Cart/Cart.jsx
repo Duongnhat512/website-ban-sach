@@ -5,7 +5,7 @@ import "./Cart.scss";
 import Title from "antd/es/typography/Title";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { doRemoveOrder, doUpdateAmount } from "../../redux/OrderSlice";
+import { doRemoveOrder, doUpdateAmount, doSelectOrder } from "../../redux/OrderSlice";
 import Cart_Empty from "../../assets/images/ico_emptycart.svg";
 
 const { Text } = Typography;
@@ -24,8 +24,7 @@ function Cart() {
 
   useEffect(() => {
     const itemsWithSelection = orders.map(item => ({
-      ...item,
-      selected: item.selected !== undefined ? item.selected : false
+      ...item
     }));
 
     setOrderItems(itemsWithSelection);
@@ -109,6 +108,7 @@ function Cart() {
               onChange={(e) => {
                 const updatedItems = orderItems.map((orderItem) => {
                   if (orderItem.id === item.id) {
+                    dispatch(doSelectOrder({ id: orderItem.id, selected: e.target.checked }));
                     return { ...orderItem, selected: e.target.checked };
                   }
                   return orderItem;

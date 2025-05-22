@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { doRemoveOrder } from "../../redux/OrderSlice";
+import { doRemoveOrder, doRemoveMultipleOrders } from "../../redux/OrderSlice";
 import "./Payment.scss";
 import { Typography } from "antd";
 import { callCreateOrder } from "../../service/OrderService";
@@ -125,12 +125,21 @@ function Payment() {
       message.error("Vui lòng đồng ý với Điều khoản & Điều kiện.");
       return;
     }
-    
     if (paymentMethod === "Thanh toán VN Pay") {
       const response = await createPayment();
       console.log("response", response);
       if (response && response.code === 200) {
         handleDeposit(response.result.id);
+      }
+    }
+    else if (paymentMethod === "Thanh toán khi nhận hàng") {
+      const response = await createPayment();
+      if (response && response.code === 200) {
+        message.success("Đặt hàng thành công! Đơn hàng sẽ được giao đến bạn.");
+        dispatch(doRemoveMultipleOrders(orderItems.map((item) => item.id)));
+        navigate("/filter");
+      } else {
+        message.error("Đặt hàng thất bại. Vui lòng thử lại.");
       }
     }
   };
@@ -151,7 +160,7 @@ function Payment() {
       )
         .then((response) => response.json())
         .then((data) => {
-          toast.success("Đặt hàng thành công!");
+          message.success("Đặt hàng thành công!");
           window.location.href = data.paymentUrl;
         })
         .catch((error) => console.log(error));
@@ -184,11 +193,13 @@ function Payment() {
 
   const getOrderItems = () => {
     if (orders.length > 0) {
-      setOrderItems(orders.map((item) => ({ ...item, selected: true })));
+      setOrderItems(orders.filter((item) => item.selected));
       let total = 0;
       orders.forEach((item) => {
         total += item.currentPrice * item.amount;
       });
+      console.log("orderItems", orderItems);
+      
       setTotalPrice(total);
     }
   };
@@ -212,7 +223,7 @@ function Payment() {
       const res = await callCreateOrder(orderData);
       if (res && res.code === 200) {
         toast.success("Đặt hàng thành công!");
-        dispatch(doRemoveOrder([]));
+        dispatch(doRemoveMultipleOrders(orderItems.map((item) => item.id)));
         if (paymentMethod === "Thanh toán VN Pay") {
           console.log("====================================");
           console.log(res.result.id);

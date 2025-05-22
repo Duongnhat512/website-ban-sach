@@ -14,7 +14,7 @@ export const orderSlice = createSlice({
       if (productIndex >= 0) {
         state.orders[productIndex].amount += action.payload.amount;
       } else {
-        state.orders.push(action.payload);
+        state.orders.push({ ...action.payload, selected: true });
         console.log(JSON.parse(JSON.stringify(state.orders)));
 
       }
@@ -26,7 +26,7 @@ export const orderSlice = createSlice({
       } else {
         state.orders.push(action.payload);
       }
-    }    
+    }
     ,
     doRemoveOrder: (state, action) => {
       state.orders = state.orders.filter(
@@ -48,8 +48,15 @@ export const orderSlice = createSlice({
         (order) => !orderIdsToRemove.includes(order.id)
       );
     },
+    doSelectOrder: (state, action) => {
+      const orderIndex = state.orders.findIndex(
+        (order) => order.id === action.payload.id
+      );
+      state.orders[orderIndex].selected = action.payload.selected;
+    },
+
 
   },
 });
 
-export const { doAddOrder, doRemoveOrder, doUpdateAmount, doRemoveMultipleOrders,doAddToOrder } = orderSlice.actions;
+export const { doAddOrder, doRemoveOrder, doUpdateAmount, doRemoveMultipleOrders, doAddToOrder, doSelectOrder } = orderSlice.actions;
