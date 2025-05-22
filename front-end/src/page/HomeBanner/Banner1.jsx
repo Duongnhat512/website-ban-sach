@@ -15,7 +15,7 @@ import {
   Rate,
   Progress,
 } from "antd";
-import xuHuongIcon from "../../assets/images/xuHuongIcon.png";
+import xuHuongIcon from "../../assets/images/xuhuongIcon.png";
 
 const { Content } = Layout;
 const { Meta } = Card;
