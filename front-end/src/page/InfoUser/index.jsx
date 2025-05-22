@@ -1,14 +1,104 @@
 import { useEffect, useState } from "react";
-import { Input, Button, Radio, Card, Menu } from "antd";
-import { Row, Col } from "antd"; 
+import { Input, Button, Radio, Card, Menu, message } from "antd";
+import { Row, Col } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import Suggest from "../../component/Suggest/Suggest";
 import HistoryOrder from "./HistoryOrder";
+import { callUpdateUser } from "../../service/UserService";
 const UserInfo = () => {
   const isLoggedIn = useSelector((state) => state.user.authenticated);
   const user = useSelector((state) => state.user.user);
   const [selectedKey, setSelectedKey] = useState("profile");
+  const [form, setForm] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    dob: user?.dob || "",
+    phoneNumber: user?.phoneNumber || "",
+  });
+  const [isChanged, setIsChanged] = useState(false);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
 
+  useEffect(() => {
+    setForm({
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      dob: user?.dob || "",
+      phoneNumber: user?.phoneNumber || "",
+    });
+    setIsChanged(false);
+  }, [user]);
+
+  // Kiểm tra thay đổi
+  const handleChange = (field, value) => {
+    const newForm = { ...form, [field]: value };
+    setForm(newForm);
+    setIsChanged(
+      newForm.firstName !== (user?.firstName || "") ||
+      newForm.lastName !== (user?.lastName || "") ||
+      newForm.email !== (user?.email || "") ||
+      newForm.dob !== (user?.dob || "") ||
+      newForm.phoneNumber !== (user?.phoneNumber || "")
+    );
+  };
+  const isValidDate = (dateString) => {
+    // Kiểm tra đúng định dạng trước
+    if (!regex.dob.test(dateString)) return false;
+    const date = new Date(dateString);
+    // Kiểm tra ngày hợp lệ và đúng với input (tránh auto chuyển sang tháng tiếp theo)
+    return (
+      date instanceof Date &&
+      !isNaN(date) &&
+      date.toISOString().slice(0, 10) === dateString
+    );
+  };
+  const regex = {
+    email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+    phone: /^(0|\+84)[0-9]{9,10}$/,
+    dob: /^\d{4}-\d{2}-\d{2}$/,
+    name: /^[a-zA-ZÀ-ỹ\s']{1,50}$/i
+  };
+
+  const validateForm = () => {
+    if (!regex.name.test(form.firstName)) {
+      message.error("Họ không hợp lệ!");
+      return false;
+    }
+    if (!regex.name.test(form.lastName)) {
+      message.error("Tên không hợp lệ!");
+      return false;
+    }
+    if (!regex.email.test(form.email)) {
+      message.error("Email không hợp lệ!");
+      return false;
+    }
+    if (!isValidDate(form.dob)) {
+      message.error("Ngày sinh không hợp lệ!");
+      return false;
+    }
+    if (!regex.phone.test(form.phoneNumber)) {
+      message.error("Số điện thoại không hợp lệ!");
+      return false;
+    }
+    return true;
+  };
+  const handleUpdate = async () => {
+    if (!validateForm()) return;
+    setLoadingUpdate(true);
+    try {
+      let res = await callUpdateUser(user.id,form);
+      if (res && res.code === 200) {
+        message.success("Cập nhật thành công!");
+        setIsChanged(false);
+      }
+    } catch (err) {
+      console.error("Error updating user:", err);
+      message.error("Cập nhật thất bại!");
+    } finally {
+      setLoadingUpdate(false);
+    }
+  };
   const renderContent = () => {
     switch (selectedKey) {
       case "profile":
@@ -16,21 +106,23 @@ const UserInfo = () => {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Họ và tên
+                Họ
               </label>
               <Input
-                placeholder="Nhập họ và tên"
-                defaultValue={user?.fullName || ""}
+                placeholder="Nhập họ"
+                value={form.firstName}
+                onChange={e => handleChange("firstName", e.target.value)}
                 className="p-2 border border-gray-300 rounded-md w-full"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Số điện thoại
+                Tên
               </label>
               <Input
-                placeholder="Nhập số điện thoại"
-                defaultValue={user?.phoneNumber || ""}
+                placeholder="Nhập tên"
+                value={form.lastName}
+                onChange={e => handleChange("lastName", e.target.value)}
                 className="p-2 border border-gray-300 rounded-md w-full"
               />
             </div>
@@ -40,47 +132,40 @@ const UserInfo = () => {
               </label>
               <Input
                 placeholder="Nhập email"
-                defaultValue={user?.email || ""}
+                value={form.email}
+                onChange={e => handleChange("email", e.target.value)}
                 className="p-2 border border-gray-300 rounded-md w-full"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Giới tính
+                Ngày sinh
               </label>
-              <Radio.Group
-                defaultValue={user?.gender || null}
-                className="flex gap-4"
-              >
-                <Radio value="male">Nam</Radio>
-                <Radio value="female">Nữ</Radio>
-              </Radio.Group>
+              <Input
+                placeholder="YYYY-MM-DD"
+                type="date"
+                value={form.dob}
+                onChange={e => handleChange("dob", e.target.value)}
+                className="p-2 border border-gray-300 rounded-md w-full"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ngày sinh
+                Số điện thoại
               </label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="DD"
-                  defaultValue={user?.dob ? user.dob.split("-")[2] : ""}
-                  className="p-2 border border-gray-300 rounded-md w-1/3"
-                />
-                <Input
-                  placeholder="MM"
-                  defaultValue={user?.dob ? user.dob.split("-")[1] : ""}
-                  className="p-2 border border-gray-300 rounded-md w-1/3"
-                />
-                <Input
-                  placeholder="YYYY"
-                  defaultValue={user?.dob ? user.dob.split("-")[0] : ""}
-                  className="p-2 border border-gray-300 rounded-md w-1/3"
-                />
-              </div>
+              <Input
+                placeholder="Nhập số điện thoại"
+                value={form.phoneNumber}
+                onChange={e => handleChange("phoneNumber", e.target.value)}
+                className="p-2 border border-gray-300 rounded-md w-full"
+              />
             </div>
             <Button
               type="primary"
               className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
+              onClick={handleUpdate}
+              disabled={!isChanged || loadingUpdate}
+              loading={loadingUpdate}
             >
               Lưu thay đổi
             </Button>

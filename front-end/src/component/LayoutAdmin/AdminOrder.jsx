@@ -31,6 +31,8 @@ const AdminOrder = () => {
         sort.order
       );
       if (res && res.code === 200) {
+        console.log(res.result);
+        
         setTotal(res.result.totalElements);
         setData(res.result.result);
       } else {

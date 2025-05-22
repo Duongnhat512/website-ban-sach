@@ -23,6 +23,8 @@ import Payment from "./page/Payment/Payment.jsx";
 import ChatBox from "./page/ChatPage/ChatBox/ChatBox.jsx";
 import MCPage from "./page/Home/MCPage/MCPage.jsx";
 import HistoryOrder from "./page/InfoUser/HistoryOrder.jsx";
+import LoginPage from "./page/Login/LoginPage.jsx";
+import RegisterPage from "./page/Register/RegisterPage.jsx";
 function App() {
   const dispatch = useDispatch();
 
@@ -61,8 +63,8 @@ function App() {
           <Route path="/history" element={<HistoryOrder />} />
 
         </Route>
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
         <Route path="/admin" element={<LayoutAdmin />} />
         <Route path="*" element={<ErrorPage />} />
         <Route path="/oauth2/callback/:clientCode" element={<Oauth2 />} />

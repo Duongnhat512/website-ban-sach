@@ -47,6 +47,7 @@ const OrderDetailDrawer = ({
     try {
       const res = await callGetDetaiOrder(orderId);
       if (res && res.code === 200) {
+
         setOrderDetail(res.result);
         const bookIds = [...new Set(res.result.map(item => item.bookId))];
         const bookInfoArr = await Promise.all(
@@ -76,19 +77,9 @@ const OrderDetailDrawer = ({
     }
   };
 
-  const renderOrderStatusTag = (status) => {
-    const statusMap = {
-      PENDING: { color: "orange", text: "Đang xử lý" },
-      DELIVERED: { color: "green", text: "Đã giao hàng" },
-      CANCELLED: { color: "red", text: "Đã hủy" },
-      CREATED: { color: "blue", text: "Mới tạo" }
-    };
-    const { color, text } = statusMap[status] || { color: "default", text: status || "Không xác định" };
-    return <Tag color={color}>{text}</Tag>;
-  };
-
   const renderPaymentStatus = (status) => {
-    const isPaid = status === "PAID";
+    const isPaid = status === "SUCCESS"
+    console.log("Payment status:", isPaid);
     return <Tag color={isPaid ? "green" : "gold"}>{isPaid ? "Đã thanh toán" : "Chưa thanh toán"}</Tag>;
   };
 

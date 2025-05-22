@@ -343,7 +343,7 @@ const AppHeader = () => {
         <Header className="flex justify-between items-center bg-white p-0 h-full">
           <Row className="w-full h-full">
             <Col span={5} className="cursor-pointer flex items-center h-full gap-5 px-5">
-              <img onClick={() => navigate("/")} src={Logo} alt="Logo" className="h-10 mr-5" />
+              <img onClick={() => navigate("/")} src={Logo} alt="Logo" className="mr-5" style={{height:50,width:"auto"}} />
             </Col>
             <Col span={13} className="flex items-center gap-2 relative">
               {/* <Popover

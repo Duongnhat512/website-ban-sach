@@ -74,3 +74,15 @@ export const callGetAllUsers = async (limit, page, sortBy,sortOrder) => {
     throw error;
   }
 }
+export const callUpdateUser = async (userId, userData) => {
+  try {
+    const response = await axios.put(
+      `/api/v1/auth/user/update/${userId}`,
+      userData
+    );
+    return response;
+  } catch (error) {
+    console.error("Update user error:", error.response?.data || error.message);
+    throw error;
+  }
+};
