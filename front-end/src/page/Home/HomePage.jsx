@@ -10,7 +10,7 @@ import {
   Image,
 } from "antd";
 import "./HomePage.scss";
-import ContainerHome1 from "./contanerhome1/containerhome1";
+import ContainerHome1 from "./contanerhome1/Containerhome1";
 import FlashIcon from "../../assets/images/label-flashsale.svg?url";
 import CateProductList from "./cateproductlist/cateproductlist";
 import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
