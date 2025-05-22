@@ -375,41 +375,54 @@ const fetchProductDetails = async () => {
           </>
         )}
 
-        {/* List of comments */}
-        <div className="mt-4 space-y-4">
-          {user &&
-            comments.map((comment) => (
-              <div key={comment.id} className="comment">
-                <div className="comment-item">
-                  <p className="comment-text">
-                    {comment.userName || "Người dùng"}: {comment.content}
-                  </p>
-                  <div className="comment-meta">
-                    <span className="comment-date">
-                      {new Date(comment.dateTime).toLocaleString("vi-VN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
-                    </span>
-                    {/* Chỉ hiển thị nút xóa nếu comment của user hiện tại */}
-                    {comment.userId == user.id && (
-                      <button
-                        className="delete-comment"
-                        onClick={() => handleDeleteComment(comment.id)}
-                      >
-                        <span style={{ fontSize: "12px", color: "blue" }}>
-                          xóa bình luận
-                        </span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+ {/* List of comments */}
+<div className="mt-4 space-y-4">
+  {user && comments.length > 0 ? (
+    comments.map((comment) => (
+      <div
+        key={comment.id}
+        className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg shadow-sm border"
+      >
+        {/* Avatar giả */}
+        <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
+          {comment.userName?.charAt(0).toUpperCase() || "A"}
         </div>
+
+        <div className="flex-1">
+          <div className="flex justify-between items-center">
+<span className="text-sm text-blue-600 font-medium">
+  {comment.userName || "Người dùng"}
+</span>
+            <span className="text-sm text-gray-500">
+              {new Date(comment.dateTime).toLocaleString("vi-VN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+<p className="text-gray-800 mt-1 bg-blue-50 border-l-4 border-blue-300 p-3 rounded-md shadow-sm leading-relaxed">
+  {comment.content}
+</p>
+
+          {comment.userId == user.id && (
+            <button
+              className="text-sm text-red-500 mt-1 hover:underline"
+              onClick={() => handleDeleteComment(comment.id)}
+            >
+              Xóa bình luận
+            </button>
+          )}
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="text-sm text-gray-500 italic">Chưa có bình luận nào.</p>
+  )}
+</div>
+
       </div>
       <Suggest />
     </div>
