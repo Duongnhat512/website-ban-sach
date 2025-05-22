@@ -21,7 +21,7 @@ const { Meta } = Card;
 const { Title } = Typography;
 
 import product1 from "../../../assets/images/product1.png";
-import xuHuongIcon from "../../../assets/images/xuHuongIcon.png";
+import xuHuongIcon from "../../../assets/images/xuhuongIcon.png";
 import { callGetBookByCategory } from "../../../service/BookService";
 import { useNavigate } from "react-router-dom";
 import { callGetAllCate } from "../../../service/AdminService";
