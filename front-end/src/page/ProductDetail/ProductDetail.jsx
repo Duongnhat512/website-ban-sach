@@ -202,11 +202,14 @@ const fetchProductDetails = async () => {
           {/* Buttons below thumbnails */}
           <div className="mt-4 flex gap-2">
             <button
-              className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded w-full bg-white h-10 text-xxl hover:bg-red-700 hover:text-white transition-all duration-300 ease-in-out hover:shadow-md"
+              className="border border-red-700 text-red-700 px-4 py-1 text-sm rounded bg-white h-10 whitespace-nowrap
+             hover:bg-red-500 hover:text-white hover:scale-105 transition-all duration-300 ease-in-out shadow-md"
               onClick={() => handleAddToCart()}
             >
               Thêm vào giỏ hàng
             </button>
+
+
             <button
               className="border bg-red-700 text-white px-4 py-1 text-sm rounded w-full h-10 text-xxl hover:bg-white hover:text-red-700 hover:border-red-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02] ease-in-out"
               onClick={() => handleBuyNow()}
@@ -330,27 +333,29 @@ const fetchProductDetails = async () => {
         </div>
         <p className="text-sm text-gray-500">(0 đánh giá)</p>
         <div className="mt-2 space-y-1">
-          {[5, 4, 3, 2, 1].map((star) => (
-            <div key={star} className="flex items-center space-x-2">
-              <span>{star} sao</span>
-              <div className="w-full h-2 bg-gray-200 rounded overflow-hidden">
-                <div className="h-2 bg-gray-400" style={{ width: "0%" }}></div>
-              </div>
-              <span>0%</span>
-            </div>
-          ))}
+        {[5, 4, 3, 2, 1].map((star) => (
+  <div key={star} className="flex items-center gap-3 text-sm">
+ <div className="w-24 text-gray-400 text-base">
+  {"☆".repeat(star)}
+</div>
+
+    <div className="flex-1 min-w-0 h-2 bg-gray-200 rounded overflow-hidden">
+      <div className="h-2 bg-yellow-400" style={{ width: "0%" }}></div>
+    </div>
+
+    <div className="w-10 text-right text-gray-700">0%</div>
+  </div>
+))}
+
         </div>
-        <p className="text-sm text-gray-500 mt-2">
-          Chỉ có thành viên mới có thể viết nhận xét. Vui lòng{" "}
-          <a href="#" className="text-blue-500">
-            đăng nhập
-          </a>{" "}
-          hoặc{" "}
-          <a href="#" className="text-blue-500">
-            đăng ký
-          </a>
-          .
-        </p>
+        {!user?.id && (
+          <p className="text-sm text-gray-500 mt-2">
+            Chỉ có thành viên mới có thể viết nhận xét. Vui lòng{" "}
+            <a href="/login" className="text-blue-500 hover:underline">đăng nhập</a> hoặc{" "}
+            <a href="/register" className="text-blue-500 hover:underline">đăng ký</a>.
+          </p>
+        )}
+
       </div>
       {/* Comment Section */}
       <div className="mt-6 p-4 bg-white rounded-lg shadow border">
