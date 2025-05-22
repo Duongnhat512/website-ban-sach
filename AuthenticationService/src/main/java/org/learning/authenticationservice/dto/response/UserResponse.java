@@ -11,6 +11,8 @@ import java.time.LocalDate;
 @Builder
 public class UserResponse {
     private String id;
+    private String firstName;
+    private String lastName;
     private String fullName;
     private String email;
     private LocalDate dob;
