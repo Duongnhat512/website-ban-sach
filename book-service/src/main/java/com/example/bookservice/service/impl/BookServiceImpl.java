@@ -360,10 +360,6 @@ public class BookServiceImpl implements BookService {
         bookImagesRepository.delete(bookImage);
     }
 
-    @Override
-    public List<BookImages> getBookImages() {
-        return bookImagesRepository.findAll();
-    }
 
 
 }
