@@ -8,15 +8,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="cart-service" />
-        <module name="payment-service" />
         <module name="book-service" />
-        <module name="api-gateway" />
+        <module name="Comment-Service" />
+        <module name="promotion-service" />
         <module name="NotificationService" />
-        <module name="order-service" />
         <module name="orderDetail-service" />
         <module name="server-config" />
-        <module name="AuthenticationService" />
         <module name="file-service" />
+        <module name="payment-service" />
+        <module name="api-gateway" />
+        <module name="order-service" />
+        <module name="AuthenticationService" />
         <module name="service-registry" />
       </profile>
     </annotationProcessing>
@@ -24,6 +26,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AuthenticationService" options="-parameters" />
+      <module name="Comment-Service" options="-parameters" />
       <module name="NotificationService" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
       <module name="book-service" options="-parameters" />
@@ -32,6 +35,7 @@
       <module name="order-service" options="-parameters" />
       <module name="orderDetail-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />
+      <module name="promotion-service" options="-parameters" />
       <module name="server-config" options="-parameters" />
       <module name="service-registry" options="-parameters" />
     </option>
