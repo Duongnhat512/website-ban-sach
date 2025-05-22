@@ -45,7 +45,7 @@ function Cart() {
     }));
 
     setOrderItems(updatedItems);
-    // Tính lại tổng tiền sau khi cập nhật trạng thái các item
+    
     calculateTotalPrice(updatedItems);
   };
 
@@ -131,7 +131,6 @@ function Cart() {
               <br />
               <Text type="secondary" style={{ fontSize: 12 }}>{item.releaseDate}</Text>
               <br />
-              {/* Ví dụ tính giá gốc tạm thời = currentPrice * 1.11 */}
               <Text delete>
                 {item.originalPrice ? (item.currentPrice * 1.11).toLocaleString() : ""}
                 &nbsp;đ
@@ -204,7 +203,7 @@ function Cart() {
             {/* Cột bên phải: Thông tin khuyến mãi, tổng tiền, thanh toán */}
             <Col xs={24} md={8}>
               <div className="cart-summary">
-                <Card bordered={false} className="mb-2 shadow-sm">
+                {/* <Card bordered={false} className="mb-2 shadow-sm">
                   <Title level={5}>KHUYẾN MÃI</Title>
                   <div style={{ marginBottom: 12 }}>
                     <Text strong>Mã Giảm 10K - Toàn Sàn</Text>
@@ -226,7 +225,7 @@ function Cart() {
                       Mua thêm
                     </Button>
                   </div>
-                </Card>
+                </Card> */}
 
                 <Card bordered={false} className="shadow-sm">
                   <Title level={5} style={{ marginBottom: 16 }}>
