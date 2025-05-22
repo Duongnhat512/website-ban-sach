@@ -13,7 +13,6 @@ import "./HomePage.scss";
 import ContainerHome1 from "./contanerhome1/Containerhome1";
 import FlashIcon from "../../assets/images/label-flashsale.svg?url";
 import CateProductList from "./cateproductlist/CateProductList";
-import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
 import { callGetBookFlashSale } from "../../service/BookService";
 import { useNavigate } from "react-router-dom";
 import Suggest from "../../component/Suggest/Suggest";
