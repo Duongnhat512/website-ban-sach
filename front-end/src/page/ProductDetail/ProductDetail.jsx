@@ -63,7 +63,7 @@ const ProductDetail = () => {
       </div>
     );
   }
-  const handleAddToCart = () => {
+  const handleAddToCart = () => { 
     const item = {
       id: product.id,
       title: product.title,

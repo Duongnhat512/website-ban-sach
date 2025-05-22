@@ -42,3 +42,27 @@
     padding: 20px;
     gap: 10px
   }
+
+.payment-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 80%;
+  
+  .summary-row {
+    display: grid;
+    grid-template-columns: 200px 150px;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+
+    .label {
+      text-align: right;
+    }
+
+    .value {
+      text-align: right;
+      min-width: 120px;
+    }
+  }
+}

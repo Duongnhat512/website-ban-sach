@@ -113,16 +113,22 @@ function Payment() {
   };
 
   const handleConfirmPayment = async () => {
-    if (!agreed) {
-      message.error("Vui lòng đồng ý với Điều khoản & Điều kiện.");
+    if (!address) {
+      message.error("Vui lòng nhập địa chỉ.");
       return;
     }
     if (!shippingMethod) {
       message.error("Vui lòng chọn phương thức vận chuyển.");
       return;
     }
+    if (!agreed) {
+      message.error("Vui lòng đồng ý với Điều khoản & Điều kiện.");
+      return;
+    }
+    
     if (paymentMethod === "Thanh toán VN Pay") {
-       const response = await createPayment();
+      const response = await createPayment();
+      console.log("response", response);
       if (response && response.code === 200) {
         handleDeposit(response.result.id);
       }
@@ -216,6 +222,8 @@ function Payment() {
           alert("Đặt hàng thành công!");
         }
       }
+      console.log("res", res);
+      return res;
     } catch (error) {
       console.error("Error creating payment:", error);
       setLoading(false);
@@ -572,47 +580,23 @@ function Payment() {
           </div>
         </div>
         <div className="sticky-footer">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              width: "80%",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
-            <Row style={{ gap: "50px" }}>
-              <Col>
-                <Text>Thành tiền: </Text>
-              </Col>
-              <Col>
-                <Text>{formatPrice(totalPrice)}</Text>
-              </Col>
-            </Row>
-            <Row style={{ gap: "50px" }}>
-              <Col>
-                <Text>Giảm giá: </Text>
-              </Col>
-              <Col>
-                <Text>{formatPrice(totalDiscount)}</Text>
-              </Col>
-            </Row>
-            <Row style={{ gap: "50px" }}>
-              <Col>
-                <Text>Phí vận chuyển: </Text>
-              </Col>
-              <Col>
-                <Text>{formatPrice(totalShippingFee)}</Text>
-              </Col>
-            </Row>
-            <Row style={{ gap: "50px" }}>
-              <Col>
-                <Text>Tổng thanh toán: </Text>
-              </Col>
-              <Col>
-                <Text>{formatPrice(totalPayment)}</Text>
-              </Col>
-            </Row>
+          <div className="payment-summary">
+            <div className="summary-row">
+              <span className="label">Thành tiền:</span>
+              <span className="value">{formatPrice(totalPrice)}</span>
+            </div>
+            <div className="summary-row">
+              <span className="label">Giảm giá:</span>
+              <span className="value">{formatPrice(totalDiscount)}</span>
+            </div>
+            <div className="summary-row">
+              <span className="label">Phí vận chuyển:</span>
+              <span className="value">{formatPrice(totalShippingFee)}</span>
+            </div>
+            <div className="summary-row">
+              <span className="label">Tổng thanh toán:</span>
+              <span className="value">{formatPrice(totalPayment)}</span>
+            </div>
           </div>
           <Row
             justify="space-between"
