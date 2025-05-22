@@ -12,7 +12,7 @@ import {
 import "./HomePage.scss";
 import ContainerHome1 from "./contanerhome1/Containerhome1";
 import FlashIcon from "../../assets/images/label-flashsale.svg?url";
-import CateProductList from "./cateproductlist/cateproductlist";
+import CateProductList from "./cateproductlist/Cateproductlist";
 import BestSellerRanking from "./bestSellerRanking/bestSellerRanking";
 import { callGetBookFlashSale } from "../../service/BookService";
 import { useNavigate } from "react-router-dom";
