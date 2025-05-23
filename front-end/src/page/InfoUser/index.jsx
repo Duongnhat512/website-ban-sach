@@ -87,7 +87,7 @@ const UserInfo = () => {
     if (!validateForm()) return;
     setLoadingUpdate(true);
     try {
-      let res = await callUpdateUser(user.id,form);
+      let res = await callUpdateUser(user.id, form);
       if (res && res.code === 200) {
         message.success("Cập nhật thành công!");
         setIsChanged(false);
@@ -299,7 +299,7 @@ const UserInfo = () => {
               >
                 <Menu.Item key="profile">Hồ sơ cá nhân</Menu.Item>
                 <Menu.Item key="address">Số địa chỉ</Menu.Item>
-                <Menu.Item key="password">Đổi mật khẩu</Menu.Item>
+                {/* <Menu.Item key="password">Đổi mật khẩu</Menu.Item> */}
                 <Menu.Item key="order">Đơn hàng của tôi</Menu.Item>
               </Menu>
             </Col>

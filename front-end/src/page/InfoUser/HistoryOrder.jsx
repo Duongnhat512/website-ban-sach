@@ -15,7 +15,7 @@ const HistoryOrder = () => {
   const userId = user?.id;
   const [allOrders, setAllOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('CREATED');
+  const [activeTab, setActiveTab] = useState('PENDING');
   const navigate = useNavigate();
 
   // Thêm state cho modal chi tiết đơn hàng
@@ -122,8 +122,8 @@ const HistoryOrder = () => {
   };
 
   const renderPaymentStatusTag = (status) => {
-    let color = status === 'PAID' ? 'green' : 'orange';
-    let text = status === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán';
+    let color = status === 'SUCCESS' ? 'green' : 'orange';
+    let text = status === 'SUCCESS' ? 'Đã thanh toán' : 'Chưa thanh toán';
     return <Tag color={color}>{text}</Tag>;
   };
 
@@ -268,9 +268,9 @@ const HistoryOrder = () => {
   return (
     <div className='max-w-[1280px] mx-auto mt-4' style={{ padding: '1px' }}>
       <Tabs defaultActiveKey="CREATED" activeKey={activeTab} onChange={(key) => setActiveTab(key)} type="card">
-        <TabPane tab={`Mới tạo (${filterOrdersByStatus('CREATED').length})`} key="CREATED">
+        {/* <TabPane tab={`Mới tạo (${filterOrdersByStatus('CREATED').length})`} key="CREATED">
           {renderOrderList('CREATED')}
-        </TabPane>
+        </TabPane> */}
         <TabPane tab={`Đang xử lý (${filterOrdersByStatus('PENDING').length})`} key="PENDING">
           {renderOrderList('PENDING')}
         </TabPane>

@@ -230,7 +230,8 @@ function Payment() {
           console.log("====================================");
           handleDeposit(res.result.id);
         } else {
-          alert("Đặt hàng thành công!");
+          // alert("Đặt hàng thành công!");
+          // message.success("Đặt hàng thành công! Đơn hàng sẽ được giao đến bạn.");
         }
       }
       console.log("res", res);

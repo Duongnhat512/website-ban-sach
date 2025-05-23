@@ -1,17 +1,19 @@
 import React from 'react';
 import './CouponItem.css';
+import { message } from 'antd';
 
-function CouponItem({ 
-  image = "https://via.placeholder.com/40/78C257/FFFFFF?text=Truck", 
+function CouponItem({
+  image = "https://via.placeholder.com/40/78C257/FFFFFF?text=Truck",
   label = "Freeship",
   title = "Giảm 10% VPP & DCHS",
   condition1 = "ĐH từ 200K",
   condition2 = "Nhập mã ngay",
   expiry = "HSD: 30/04/25",
-  progressPercentage = 50 
+  progressPercentage = 50
 }) {
   const handleSave = () => {
-    alert('Đã lưu mã thành công!');
+    // alert('Đã lưu mã thành công!');
+    message.success('Đã lưu mã thành công!' );
   };
 
   return (

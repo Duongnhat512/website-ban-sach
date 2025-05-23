@@ -5,7 +5,6 @@ import { callGetBookById } from "../../../service/AdminService";
 import axios from "axios";
 
 const ORDER_STATUS_OPTIONS = [
-  { value: "CREATED", label: "Mới tạo" },
   { value: "PENDING", label: "Đang xử lý" },
   { value: "DELIVERED", label: "Đã giao hàng" },
   { value: "CANCELLED", label: "Đã hủy" },
@@ -206,9 +205,6 @@ const OrderDetailDrawer = ({
                   onChange={handleStatusChange}
                   disabled={updating}
                 >
-                  <Select.Option value="CREATED">
-                    <Tag color="blue">Mới tạo</Tag>
-                  </Select.Option>
                   <Select.Option value="PENDING">
                     <Tag color="orange">Đang xử lý</Tag>
                   </Select.Option>

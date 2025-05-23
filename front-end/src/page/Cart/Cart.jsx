@@ -21,7 +21,13 @@ function Cart() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const user = useSelector((state) => state.user.user); // Lấy user từ redux
+  useEffect(() => {
+    if (!user) {
+      message.warning("Phải đăng nhâp trước khi vào giỏ hàng");
+      navigate("/login")// Nếu đã đăng nhập thì về trang chủ
+    }
+  }, []);
   useEffect(() => {
     const itemsWithSelection = orders.map(item => ({
       ...item
@@ -44,7 +50,7 @@ function Cart() {
     }));
 
     setOrderItems(updatedItems);
-    
+
     calculateTotalPrice(updatedItems);
   };
 
@@ -88,10 +94,10 @@ function Cart() {
 
   const handlePayment = () => {
     const selectedItems = orderItems.filter(item => item.selected);
-    
+
     if (selectedItems.length === 0) {
       message.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
-      
+
       return;
     }
     // Chuyển hướng đến trang thanh toán

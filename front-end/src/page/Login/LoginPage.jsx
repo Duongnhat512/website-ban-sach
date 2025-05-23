@@ -11,7 +11,10 @@ import "./Login.scss";
 const LoginPage = () => {
     const user = useSelector((state) => state.user.user); // Lấy user từ redux
     useEffect(() => {
-        if (user) {
+        console.log('====================================');
+        console.log(user);
+        console.log('====================================');
+        if (user && user.email !== "") {
             window.location.href = "/"; // Nếu đã đăng nhập thì về trang chủ
         }
     }, [user]);
